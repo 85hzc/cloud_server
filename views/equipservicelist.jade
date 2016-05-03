@@ -1,0 +1,122 @@
+html
+    head
+        title 设备服务详细表
+        link(rel='stylesheet' href='/stylesheets/style.css')
+        script(type='text/javascript' src='/javascripts/jquery-1.11.2.min.js')
+        script.
+            //alert("aaaaa");
+            $(function() {
+                //alert("bbbbb");
+                var autostartData = {};
+                var sstatusData = {};
+
+                $('input[type=radio]').click(function(event){
+                    //alert(event.target.value);
+                    var type_service = event.target.name.split('_');
+                    //alert(type_service[0]);
+                    //alert(type_service[1]);
+                    if ("isautostart"==type_service[0]) {
+                        autostartData[type_service[1]] = event.target.value;
+                    } else {
+                        sstatusData[type_service[1]] = event.target.value;
+                    }
+                    /*var autostr="";
+                    for(key in autostartData)
+                    {
+                        autostr += autostartData[key];
+                    }
+                    alert(autostr);*/
+                });
+                
+                $('#save').click(function(event) {
+                    //alert("tijiao");
+                    autostartData = JSON.stringify(autostartData);
+                    sstatusData = JSON.stringify(sstatusData);
+                    //alert(autostartData);
+                    //alert(sstatusData);
+                    $.post('/equipment/setStartAndStatus', {
+                        autostartData : autostartData,
+                        sstatusData : sstatusData,
+                        sn : "#{sn}"
+                    }, function(rtndata, stas) {
+                        //alert(rtndata.rowCount);
+                        if(rtndata.rowCount > 0){
+                            alert("操作成功");
+                            location.reload(true);
+                        } else {
+                            alert("没有改变");
+                        }
+                    });
+                });
+
+                $('#reset').click(function(event) {
+                    location.reload(true);
+                });
+
+
+            });
+    body
+        div.place
+            span 位置：
+            ul.placeul
+                li
+                    a 设备管理
+                li
+                    a 服务列表
+        br
+        br
+        br
+        div.right
+            a(href="javascript:history.back();") 返回
+        table
+            caption 设备(#{sn})服务列表
+            tr
+                th 序号
+                th 服务
+                th 开机自启动(是/否)
+                th 服务状态(开启/关闭)
+                - if(0 == result.rowCount) {
+                    tr
+                        td(colspan="4").nothing nothing!
+                - } else {
+                      - for(var i = 0; i < result.rowCount; i++) {
+                          tr
+                              td #{i+1}
+                              td #{result.rows[i].servicename}
+                              - if(0 == result.rows[i].autostart) {
+                                  td
+                                      input(type="radio" name="isautostart_#{result.rows[i].servicename}" value="1")
+                                      |是&nbsp;&nbsp;&nbsp;
+                                      input(type="radio" name="isautostart_#{result.rows[i].servicename}" checked="checked" value="0")
+                                      |否
+                              - } else {
+                                  td
+                                      input(type="radio" name="isautostart_#{result.rows[i].servicename}" checked="checked" value="1")
+                                      |是&nbsp;&nbsp;&nbsp;
+                                      input(type="radio" name="isautostart_#{result.rows[i].servicename}" value="0")
+                                      |否
+                              - }
+
+                              - if(0 == result.rows[i].servicestatus) {
+                                  td
+                                      input(type="radio" name="sstatus_#{result.rows[i].servicename}" value="1")
+                                      |是&nbsp;&nbsp;&nbsp;
+                                      input(type="radio" name="sstatus_#{result.rows[i].servicename}" checked="checked" value="0")
+                                      |否
+                              - } else {
+                                  td
+                                      input(type="radio" name="sstatus_#{result.rows[i].servicename}" checked="checked" value="1")
+                                      |是&nbsp;&nbsp;&nbsp;
+                                      input(type="radio" name="sstatus_#{result.rows[i].servicename}" value="0")
+                                      |否
+                              - }
+                      - }
+                - }
+        br
+        br
+        br
+        div.saveandcancle
+            button(id="save").saveandcancle 保存
+            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            button(id="reset").saveandcancle 取消
+

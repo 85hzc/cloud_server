@@ -1,0 +1,51 @@
+html
+    head
+        title 添加插件
+        link(rel='stylesheet' href='/stylesheets/style.css')
+        script(type='text/javascript' src='/javascripts/jquery-1.11.2.min.js')
+        script.
+            $(function() {
+                $('#btnsubmit').click(function(event) {
+                    event.preventDefault();
+                    var plugname = $('input[name=plugname]').val().trim();
+                    if ('' == plugname) {
+                        alert('插件名称不能为空！');
+                        return;
+                    } else {
+                        $('input[name=plugname]').val(plugname);
+                        $('#formid').submit();
+                    }
+                });
+            });
+    body
+        div.place
+            span 位置：
+            ul.placeul
+                li
+                    a 插件管理
+                li
+                    a 添加插件
+        br
+        br
+        br
+        div.contentcenter
+            br
+            h4 添加插件
+            br
+            br
+            form(method='post' action='/plugin/addPlugin' id='formid')
+                div.form-row
+                    label 插件名称：
+                    input(type='text' name='plugname')
+                    br
+                    br
+                    br
+                div.form-row
+                    label 插件描述：
+                    input(type='text' name='plugdesc')
+                    br
+                    br
+                    br
+                    input(type='submit' value='确认添加' id='btnsubmit').saveandcancle
+                    |&nbsp;&nbsp;&nbsp;&nbsp;
+                    input(type='reset' value='重置').saveandcancle

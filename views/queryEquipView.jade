@@ -1,0 +1,27 @@
+html
+    head
+        title 查找设备
+        link(rel='stylesheet' href='/stylesheets/style.css')
+    body
+        div.place
+            span 位置：
+            ul.placeul
+                li
+                    a 设备管理
+                li
+                    a 设备查找
+        br
+        br
+        br
+        div.contentcenter
+            p 请输入要查找的设备MAC地址。
+            br
+            br
+            h4 查找设备
+            br
+            form(method='post' action='/equipment/queryEquipById')
+                div.form-row
+                    label 设备SN号（SN）：
+                    input(type='text' name='sn')
+                    |&nbsp;&nbsp;&nbsp;
+                    input(type='submit' value='查找').saveandcancle

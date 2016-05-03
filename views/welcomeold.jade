@@ -1,0 +1,35 @@
+html
+    head
+        title 欢迎来到后台管理系统
+        meta(charset="utf-8")
+        link(rel='stylesheet' href='/stylesheets/style.css')
+        script(type='text/javascript' src='/javascripts/jquery-1.11.2.min.js')
+        script.
+            $(function() {
+                $('#equiplist').click(function(event) {
+                    alert('设备列表');
+                    event.preventDefault();
+                    $('#content').load('content.jade');
+                });
+            });
+    body
+        div(id="container" style="width:1300px;")
+            div(id="header" style="background-color:#FFA500;")
+                h1 后台管理系统
+            div(id="menu" style="background-color:#FFD700;height:500px;width:200px;float:left;")
+                h3 设备管理
+                ul
+                    li
+                        a(href="#" id="equiplist") 设备列表
+                    li
+                        a(href="#") 查找设备
+                h3 插件管理
+                ul
+                    li
+                        a(href="#") 插件列表
+                    li
+                        a(href="#") 添加插件
+                    li
+                        a(href="#") 查找插件
+            div(id="content" style="background-color:#EEEEEE;height:500px;width:1100px;float:left;")
+            div(id="footer" style="backgound-color:#FFA500;clear:both;text-align:center;") Copyright@zhangxi

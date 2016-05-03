@@ -1,0 +1,28 @@
+html
+head
+title 添加插件
+link(rel='stylesheet' href='stylesheets/style.css')
+body
+p 请输入要添加的插件信息。
+br
+br
+br
+h4 添加插件
+br
+form(method='post' action='/testpost/do')
+    div.form-row
+        label
+            插件名称：
+        input(type='text' name='pluginame')
+    
+    br
+    div.form-row
+        label
+            插件描述：
+        input(type='text' name='plugindesc')
+    
+    br
+    div.form-row
+        input(type='submit' value='添加')
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        input(type='reset' value='取消')

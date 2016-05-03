@@ -1,0 +1,104 @@
+html
+    head
+        title 设备列表
+        link(rel='stylesheet' href='/stylesheets/style.css')
+        script.
+            function doDel(sn) {
+                if (confirm('你真的要删除吗？')) {
+                    location = '/equipment/deleteEquipment/?sn=' + sn;
+                }
+            }
+    body
+        div.place
+            span 位置：
+            ul.placeul
+                li
+                    a 设备管理
+                li
+                    a 设备列表
+        div.content
+            br
+            br
+            table
+                caption 设备列表
+                tr
+                    th 序号
+                    th 设备SN
+                    th 设备MAC
+                    th 在线状态
+                    th(colspan="5" style="text-color:red;") 操作类型
+                    - if(0 == result.rowCount) {
+                        tr
+                            td(colspan="9") nothing!
+                    - } else {
+
+                        - for(var i = 0; i < result.rowCount; i++) {
+                            tr
+                                td #{startSeriaNum+i+1}
+                                td #{result.rows[i].sn}
+                                td #{result.rows[i].equipmac}
+                                - if(result.rows[i].onlinestatus == 0) {
+                                    td 离线
+                                - } else {
+                                    td 在线
+                                - }
+                                td
+                                    a(href="#") 升级
+                                td
+                                    a(href="javascript:doDel('#{result.rows[i].sn}')") 删除
+                                td
+                                    a(href="/equipment/installedPlugin?sn=#{result.rows[i].sn}") 已装插件
+                                td
+                                    a(href="/equipment/installPluginList/?sn=#{result.rows[i].sn}") 安装插件
+                                td
+                                    a(href="/equipment/equipServiceList/?sn=#{result.rows[i].sn}") 服务详细
+                        - }
+                    - }
+            br
+            - if(result.rowCount != 0) {
+            div.page
+                - if(pagecurrent > 1) {
+                    a(href="/equipment/allEquipment/?pagecurrent=1") 首页
+                    |&nbsp;&nbsp;&nbsp;
+                - }
+                - if(5 >= pagecount) {
+                    - for(var i = 0; i < pagecount; i++) {
+                        - if(pagecurrent == (i+1)) {
+                            a(href="/equipment/allEquipment/?pagecurrent=#{i+1}" style="color:red;") #{i+1}
+                            |&nbsp;&nbsp;&nbsp;
+                        - } else {
+                            a(href="/equipment/allEquipment/?pagecurrent=#{i+1}") #{i+1}
+                            |&nbsp;&nbsp;&nbsp;
+                        - }    
+                    - }
+                - } else {
+                    - var start = 1;
+                    - if(((parseInt((pagecurrent-1)/5)+1)*5) > pagecount) {
+                        - start = pagecount-5+1;
+                    - } else {
+                        - start = parseInt((pagecurrent-1)/5)*5+1;
+                    - }
+                    
+                    - for(var i = 0; i < 5; i++) {
+                        - if(pagecurrent == (start+i)) {
+                            a(href="/equipment/allEquipment/?pagecurrent=#{start+i}" style="color:red;") #{start+i}
+                            |&nbsp;&nbsp;&nbsp;
+                        - } else {
+                            a(href="/equipment/allEquipment/?pagecurrent=#{start+i}") #{start+i}
+                            |&nbsp;&nbsp;&nbsp;
+                        - }
+                    - }
+                - }
+                - if(pagecurrent > 1) {
+                    - var prepage = parseInt(pagecurrent) - 1;
+                    a(href="/equipment/allEquipment/?pagecurrent=#{prepage}") 上一页
+                    |&nbsp;&nbsp;&nbsp;
+                - }
+                
+                - if(pagecount > pagecurrent) {
+                    - var nextpage = parseInt(pagecurrent) + 1;
+                    a(href="/equipment/allEquipment/?pagecurrent=#{nextpage}") 下一页
+                    |&nbsp;&nbsp;&nbsp;
+                    a(href="#") 尾页
+                - }
+            - }

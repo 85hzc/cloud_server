@@ -6,7 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+//var users = require('./routes/users');
+var equipments = require('./routes/equipments');
+var plugins = require('./routes/plugins');
 
 var app = express();
 
@@ -22,8 +24,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//输出日志到目录
+var fs = require('fs');
+var accessLogStream = fs.createWriteStream(__dirname + '/log/access.log', {flags : 'a', encoding : 'utf8'});
+app.use(logger('combined', {stream : accessLogStream}));
+
 app.use('/', routes);
-app.use('/users', users);
+//app.use('/plugin/users/', users);
+app.use('/equipment', equipments);
+app.use('/plugin', plugins);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

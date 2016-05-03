@@ -1,0 +1,42 @@
+html
+    head
+        title 设备插件详细表
+        link(rel='stylesheet' href='/stylesheets/style.css')
+        script.
+            function doDel(sn, plugname) {
+                if (confirm('您确定要卸载吗?')) {
+                    location = '/equipment/uninstallPlugin/?sn=' + sn + '&plugname=' + plugname;
+                }
+            }
+    body
+        div.place
+            span 位置：
+            ul.placeul
+                li
+                    a 设备管理
+                li
+                    a 已装插件列表
+        br
+        br
+        br
+        div.right
+            a(href="javascript:history.back();") 返回
+        table
+            caption 设备(#{sn})已安装的插件
+            tr
+                th 序号
+                th 已安装插件名称
+                th 操作
+                - if(0 == result.rowCount) {
+                    tr
+                        td(colspan="3").nothing nothing!
+                - } else {
+
+                    - for(var i = 0; i < result.rowCount; i++) {
+                        tr
+                            td #{i+1}
+                            td #{result.rows[i].plugname}
+                            td
+                                a(href='javascript:doDel("#{sn}", "#{result.rows[i].plugname}")') 卸载
+                    - }
+                -}

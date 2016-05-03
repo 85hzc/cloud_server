@@ -1,0 +1,31 @@
+html
+head
+title 查找插件
+link(rel='stylesheet' href='stylesheets/style.css')
+body
+p 请输入要查找插件的名称。
+br
+br
+h4 查找插件
+br
+form(method='post' action='#')
+    div.form-row
+        label
+            插件名称：
+        input(type='text' name='pluginame')
+        &nbsp;
+        input(type='submit' value='查找')
+br
+table
+    caption(style="text-align:left;") 查找结果
+    tr
+        th 序号
+        th 插件
+        th(colspan="2") 操作类型
+    tr
+        td 001
+        td dosattack
+        td
+            a(href="")删除
+        td
+            a(href="")修改

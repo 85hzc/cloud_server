@@ -1,5 +1,0 @@
-    var connectstr = {
-        consqlString : "tcp://wudi:123@localhost/cloudac"
-    };
-
-    module.exports = connectstr;

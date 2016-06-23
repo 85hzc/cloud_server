@@ -1,10 +1,10 @@
 var pg = require('pg');
-var $confconect = require('../conf/db');
+var confconect = require('../conf/db');
 var client_intf = require('client_intf');
 var EventEmitter = require('events').EventEmitter;
 var evt = new EventEmitter();
 
-var pgString = "postgres://wudi:123@localhost/cloud_server_db";
+var pgString = confconect.connectstr.consqlString;
 
 var client = new pg.Client(pgString);
 client.connect();

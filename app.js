@@ -6,33 +6,37 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-//var users = require('./routes/users');
-var equipments = require('./routes/equipments');
-var plugins = require('./routes/plugins');
-
+var users = require('./routes/users');
+var xmlparser = require('express-xml-bodyparser');
+var ejs = require('ejs');
+//var session = require('express-session')
 var app = express();
 
+app.engine('.html', ejs.__express);
 // view engine setup
+//app.set('views', path.join(__dirname, 'views_customer'));
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+//app.use(express.path.join(__dirname, 'views_customer')));
+app.set('view engine', 'html');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+//app.use(xmlparser());
+
+app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//输出日志到目录
-var fs = require('fs');
-var accessLogStream = fs.createWriteStream(__dirname + '/log/access.log', {flags : 'a', encoding : 'utf8'});
-app.use(logger('combined', {stream : accessLogStream}));
 
 app.use('/', routes);
-//app.use('/plugin/users/', users);
-app.use('/equipment', equipments);
-app.use('/plugin', plugins);
+app.use('/users', users);
+
+app.use(express.query());
+
+/* custom */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

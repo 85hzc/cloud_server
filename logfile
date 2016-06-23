@@ -1,0 +1,88 @@
+LOG:  could not bind IPv6 socket: Cannot assign requested address
+HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+LOG:  database system was shut down at 2016-05-30 00:36:55 CST
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+ERROR:  syntax error at or near "WHERE" at character 44
+STATEMENT:  UPDATE gateway_table SET on_line = 'ture', WHERE gateway_id = 'tempserialnumber0';
+ERROR:  column "on_line" of relation "gateway_table" does not exist at character 26
+STATEMENT:  UPDATE gateway_table SET on_line = 'ture' WHERE gateway_id = 'tempserialnumber0';
+LOG:  could not receive data from client: Connection reset by peer
+ERROR:  column "online" of relation "gateway_table" does not exist at character 26
+STATEMENT:  UPDATE gateway_table SET online = 'ture' WHERE gateway_id = 'tempserialnumber0';
+ERROR:  syntax error at or near "DELETE" at character 27
+STATEMENT:  ALTER TABLE gateway_table DELETE gateway_status;
+ERROR:  syntax error at or near "DELETE" at character 27
+STATEMENT:  ALTER TABLE gateway_table DELETE gateway_status boolean;
+ERROR:  syntax error at or near "boolean" at character 47
+STATEMENT:  ALTER TABLE gateway_table DROP gateway_status boolean;
+ERROR:  invalid input syntax for type boolean: "ture" at character 35
+STATEMENT:  UPDATE gateway_table SET online = 'ture' WHERE gateway_id = 'tempserialnumber0';
+ERROR:  invalid input syntax for type boolean: "ture" at character 35
+STATEMENT:  UPDATE gateway_table SET online = 'ture' WHERE gateway_id = 'tempserialnumber0';
+ERROR:  syntax error at or near "WHERE" at character 45
+STATEMENT:  UPDATE gateway_table SET on_line = 'false', WHERE gateway_id = 'tempserialnumber0';
+LOG:  could not receive data from client: Connection reset by peer
+ERROR:  syntax error at or near "WHERE" at character 45
+STATEMENT:  UPDATE gateway_table SET on_line = 'false', WHERE gateway_id = 'tempserialnumber0';
+ERROR:  syntax error at or near "WHERE" at character 45
+STATEMENT:  UPDATE gateway_table SET on_line = 'false', WHERE gateway_id = 'tempserialnumber0';
+ERROR:  column "on_line" of relation "gateway_table" does not exist at character 26
+STATEMENT:  UPDATE gateway_table SET on_line = 'false' WHERE gateway_id = 'tempserialnumber0';
+ERROR:  column "device_id" does not exist at character 48
+HINT:  Perhaps you meant to reference the column "device_table.dev_id".
+STATEMENT:  UPDATE device_table SET online = 'false' WHERE device_id = 'tempserialnumber0';
+ERROR:  syntax error at or near "[" at character 13
+STATEMENT:  ALTER TABLE [ ONLY ] name [ * ]
+	ALTER TABLE device_table RENAME dev_id TO device_id;
+ERROR:  relation "device_id" does not exist at character 15
+STATEMENT:  select * from device_id;
+ERROR:  column "online" of relation "device_table" does not exist at character 25
+STATEMENT:  UPDATE device_table SET online = 'false' WHERE device_id = 'tempserialnumber0';
+LOG:  could not receive data from client: Connection reset by peer
+ERROR:  syntax error at or near "ls" at character 1
+STATEMENT:  ls
+	;
+ERROR:  syntax error at or near "history" at character 1
+STATEMENT:  history
+	;
+ERROR:  column "user_id" does not exist at character 34
+STATEMENT:  SELECT * FROM device_table WHERE user_id = 'ovsaAwpZCJkpKozZPrmJyD8-eYwg';
+ERROR:  column "dev_id" does not exist at character 75
+HINT:  Perhaps you meant to reference the column "user_table.user_id" or the column "user_table.device_id".
+STATEMENT:  DELETE FROM user_table WHERE user_id = 'ovsaAwpZCJkpKozZPrmJyD8-eYwg' and dev_id = 'gh_99f35e5ef2ff_190e44bbd5e76a4c'
+ERROR:  column "dev_id" does not exist at character 77
+HINT:  Perhaps you meant to reference the column "user_table.user_id" or the column "user_table.device_id".
+STATEMENT:  SELECT * FROM user_table WHERE user_id = 'ovsaAwpZCJkpKozZPrmJyD8-eYwg' and dev_id = 'gh_99f35e5ef2ff_190e44bbd5e76a4c'
+ERROR:  syntax error at or near "gh_99f35e5ef2ff_190e44bbd5e76a4c" at character 1
+STATEMENT:  gh_99f35e5ef2ff_190e44bbd5e76a4c;
+LOG:  could not receive data from client: Connection reset by peer
+LOG:  could not receive data from client: Connection reset by peer
+ERROR:  syntax error at or near "run_status" at character 26
+STATEMENT:  ALTER TABLE device_table run_status varchar(80);
+ERROR:  syntax error at or near "run_status" at character 30
+STATEMENT:  ALTER TABLE device_table SET run_status varchar(80);
+ERROR:  syntax error at or near "change" at character 26
+STATEMENT:  ALTER TABLE device_table change run_status varchar(80);
+ERROR:  syntax error at or near "PDATE" at character 1
+STATEMENT:  PDATE device_table SET run_status = 'on' WHERE sn = 'gh_99f35e5ef2ff_190e44bbd5e76a4c';
+ERROR:  column "sn" does not exist at character 49
+STATEMENT:  UPDATE device_table SET run_status = 'on' WHERE sn = 'gh_99f35e5ef2ff_190e44bbd5e76a4c';
+ERROR:  syntax error at or near "ls" at character 1
+STATEMENT:  ls
+	;
+ERROR:  column "gatewat_id" does not exist at character 48
+HINT:  Perhaps you meant to reference the column "device_table.gateway_id".
+STATEMENT:  UPDATE device_table SET online = 'false' WHERE gatewat_id = 'tempserialnumber0';
+ERROR:  unterminated quoted string at or near "'gh_99f35e5ef2ff_190e44bbd5e76a4c'';" at character 120
+STATEMENT:  UPDATE device_table SET online = 'true', gateway_id = 'tempserialnumber0' , run_status = 'undefined' WHERE device_id = 'gh_99f35e5ef2ff_190e44bbd5e76a4c'';
+ERROR:  unterminated quoted string at or near "'gh_99f35e5ef2ff_190e44bbd5e76a4c'';" at character 126
+STATEMENT:  UPDATE device_table SET online = 'true', gateway_id = 'tempserialnumber0' , run_status = '[object Object]' WHERE device_id = 'gh_99f35e5ef2ff_190e44bbd5e76a4c'';
+ERROR:  unterminated quoted string at or near "'gh_99f35e5ef2ff_190e44bbd5e76a4c'';" at character 113
+STATEMENT:  UPDATE device_table SET online = 'true', gateway_id = 'tempserialnumber0' , run_status = 'on' WHERE device_id = 'gh_99f35e5ef2ff_190e44bbd5e76a4c'';
+LOG:  received smart shutdown request
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+LOG:  received SIGHUP, reloading configuration files
+LOG:  database system is shut down

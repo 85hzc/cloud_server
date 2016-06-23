@@ -1,0 +1,70 @@
+<html>
+<head>
+<meta http-equiv='content-type' content='text/html;charset=utf-8'/>
+<title>用户登录</title>
+<link href='/stylesheets/login.css' rel='stylesheet' type='text/css'/>
+<script type='text/javascript' src='/javascripts/jquery-1.11.2.min.js'></script>
+<script type='text/javascript' src='/javascripts/cookieFunction.js'></script>
+<script type='text/javascript' src='/javascripts/md5.js'></script>
+
+<script type="text/javascript">
+
+$(function() {
+    var username = getCookie('username');
+    var password = getCookie('password');
+    //alert('uesrname=' + username + ',password=' + password);
+    $('#username').val(username);
+    $('#password').val(password);
+
+    $('#loginform').submit(function(event){
+    //var ischecked = document.getElementById('rememberpw').checked;
+    //alert("hi");
+    //alert(hex_md5('aaaa'));
+    if ($('#rememberpw').is(':checked')) {
+        //alert($('#rememberpw').is(':checked'));
+        var date = new Date();
+        date.setTime(date.getTime() + (10*24*60*60*1000));
+        var newusername = $('#username').val();
+        var newpassword = $('#password').val();
+        //alert(newusername + ' ' + newpassword);
+        setCookie('username', newusername, date);
+        setCookie('password', hex_md5(newpassword), date);
+     } else {
+         //alert('clear');
+         clearCookie('username');
+         clearCookie('password');
+         //alert('else');
+     }
+
+     return true;
+  });
+});
+</script>
+</head>
+
+<body>
+    <div class='main-login'>
+    <div class='login-logo'></div>
+    <div class='login-content' id='login-content'>
+        <form action='/login' method='post' id='loginform' name='loginform'>
+
+            <div class='login-info'>
+                <span class='user'>&nbsp;</span>
+                <input name='username' id='username' type='text' onblur='checkUsername()' value='' class='login-input'/>
+            </div>
+
+            <div class='login-info'>
+                <span class='pwd'>&nbsp;</span>
+                <input name='password' id='password' type='password' onblur='checkPassword()' value='' class='login-input'/>
+            </div>
+
+            <div class='login-operation'>
+                <button type='submit'>登录</button>
+                <button><a href="/register_page" class='login_register'>注册</a></button>
+             <!--   <button name='registerbtn' type='' value='注  册' class='login-register'/> -->
+            </div>
+        </form>
+    </div>
+    </div>
+</body>
+</html>

@@ -9,34 +9,47 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var xmlparser = require('express-xml-bodyparser');
 var ejs = require('ejs');
-//var session = require('express-session')
+
+var session = require('express-session');
+var plugins = require('./routes/plugins');
 var app = express();
+
 
 app.engine('.html', ejs.__express);
 // view engine setup
-//app.set('views', path.join(__dirname, 'views_customer'));
+/* custom */
+app.use(cookieParser());
+app.use(session({
+  secret:'1234',
+  name:'abcdef',
+//  cookie:{maxAge:86400},
+  resave:false,
+  saveUninitialized:true
+}));
+
 app.set('views', path.join(__dirname, 'views'));
-//app.use(express.path.join(__dirname, 'views_customer')));
+
 app.set('view engine', 'html');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 //app.use(xmlparser());
 
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', routes);
 app.use('/users', users);
-
+app.use('/plugin', plugins);
 app.use(express.query());
 
-/* custom */
+
+app.use(cookieParser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

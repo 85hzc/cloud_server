@@ -1,5 +1,5 @@
 var pg = require('pg');
-var $confconect = require('../conf/db');
+var $confconect = require('db');
 
 var EventEmitter = require('events').EventEmitter;
 var evt = new EventEmitter();

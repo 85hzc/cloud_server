@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title>插件列表</title>
+        <link rel='stylesheet' href='/stylesheets/style.css'/>
+        <script type='text/javascript'>
+            function doDel(plugname) {
+                if (confirm('你真的要删除吗？')) {
+                    location = '/plugin/deletePlugin/?plugname=' + plugname;
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class='place'>
+            <span>位置：</span>
+            <ul class='placeul'>
+                <li>
+                    <a>插件管理</a>
+                </li>
+                <li>
+                    <a>插件列表</a>
+                </li>
+            </ul>
+        </div>
+        <br/>
+        <br/>
+        <table>
+            <caption>插件列表</caption>
+            <tr>
+                <th>序号</th>
+                <th>插件名称</th>
+                <th>插件描述</th>
+                <th colspan="5" style="text-color:red;">操作类型</th>
+            </tr>
+                <% if(0 == result.rowCount) { %>
+                    <tr>
+                        <td colspan="5">nothing!</td>
+                    </tr>
+                <% } else { %>
+
+                    <% for(var i = 0; i < result.rowCount; i++) { %>
+                        <tr>
+                            <td><%= (i+1) %></td>
+                            <td><%=result.rows[i].plugname%></td>
+                            <% if(null == result.rows[i].plugdesc || '' == result.rows[i].plugdesc.trim()) { %>
+                                <td>无</td>
+                            <% } else { %>
+                                <td><%=result.rows[i].plugdesc%></td>
+                            <% } %>
+                            <td>
+                                <a href="javascript:doDel('<%= result.rows[i].plugname %>')">删除</a>
+                            </td>
+                            <td>
+                                <a href="/plugin/updatePluginView?plugname=<%= result.rows[i].plugname %>&plugdesc=<%= result.rows[i].plugdesc %>">修改</a>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% } %>
+        </table>
+    </body>
+</html>

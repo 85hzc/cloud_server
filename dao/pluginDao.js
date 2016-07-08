@@ -1,7 +1,10 @@
 var pg = require('pg');
-var $confconect = require('../conf/db');
+var $confconect = require('db');
 var $sql = require('./pluginSqlMapping');
-
+var multiparty = require('multiparty');
+var fs = require('fs');
+var db = require('db');
+var client = require('db_client');
 
 //向前台返回JSON的简单封装
 var jsonWrite = function(res, ret) {
@@ -15,116 +18,155 @@ var jsonWrite = function(res, ret) {
     }
 };
 
+function insert_end_handler(result)
+{
+    console.log("Enter insert_end_handler");
 
-module.exports = {
-    addPlugin : function(req, res, next) {
-        var param = req.boby || req.body;
-        pg.connect($confconect.consqlString, function(err, client, done){
-            if (err) {
-                return console.error('error fetching client from pool', err);
-            }
-            client.query($sql.insert, [param.plugname, param.plugdesc], function(err, result) {
-                if (result.rowCount > 0) {
-                    result = {
-                        code : 200,
-                        msg : '增加成功'
-                    };
-                } else {
-                    jsonWrite(res, result);
-                }
-                client.end();
-                res.redirect('/plugin/allPlugin');
-            });
-        });
-    },
+    console.log(result);
 
-    deletePlugin : function(req, res, next) {
-        pg.connect($confconect.consqlString, function(err, client, done) {
-            var plugname = req.query.plugname;
-            client.query($sql.delete, [plugname], function(err, result) {
-                if (result.rowCount > 0) {
-                    result = {
-                        code : 200,
-                        msg : '删除成功'
-                    };
-                } else {
-                    result = void 0;
-                }
-                client.end();
-                res.redirect('/plugin/allPlugin');
-            });
-        });
-    },
+    if ( 0 != result.rowCount)
+    {
+        console.log("insert plugin success");
+        this.res.render('register_success');
+        console.log("12345678");
+    }
+    console.log("Exit insert_end_handler");
+}
 
-    
+//TBD
+function db_error_handler(error)
+{
+    console.log("Enter db_error_handlerx");
+    console.log(error);
+}
 
-    updatePlugin : function(req, res, next) {
-        var param = req.body;
-        if (param.plugname == null || param.plugdesc == null) {
-            jsonWrite(res, undefined);
-            return;
-        }
-        console.log(param.plugname + "........." + param.plugdesc);
-        pg.connect($confconect.consqlString, function(err, client, done) {
-            client.query($sql.update, [param.plugdesc, param.plugname], function(err, result) {
-                if (result.rowCount > 0) {
-                    /*res.render('suc', {
-                        result : result
-                    });*/
-                    res.redirect('/plugin/allPlugin');
-                } else {
-                    res.render('fail', {
-                        result : result
-                    });
-                }
-                console.log(result);
-                client.end();
-            });
-        });
-    },
-
-
+/*
     queryPluginByName : function(req, res, next) {
         var plugname = req.body.plugname;
         console.log(plugname);
-        pg.connect($confconect.consqlString, function(err, client, done) {
+	pg.connect($confconect.consqlString, function(err, client, done) {
             client.query($sql.queryByName, [plugname], function(err, result) {
-                console.log(result);
+	    console.log(result);
                 if (err){
                     res.render('fail', {
-                        result : result
+		                    result : result
                     });
                 } else {
-                    res.render('querypluginresult', {
+		    res.render('querypluginresult', {
                         result : result
-                    });
-                }
-                client.end();
-            });
-        });
-    },
-
-
-
-    queryAllPlugin : function(req, res, next) {
-        console.log($confconect.consqlString);
-        console.log($sql.queryAll);
-        pg.connect($confconect.consqlString, function(err, client, done) {
-            client.query($sql.queryAll, function(err, result) {
-                //jsonWrite(res, result);
-                console.log(result);
-                if (err){
-                    res.render('fail', {
-                        result : result
-                    });
-                } else {
-                    res.render('pluginlist', {
-                        result : result
-                    });
+			            });
                 }
                 client.end();
             });
         });
     }
 
-};
+
+ */
+
+function db_row_handler(result)
+{
+    console.log("Enter db_row_handler");
+    this.rows.push(result);
+//    console.log(this.rows);
+}
+
+function queryAllPluginHandler(result)
+{
+    console.log(result);
+
+    console.log("111");
+    result.rows =this.rows;
+    console.log(result.rows);
+    this.res.render("queryAllPluginResult", {                                                                                                 
+                        result : result
+                   }); 
+    console.log("222");
+}
+
+function queryAllPlugin(req, res, next)
+{
+    console.log("Enter queryAllPlugin");
+    console.log(req.session.vendorID);
+    var vendorID = req.session.vendorID;
+    var query_str = "SELECT * from " + db.plugin_table
+                   + " WHERE vendor_id = '"
+                   + vendorID
+                   + "';";
+
+    console.log(query_str);
+    var db_query = client.query(query_str);
+    db_query.req = req;
+    db_query.res = res;
+    db_query.rows = new Array();
+
+    db_query.on('row', db_row_handler);
+    db_query.on('end', queryAllPluginHandler);
+
+}
+
+function addPlugin(req, res, next)
+{
+    console.log("Enter addPlugin");
+
+    console.log(req.session.vendorID);
+
+    console.log(req.body);
+    
+    console.log("Exit addPlugin");
+
+    var insert_str = "INSERT INTO " + db.plugin_table 
+                      + " VALUES('" 
+                      + req.session.vendorID + "', '"
+                      + req.body.plugin_name + "', '"
+                      + req.body.plugin_desc  
+                      + "');";
+
+    console.log(insert_str);
+    
+    var db_query = client.query(insert_str);
+
+    db_query.req = req;
+    db_query.res = res;
+
+    db_query.on('end', insert_end_handler);
+    db_query.on('error', db_error_handler);
+
+}
+
+function deletePluginHandler(result)
+{
+    console.log("Enter deletePluginHandler");
+    this.res.redirect('/plugin/allPlugin');
+}
+
+function deletePlugin(req, res, next)
+{
+    console.log("Enter deletePlugin");
+    
+    var plugin_name = req.query.plugin_name;
+    var vendorID = req.session.vendorID;
+
+    console.log(plugin_name);
+
+    var query_str = "DELETE FROM " + db.plugin_table 
+                  + " WHERE vendor_id = '"
+                  + vendorID
+                  + "' and plugin_name = '"
+                  + plugin_name
+                  + "';"
+
+    console.log(query_str);
+
+    var db_query = client.query(query_str);
+    db_query.res = res;
+
+    db_query.on('end', deletePluginHandler);
+    db_query.on('error', db_error_handler);
+
+}
+
+module.exports.addPlugin = addPlugin;
+module.exports.deletePlugin = deletePlugin;
+
+module.exports.queryAllPlugin = queryAllPlugin;

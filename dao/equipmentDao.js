@@ -1,10 +1,10 @@
 var pg = require('pg');
-var confconect = require('../conf/db');
+var $confconect = require('db');
 var client_intf = require('client_intf');
 var EventEmitter = require('events').EventEmitter;
 var evt = new EventEmitter();
 
-var pgString = confconect.connectstr.consqlString;
+var pgString = "postgres://wudi:123@localhost/cloud_server_db";
 
 var client = new pg.Client(pgString);
 client.connect();
@@ -18,6 +18,7 @@ module.exports.uninstallPlugin = uninstallPlugin;
 module.exports.equipServiceList = equipServiceList;
 module.exports.setStartAndStatus = setStartAndStatus;
 module.exports.queryAllEquipment = queryAllEquipment;
+module.exports.queryEquipById = queryEquipById;
 
 
 //向前台返回JSON的简单封装
@@ -250,7 +251,7 @@ function setStartAndStatus(req, res, next)
 
 function queryAllEquipment(req, res, next)
 {
-    var pagesize = req.query.pagesize || 15;
+    var pagesize = req.query.pagesize || 5;
     var pagecount = 0;
     var pagecurrent = req.query.pagecurrent || 1;
     var pageoffset = (pagecurrent - 1) * pagesize;
@@ -306,6 +307,7 @@ function queryAllEquipment(req, res, next)
 
 function queryEquipById(req, res, next)
 {
+    console.log('aaaa');
     var sn = req.body.sn;
     console.log(sn);
     pg.connect($confconect.consqlString, function(err, client, done) {

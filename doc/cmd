@@ -1,0 +1,9 @@
+##################################
+start database for james's pc
+##################################
+account:cloudac/1234
+start server:
+#su cloudac
+#123456
+#cd ~/cloud_create
+#/usr/local/pgsql/bin/pg_ctl -D /home/cloudac/data_create -l logfile start

@@ -6,6 +6,8 @@ var pg = require('pg');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
+var db = require('db');
+var pgString = db.consqlString;
 
 router.post('/list', function(req, res, next) {
 	var poststr = req.body.HTTP_RAW_POST_DATA;
@@ -25,8 +27,8 @@ router.post('/list', function(req, res, next) {
 						<FuncFlag>0</FuncFlag>
 					</xml>";
 
-	var connectstr = "tcp://wudi:123@localhost/weixin";
-	pg.connect(connectstr, function(err, client, done) {
+
+	pg.connect(pgString, function(err, client, done) {
         client.query("select equipname from tbluserdevice where username=$1", [fromusername], function(err, result) {
             
             var content = "";

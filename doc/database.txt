@@ -1,0 +1,213 @@
+1. 命令行连接数据库
+   #./psql -U cloudac -d cloud_server_db
+
+2. table cmds
+   #\dt                 //show tables
+   #\d [table name]     //show tables struct
+   
+
+3. table definition
+   -----------------------------------------------------------
+                            SUMMARY
+   -----------------------------------------------------------
+   database: cloud_server_db
+   table:  
+            iot_dev_datamodel
+            iot_device
+            dev_user_mapping
+
+   -----------------------------------------------------------
+                            TABLES
+   -----------------------------------------------------------
+   CREATE TABLE iot_dev_datamodel
+   (
+        "dataModelId" bigserial PRIMARY KEY,
+        "definition" json,
+        "manufacture" varchar(64),
+        "manufactureDataModelId" bigint,
+        "createTime" timestamptz
+   );
+
+   CREATE TABLE iot_device
+   (
+        "deviceId" bigserial PRIMARY KEY,
+        "deviceDataModelId" bigserial REFERENCES iot_dev_datamodel ("dataModelId"),
+        "online" boolean,
+        "devData" json,
+        "firstOnlineTime" timestamptz,
+        "lastOnlineTime" timestamptz,
+        "userId" bigserial
+   );
+
+   CREATE TABLE dev_user_mapping
+   (
+        "deviceId" bigserial REFERENCES iot_device ("deviceId"),
+        "userId" bigserial
+   );
+
+   -----------------------------------------------------------
+                      TABLES TEST VALUES
+   -----------------------------------------------------------
+   INSERT INTO iot_dev_datamodel VALUES ('1', '{
+           "controls": [
+           {
+           "param": "power",
+           "type": "switch",
+           "displayType": "static",
+           "display":"电源",
+           "default": "1"
+           },
+           {
+           "param": "line1",
+           "type": "switch",
+           "displayType": "customer",
+           "display":"线路1",
+           "cDisplay":"line1Display",
+           "default": "1"
+           },
+           {
+           "param": "line2",
+           "type": "switch",
+           "displayType": "customer",
+           "display":"线路2",
+           "cDisplay":"line2Display",
+           "default": "1"
+           }
+   ], 
+       "settings": [
+       {
+           "param": "name",
+           "type": "text",
+           "display":"设备名称",
+           "default": "请输入设备别名"
+       },
+       {
+           "param": "line1Display",
+           "type": "text",
+           "display":"线路1设备名",
+           "default": "请输入被控制设备别名"
+       },
+       {
+           "param": "line2Display",
+           "type": "text",
+           "display":"线路2设备名",
+           "default": "请输入被控制设备别名"
+       }
+       ],
+       "info": [
+       {
+           "param": "manufacture",
+           "type": "text",
+           "display" : "生产厂商"
+       },
+       {
+           "param": "serialNumber",
+           "type": "text",
+           "display" : "序列号"
+       },
+       {
+           "param": "softwareVersion",
+           "type": "text",
+           "display" : "软件版本"
+       }
+       ]
+   }', '', '12', '2003-04-12 04:05:06 America/New_York');
+
+   INSERT INTO iot_dev_datamodel VALUES ('2', '{
+		    "controls": [
+			{
+			    "param": "power",
+			    "type": "switch",
+			    "displayType": "static",
+			    "display":"电源",
+			    "default": "1"
+			},
+			{
+			    "param": "line1",
+			    "type": "switch",
+			    "displayType": "customer",
+			    "display":"线路1",
+			    "cDisplay":"line1Display",
+			    "default": "1"
+			},
+			{
+			    "param": "line2",
+			    "type": "switch",
+			    "displayType": "customer",
+			    "display":"线路2",
+			    "cDisplay":"line2Display",
+			    "default": "1"
+			}
+		    ], 
+		    "settings": [
+			{
+			    "param": "name",
+			    "type": "text",
+			    "display":"设备名称",
+			    "default": "请输入设备别名"
+			},
+			{
+			    "param": "line1Display",
+			    "type": "text",
+			    "display":"线路1设备名",
+			    "default": "请输入被控制设备别名"
+			},
+			{
+			    "param": "line2Display",
+			    "type": "text",
+			    "display":"线路2设备名",
+			    "default": "请输入被控制设备别名"
+			}
+		    ],
+		    "info": [
+			{
+			    "param": "serialNumber",
+			    "type": "text",
+			    "display" : "序列号"
+			},
+			{
+			    "param": "softwareVersion",
+			    "type": "text",
+			    "display" : "软件版本"
+			}
+		    ]
+       }', '', '13', '2003-04-12 04:05:06 America/New_York');
+
+
+   INSERT INTO iot_device VALUES ('201607201508000001', '1', 'true', '{
+			"name" : "卧室",
+			"power" : "1",
+			"manufacture" : "feixun",
+			"softwareVersion": "V1.0.0"
+   }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
+   
+   INSERT INTO iot_device VALUES ('201607201508000002', '2', 'false', '{
+			"name" : "客厅",
+			"power" : "1",
+			"line1": "1",
+			"line2": "0",
+			"line1Display": "灯",
+			"line2Display": "插座",
+			"manufacture" : "feixun",
+			"softwareVersion": "V1.0.0",
+			"oui" : "001122",
+			"serialNumber" : "1314151456"       
+   }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
+
+   INSERT INTO iot_device VALUES ('201607201508000003', '2', 'false', '{
+			"name" : "客厅",
+			"power" : "1",
+			"line1": "1",
+			"line2": "0",
+			"line1Display": "灯",
+			"line2Display": "插座",
+			"manufacture" : "feixun",
+			"softwareVersion": "V1.0.0",
+			"oui" : "001122",
+			"serialNumber" : "1314151456"       
+   }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
+
+
+   INSERT INTO dev_user_mapping VALUES ('201607201508000001', '201607201508000001');
+   INSERT INTO dev_user_mapping VALUES ('201607201508000002', '201607201508000001');
+   INSERT INTO dev_user_mapping VALUES ('201607201508000003', '201607201508000002');

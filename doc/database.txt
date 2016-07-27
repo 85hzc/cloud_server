@@ -3,8 +3,8 @@
 
 2. table cmds
    #\dt                 //show tables
-   #\d [table name]     //show tables struct
-   
+   #\d [table name]     //show tables struct 
+   #ALTER TABLE iot_device ADD COLUMN "gatewayId" text; //修改表，增加列
 
 3. table definition
    -----------------------------------------------------------
@@ -12,6 +12,7 @@
    -----------------------------------------------------------
    database: cloud_server_db
    table:  
+            user
             iot_dev_datamodel
             iot_device
             dev_user_mapping
@@ -19,6 +20,15 @@
    -----------------------------------------------------------
                             TABLES
    -----------------------------------------------------------
+   CREATE TABLE user_table
+   (
+        "userId" bigserial PRIMARY KEY,
+        "username" varchar(64),
+        "password" varchar(64),
+        "nickname" varchar(64),
+        "email" varchar(128)
+   );
+
    CREATE TABLE iot_dev_datamodel
    (
         "dataModelId" bigserial PRIMARY KEY,
@@ -42,12 +52,13 @@
    CREATE TABLE dev_user_mapping
    (
         "deviceId" bigserial REFERENCES iot_device ("deviceId"),
-        "userId" bigserial
+        "userId" bigserial REFERENCES user ("userId"),
    );
-
    -----------------------------------------------------------
                       TABLES TEST VALUES
    -----------------------------------------------------------
+   INSERT INTO user_table VALUES ('201607201508000001', 'james', '1234', '北辰', 'jianzhi.guan@feixun.com.cn');
+
    INSERT INTO iot_dev_datamodel VALUES ('1', '{
            "controls": [
            {
@@ -227,3 +238,16 @@
   FROM iot_device INNER JOIN iot_dev_datamodel ON 
   iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
   WHERE iot_device."deviceId" IN (SELECT "deviceId" FROM dev_user_mapping WHERE "userId"='201607201508000001');
+
+
+   -----------------------------------------------------------
+   For:         app/dev_set_dev api
+   Detail:      根据userId和deviceId查询绑定关系，dataModel定义，
+                设备在线状态,设备gatewayId
+   -----------------------------------------------------------
+   SELECT 
+   iot_dev_datamodel.definition,dev_user_mapping."deviceId",iot_device.online,iot_device."devData",iot_device."gatewayId" 
+   FROM (dev_user_mapping JOIN iot_device ON 
+   dev_user_mapping."deviceId"=iot_device."deviceId") 
+   LEFT JOIN iot_dev_datamodel ON iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
+   WHERE dev_user_mapping."deviceId"='201607201508000001' AND dev_user_mapping."userId"='201607201508000001';

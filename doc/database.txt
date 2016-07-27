@@ -5,6 +5,10 @@
    #\dt                 //show tables
    #\d [table name]     //show tables struct 
    #ALTER TABLE iot_device ADD COLUMN "gatewayId" text; //修改表，增加列
+   #ALTER TABLE iot_device ADD COLUMN "manufacture" varchar(64); //修改表，增加列
+   #ALTER TABLE iot_device ADD COLUMN "manufactureSN" varchar(256); //修改表，增加列
+   #ALTER TABLE iot_device alter COLUMN "deviceDataModelId" set data TYPE bigint;
+   #ALTER TABLE iot_device ALTER COLUMN online SET DEFAULT false;
 
 3. table definition
    -----------------------------------------------------------
@@ -12,7 +16,7 @@
    -----------------------------------------------------------
    database: cloud_server_db
    table:  
-            user
+            user_table
             iot_dev_datamodel
             iot_device
             dev_user_mapping
@@ -41,8 +45,11 @@
    CREATE TABLE iot_device
    (
         "deviceId" bigserial PRIMARY KEY,
-        "deviceDataModelId" bigserial REFERENCES iot_dev_datamodel ("dataModelId"),
-        "online" boolean,
+        "deviceDataModelId" bigint REFERENCES iot_dev_datamodel ("dataModelId"),
+        "manufacture" varchar(64),
+        "manufactureSN" varchar(256),
+        "gatewayId" varchar(256),
+        "online" boolean DEFULT false,
         "devData" json,
         "firstOnlineTime" timestamptz,
         "lastOnlineTime" timestamptz,
@@ -185,14 +192,14 @@
        }', '', '13', '2003-04-12 04:05:06 America/New_York');
 
 
-   INSERT INTO iot_device VALUES ('201607201508000001', '1', 'true', '{
+   INSERT INTO iot_device VALUES ('201607201508000001', '1', '', '', '', 'true', '{
 			"name" : "卧室",
 			"power" : "1",
 			"manufacture" : "feixun",
 			"softwareVersion": "V1.0.0"
    }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
    
-   INSERT INTO iot_device VALUES ('201607201508000002', '2', 'false', '{
+   INSERT INTO iot_device VALUES ('201607201508000002', '2', '', '', '', 'false', '{
 			"name" : "客厅",
 			"power" : "1",
 			"line1": "1",
@@ -205,7 +212,7 @@
 			"serialNumber" : "1314151456"       
    }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
 
-   INSERT INTO iot_device VALUES ('201607201508000003', '2', 'false', '{
+   INSERT INTO iot_device VALUES ('201607201508000003', '2', '', '', '', 'false', '{
 			"name" : "客厅",
 			"power" : "1",
 			"line1": "1",
@@ -251,3 +258,14 @@
    dev_user_mapping."deviceId"=iot_device."deviceId") 
    LEFT JOIN iot_dev_datamodel ON iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
    WHERE dev_user_mapping."deviceId"='201607201508000001' AND dev_user_mapping."userId"='201607201508000001';
+
+
+   -----------------------------------------------------------
+   For:         app/dev_bind api
+   Detail:      根据manufacture和manufactureSN查询
+                设备是否已经上过线
+   -----------------------------------------------------------
+   SELECT 
+   iot_device."deviceId",iot_device.manufacture,iot_device."manufactureSN" 
+   FROM iot_device 
+   WHERE manufacture='feixun' AND "manufactureSN"='FXLED2016072700000001';

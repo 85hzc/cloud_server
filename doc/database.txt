@@ -240,11 +240,23 @@
    Detail:      根据userId查询该用户的所有设备
                 和设备对应的dataModel数据
    -----------------------------------------------------------
-  SELECT 
-  iot_device."deviceId",iot_device.online,iot_device."devData",iot_dev_datamodel."dataModelId",iot_dev_datamodel.definition 
-  FROM iot_device INNER JOIN iot_dev_datamodel ON 
-  iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
-  WHERE iot_device."deviceId" IN (SELECT "deviceId" FROM dev_user_mapping WHERE "userId"='201607201508000001');
+   SELECT 
+   iot_device."deviceId",iot_device.online,iot_device."devData",iot_dev_datamodel."dataModelId",iot_dev_datamodel.definition 
+   FROM iot_device INNER JOIN iot_dev_datamodel ON 
+   iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
+   WHERE iot_device."deviceId" IN (SELECT "deviceId" FROM dev_user_mapping WHERE "userId"='201607201508000001');
+
+   
+   -----------------------------------------------------------
+   For:         app/dev_get_one api
+   Detail:      根据userId和devId获取某一台设备的数据
+   -----------------------------------------------------------
+   SELECT 
+   iot_device."deviceId",iot_device.online,iot_device."devData",iot_dev_datamodel."dataModelId",iot_dev_datamodel.definition AS "dataModel" 
+   FROM iot_device INNER JOIN iot_dev_datamodel ON 
+   iot_device."deviceDataModelId"=iot_dev_datamodel."dataModelId" 
+   WHERE iot_device."deviceId" IN (SELECT "deviceId" FROM dev_user_mapping
+   WHERE "userId"='201607201508000001' AND "deviceId"='201607201508000001');
 
 
    -----------------------------------------------------------

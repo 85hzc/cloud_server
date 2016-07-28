@@ -12,6 +12,7 @@ var wechat_priv = require('wechat_priv');
 var gateway_priv = require('gateway_priv');
 var user_intf = require('user_intf');
 var app = require('app');
+var user = require('user');
 var check        = require('check');
 var session_priv = require('session_priv');
 
@@ -142,6 +143,18 @@ router.post('/app', function(req, res, next)
     console.log(req.body);
     app.message_handle(req, res);
 //    res.render('index', { title: 'Express' });
+});
+
+router.post('/user', function(req, res, next)
+{
+    console.log(req.body);
+    user.register(req, res);
+});
+
+router.post('/user/login', function(req, res, next)
+{
+    console.log(req.body);
+    user.login(req, res);
 });
 
 

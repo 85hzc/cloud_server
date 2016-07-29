@@ -1,14 +1,17 @@
 1. 命令行连接数据库
-   #./psql -U cloudac -d cloud_server_db
+    #./psql -U cloudac -d cloud_server_db
+    #psql postgres     //适用于ubuntu用apt-get安装pg的场景
 
 2. table cmds
-   #\dt                 //show tables
-   #\d [table name]     //show tables struct 
-   #ALTER TABLE iot_device ADD COLUMN "gatewayId" text; //修改表，增加列
-   #ALTER TABLE iot_device ADD COLUMN "manufacture" varchar(64); //修改表，增加列
-   #ALTER TABLE iot_device ADD COLUMN "manufactureSN" varchar(256); //修改表，增加列
-   #ALTER TABLE iot_device alter COLUMN "deviceDataModelId" set data TYPE bigint;
-   #ALTER TABLE iot_device ALTER COLUMN online SET DEFAULT false;
+    #\c [database name]  //切换到某数据库
+    #\dt                 //show tables
+    #\d [table name]     //show tables struct 
+    #ALTER TABLE iot_device ADD COLUMN "gatewayId" text; //修改表，增加列
+    #ALTER TABLE iot_device ADD COLUMN "manufacture" varchar(64); //修改表，增加列
+    #ALTER TABLE iot_device ADD COLUMN "manufactureSN" varchar(256); //修改表，增加列
+    #ALTER TABLE iot_device alter COLUMN "deviceDataModelId" set data TYPE bigint;
+    #ALTER TABLE iot_device ALTER COLUMN online SET DEFAULT false;
+    #ALTER TABLE iot_dev RENAME COLUMN "definition" TO "devDataModel";  //重命名表的列名
 
 3. table definition
    -----------------------------------------------------------

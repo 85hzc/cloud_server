@@ -36,7 +36,7 @@
    CREATE TABLE iot_dev_datamodel
    (
         "dataModelId" bigserial PRIMARY KEY,
-        "definition" json,
+        "devDataModel" json,
         "manufacture" varchar(64),
         "manufactureDataModelId" bigint,
         "createTime" timestamptz
@@ -46,27 +46,29 @@
    (
         "deviceId" bigserial PRIMARY KEY,
         "deviceDataModelId" bigint REFERENCES iot_dev_datamodel ("dataModelId"),
+        "deviceType" varchar(32),
         "manufacture" varchar(64),
         "manufactureSN" varchar(256),
         "gatewayId" varchar(256),
-        "online" boolean DEFULT false,
+        "online" boolean DEFAULT false,
         "devData" json,
         "firstOnlineTime" timestamptz,
         "lastOnlineTime" timestamptz,
-        "userId" bigserial
+        "userId" bigint
    );
 
    CREATE TABLE dev_user_mapping
    (
-        "deviceId" bigserial REFERENCES iot_device ("deviceId"),
-        "userId" bigserial REFERENCES user ("userId"),
+        "deviceId" bigint REFERENCES iot_device ("deviceId"),
+        "userId" bigint REFERENCES user ("userId"),
+        "userDevData" json
    );
    -----------------------------------------------------------
                       TABLES TEST VALUES
    -----------------------------------------------------------
-   INSERT INTO user_table VALUES ('201607201508000001', 'james', '1234', '北辰', 'jianzhi.guan@feixun.com.cn');
+   INSERT INTO user_table VALUES ('201607201508000001', 'james', 'gdyb21LQTcIANtvYMT7QVQ==', '北辰', 'jianzhi.guan@feixun.com.cn');
 
-   INSERT INTO iot_dev_datamodel VALUES ('1', '{
+   INSERT INTO iot_dev_datamodel("devDataModel","manufacture","manufactureDataModelId","createTime") VALUES ('{
            "controls": [
            {
            "param": "power",
@@ -129,9 +131,9 @@
            "display" : "软件版本"
        }
        ]
-   }', '', '12', '2003-04-12 04:05:06 America/New_York');
+   }', 'feixun', '12', '2003-04-12 04:05:06 America/New_York');
 
-   INSERT INTO iot_dev_datamodel VALUES ('2', '{
+   INSERT INTO iot_dev_datamodel("devDataModel","manufacture","manufactureDataModelId","createTime") VALUES ('{
 		    "controls": [
 			{
 			    "param": "power",
@@ -189,17 +191,19 @@
 			    "display" : "软件版本"
 			}
 		    ]
-       }', '', '13', '2003-04-12 04:05:06 America/New_York');
+       }', 'feixun', '13', '2003-04-12 04:05:06 America/New_York');
 
 
-   INSERT INTO iot_device VALUES ('201607201508000001', '1', '', '', '', 'true', '{
+   INSERT INTO iot_device("deviceId","deviceDataModelId","manufacture","manufactureSN",online,"devData","firstOnlineTime","lastOnlineTime","userId") 
+   VALUES ('201607201508000001', '1', 'haha', 'HAHA00000001', 'true', '{
 			"name" : "卧室",
 			"power" : "1",
 			"manufacture" : "feixun",
 			"softwareVersion": "V1.0.0"
    }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
    
-   INSERT INTO iot_device VALUES ('201607201508000002', '2', '', '', '', 'false', '{
+   INSERT INTO iot_device("deviceId","deviceDataModelId","manufacture","manufactureSN",online,"devData","firstOnlineTime","lastOnlineTime","userId") 
+   VALUES ('201607201508000002', '2', 'feixun', 'FX00000000001', 'false', '{
 			"name" : "客厅",
 			"power" : "1",
 			"line1": "1",
@@ -212,7 +216,8 @@
 			"serialNumber" : "1314151456"       
    }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
 
-   INSERT INTO iot_device VALUES ('201607201508000003', '2', '', '', '', 'false', '{
+   INSERT INTO iot_device("deviceId","deviceDataModelId","manufacture","manufactureSN",online,"devData","firstOnlineTime","lastOnlineTime","userId") 
+   VALUES ('201607201508000003', '2', 'feixun', 'FX00000000002', 'false', '{
 			"name" : "客厅",
 			"power" : "1",
 			"line1": "1",
@@ -226,9 +231,9 @@
    }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York', '201607201508000001');
 
 
-   INSERT INTO dev_user_mapping VALUES ('201607201508000001', '201607201508000001');
-   INSERT INTO dev_user_mapping VALUES ('201607201508000002', '201607201508000001');
-   INSERT INTO dev_user_mapping VALUES ('201607201508000003', '201607201508000002');
+   INSERT INTO dev_user_mapping("deviceId","userId") VALUES ('201607201508000001', '201607201508000001');
+   INSERT INTO dev_user_mapping("deviceId","userId") VALUES ('201607201508000002', '201607201508000001');
+   INSERT INTO dev_user_mapping("deviceId","userId") VALUES ('201607201508000003', '201607201508000002');
 
 
 

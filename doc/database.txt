@@ -289,3 +289,14 @@
    iot_device."deviceId",iot_device.manufacture,iot_device."manufactureSN" 
    FROM iot_device 
    WHERE manufacture='feixun' AND "manufactureSN"='FXLED2016072700000001';
+
+   -----------------------------------------------------------
+   For:         app/dev_bind api
+   Detail:      插入一条设备用户绑定记录,如果以存在则不擦入
+   -----------------------------------------------------------
+   INSERT INTO dev_user_mapping("deviceId","userId") 
+   SELECT '201607201508000002','3' FROM dev_user_mapping 
+   WHERE NOT EXISTS(SELECT "deviceId","userId" 
+   FROM dev_user_mapping 
+   WHERE "deviceId"= '201607201508000002' AND "userId"='3');
+

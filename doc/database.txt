@@ -124,7 +124,7 @@
            "display" : "生产厂商"
        },
        {
-           "param": "serialNumber",
+           "param": "manufactureSN",
            "type": "text",
            "display" : "序列号"
        },
@@ -184,7 +184,7 @@
 		    ],
 		    "info": [
 			{
-			    "param": "serialNumber",
+			    "param": "manufactureSN",
 			    "type": "text",
 			    "display" : "序列号"
 			},

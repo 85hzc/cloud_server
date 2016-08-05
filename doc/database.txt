@@ -295,8 +295,7 @@
    Detail:      插入一条设备用户绑定记录,如果以存在则不擦入
    -----------------------------------------------------------
    INSERT INTO dev_user_mapping("deviceId","userId") 
-   SELECT '201607201508000002','3' FROM dev_user_mapping 
+   SELECT '201607201508000002','3' 
    WHERE NOT EXISTS(SELECT "deviceId","userId" 
    FROM dev_user_mapping 
    WHERE "deviceId"= '201607201508000002' AND "userId"='3');
-

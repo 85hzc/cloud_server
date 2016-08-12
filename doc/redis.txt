@@ -1,0 +1,8 @@
+1. ubuntu 安装 redis
+    #apt-get install redis-server
+
+2. 启动
+    #redis-server&
+
+3. 命令行
+    #redis-cli

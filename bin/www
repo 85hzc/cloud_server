@@ -93,7 +93,11 @@ function onListening() {
 
 function onNewConnection(socket) {
     socket.id=devConn.newConnection(socket);
-    socket.on('close', function(socket){
+    socket.on('close', function() {
+        if(typeof(socket.id) == 'undefined') {
+            console.log("socket.id is undefined!");
+            return;
+        }
         devConn.releaseConnection(socket.id);
     });
 }

@@ -1,0 +1,11 @@
+Steps for install this server are:
+1. install node 
+2. install postgresql
+3. install redis
+
+
+Runtime configuration
+1. change kernel config for tcp
+    #echo 30 > tcp_keepalive_intvl
+    #echo 30 > tcp_keepalive_time
+    #echo 3 > tcp_keepalive_probes

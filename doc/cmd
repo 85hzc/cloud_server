@@ -1,5 +1,13 @@
 ##################################
-start database for james's pc
+# 1. init database
+##################################
+cd tool/
+psql -h 127.0.0.1 -U postgres -d cloud_server_db -f ./database_init.pgsql
+
+
+
+##################################
+# x. start database for james's pc
 ##################################
 account:cloudac/1234
 start server:

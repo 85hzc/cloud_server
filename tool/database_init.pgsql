@@ -60,7 +60,8 @@ CREATE TABLE plugin_version
     "pluginId" bigint REFERENCES plugin_table ("pluginId"),
     "version" varchar(32) default '',
     "changeLog" varchar(512) default '',
-    "fileName" varchar(64) default ''
+    "fileName" varchar(64) default '',
+    "md5" varchar(256) default ''
 );
 
 DROP TABLE IF EXISTS gateway_plugin;
@@ -85,5 +86,6 @@ CREATE TABLE firmware_version
     "firmwareId" bigint REFERENCES firmware_table ("firmwareId"),
     "version" varchar(32) default '',
     "changeLog" varchar(512) default '',
-    "fileName" varchar(64) default ''
+    "fileName" varchar(64) default '',
+    "md5" varchar(256) default ''
 );

@@ -93,6 +93,15 @@
         "pluginId" bigint REFERENCES plugin_table ("pluginId"),
         "version" varchar(32)
    );
+   
+   CREATE TABLE vendor
+   (
+        "vendorId" bigserial PRIMARY KEY,
+        "username" varchar(64),
+        "password" varchar(64),
+        "email" varchar(128)
+   );
+
 
    -----------------------------------------------------------
                       TABLES TEST VALUES
@@ -273,7 +282,7 @@
    INSERT INTO plugin_version("pluginId","version","fileName") VALUES ('2', 'V1.0.1', 'libpcre.ipk');
 
 
-
+   INSERT INTO vendor("username","password") VALUES ('admin','ISMvKXpXpadDiUoOSoAfww=='); //admin/admin
 
 3. select examples
    -----------------------------------------------------------

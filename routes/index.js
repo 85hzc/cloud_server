@@ -164,10 +164,9 @@ router.post('/register_page', function(req, res, next) {
     
     var username = req.body.username;
     var password = req.body.password;
-    var vendorID = req.body.vendorID;
+    var email = req.body.email;
   
-    console.log(vendorID);
-    check.check_register("vendor_register", username, password, vendorID, req, res);
+    check.check_register("vendor_register", username, password, email, req, res);
     
 });
 

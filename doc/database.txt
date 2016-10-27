@@ -68,6 +68,32 @@
         "userId" bigint REFERENCES user ("userId"),
         "userDevData" json
    );
+   
+   CREATE TABLE plugin_table
+   (
+        "pluginId" bigserial PRIMARY KEY,
+        "pluginName" varchar(64)
+        "pluginDesc" varchar(256),
+        "pluginDir" varchar(256),
+        "newestVersion" varchar(32)
+
+   );
+
+   CREATE TABLE plugin_version
+   (
+        "pluginId" bigint REFERENCES plugin_table ("pluginId"),
+        "version"  varchar(32),
+        "changeLog" varchar(512),
+        "fileName" varchar(64)
+   );
+
+   CREATE TABLE gateway_plugin
+   (
+        "deviceId" bigint REFERENCES iot_device ("deviceId"),
+        "pluginId" bigint REFERENCES plugin_table ("pluginId"),
+        "version" varchar(32)
+   );
+
    -----------------------------------------------------------
                       TABLES TEST VALUES
    -----------------------------------------------------------
@@ -240,6 +266,11 @@
    INSERT INTO dev_user_mapping("deviceId","userId") VALUES ('201607201508000002', '201607201508000001');
    INSERT INTO dev_user_mapping("deviceId","userId") VALUES ('201607201508000003', '201607201508000002');
 
+   INSERT INTO plugin_table("pluginDir","newestVersion") VALUES ('http://172.17.60.163/plugin', 'V1.0.2');
+   INSERT INTO plugin_table("pluginDir","newestVersion") VALUES ('http://172.17.60.163/plugin', 'V1.0.1');
+
+   INSERT INTO plugin_version("pluginId","version","fileName") VALUES ('1', 'V1.0.2', 'wifidog.ipk');
+   INSERT INTO plugin_version("pluginId","version","fileName") VALUES ('2', 'V1.0.1', 'libpcre.ipk');
 
 
 

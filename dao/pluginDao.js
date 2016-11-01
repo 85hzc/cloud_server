@@ -6,6 +6,10 @@ var fs = require('fs');
 var db = require('db');
 var client = require('db_client');
 
+var pgString = db.consqlString;
+var myClient = new pg.Client(pgString);
+myClient.connect();
+
 //向前台返回JSON的简单封装
 var jsonWrite = function(res, ret) {
     if (typeof ret === 'undefined') {
@@ -28,7 +32,6 @@ function insert_end_handler(result)
     {
         console.log("insert plugin success");
         this.res.render('register_success');
-        console.log("12345678");
     }
     console.log("Exit insert_end_handler");
 }
@@ -90,7 +93,7 @@ function queryAllPlugin(req, res, next)
     console.log(req.session.vendorID);
     var vendorID = req.session.vendorID;
     var query_str = "SELECT * from " + db.plugin_table
-                   + " WHERE vendor_id = '"
+                   + " WHERE \"vendorId\" = '"
                    + vendorID
                    + "';";
 
@@ -112,26 +115,93 @@ function addPlugin(req, res, next)
     console.log(req.session.vendorID);
 
     console.log(req.body);
-    
-    console.log("Exit addPlugin");
 
-    var insert_str = "INSERT INTO " + db.plugin_table 
+    var ret = 0;
+    
+    var insertStr = "INSERT INTO " + db.plugin_table
+                      + "(\"vendorId\",\"pluginName\",\"pluginDesc\",\"newestVersion\")" 
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
                       + req.body.plugin_name + "', '"
-                      + req.body.plugin_desc  
+                      + req.body.plugin_desc + "', '"
+                      + req.body.newestVersion  
                       + "');";
 
-    console.log(insert_str);
+    console.log(insertStr);
     
-    var db_query = client.query(insert_str);
+    myClient.query(insertStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var pluginId = result.rows[0].pluginId;
+        var fileDir = db.file_server_url + "/" + req.session.vendorName + "/plugin/" + pluginId;
+
+        console.log("pluginDir="+fileDir);
+
+        var updateStr = "UPDATE " + db.plugin_table + "SET \"pluginDir\"='" 
+                    + fileDir + "' WHERE \"pluginId\"='" + pluginId + "';";
+
+        console.log(updateStr);
+
+        myClient.query(updateStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                return;
+            }
+
+            if (result.rowCount == 1) {
+                console.log("update plugin table success.");
+            }
+            else {
+                console.log("update plugin table fails.");
+                ret = 1;
+            }
+
+            var retStr = {
+                    pluginId: pluginId,
+                    ret: ret 
+                };
+            res.send(JSON.stringify(retStr));
+
+        });
+
+    });
+    /*var db_query = client.query(insert_str);
 
     db_query.req = req;
     db_query.res = res;
 
     db_query.on('end', insert_end_handler);
-    db_query.on('error', db_error_handler);
+    db_query.on('error', db_error_handler);*/
 
+}
+
+function addPluginVersion(req, res)
+{
+    var insertStr = "INSERT INTO plugin_version (\"pluginId\", \"version\", \"changeLog\", \"fileName\") "
+            + "VALUES('" + req.body.pluginId + "', '"
+            + req.body.version + "', '"
+            + req.body.versionDesc + "', '"
+            + req.file.originalname
+            + "');";
+
+    console.log(insertStr);
+
+    myClient.query(insertStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+        if (result.rowCount == 1) {
+            console.log("add plugin_version success.");
+
+            var retStr = { ret: 0 };
+
+            res.send(JSON.stringify(retStr));
+        }
+    });
 }
 
 function deletePluginHandler(result)
@@ -167,6 +237,7 @@ function deletePlugin(req, res, next)
 }
 
 module.exports.addPlugin = addPlugin;
+module.exports.addPluginVersion = addPluginVersion;
 module.exports.deletePlugin = deletePlugin;
 
 module.exports.queryAllPlugin = queryAllPlugin;

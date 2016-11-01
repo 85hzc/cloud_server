@@ -109,8 +109,10 @@ router.get('/bottom', function(req, res, next) {
 });
 
 router.get('/quit', function(req, res, next) {
-  if (req.session.haslogined) {
-      req.session.haslogined = null;
+  if (req.session.hasLogined) {
+      req.session.hasLogined = null;
+      req.session.vendorID = null;
+      req.session.vendorName = null;
   }
   res.render('login');
 });

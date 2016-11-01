@@ -14,6 +14,8 @@
     #ALTER TABLE iot_dev RENAME COLUMN "definition" TO "devDataModel";  //重命名表的列名
     #alter table iot_dev_datamodel add column "firmwareId" bigint;
     #alter table iot_dev_datamodel add column "pluginId" bigint;
+    #alter table plugin_table add column "vendorId" bigint;
+    #alter table firmware_table add column "vendorId" bigint;
 
 3. table definition
    -----------------------------------------------------------
@@ -72,10 +74,11 @@
    CREATE TABLE plugin_table
    (
         "pluginId" bigserial PRIMARY KEY,
-        "pluginName" varchar(64)
+        "pluginName" varchar(64),
         "pluginDesc" varchar(256),
         "pluginDir" varchar(256),
-        "newestVersion" varchar(32)
+        "newestVersion" varchar(32),
+        "vendorId" bigint REFERENCES vendor("vendorId")
 
    );
 
@@ -84,7 +87,8 @@
         "pluginId" bigint REFERENCES plugin_table ("pluginId"),
         "version"  varchar(32),
         "changeLog" varchar(512),
-        "fileName" varchar(64)
+        "fileName" varchar(64),
+        "createTime"  timestamptz
    );
 
    CREATE TABLE gateway_plugin
@@ -102,6 +106,13 @@
         "email" varchar(128)
    );
 
+   CREATE TABLE vendor
+   (
+        "vendorId" bigserial PRIMARY KEY,
+        "username" varchar(64),
+        "password" varchar(64),
+        "email" varchar(128)
+   );
 
    -----------------------------------------------------------
                       TABLES TEST VALUES

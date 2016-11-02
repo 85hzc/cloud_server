@@ -119,12 +119,11 @@ function addPlugin(req, res, next)
     var ret = 0;
     
     var insertStr = "INSERT INTO " + db.plugin_table
-                      + "(\"vendorId\",\"pluginName\",\"pluginDesc\",\"newestVersion\")" 
+                      + "(\"vendorId\",\"pluginName\",\"pluginDesc\")" 
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
                       + req.body.pluginName + "', '"
-                      + req.body.pluginDesc + "', '"
-                      + req.body.version  
+                      + req.body.pluginDes
                       + "') RETURNING \"pluginId\";";
 
     console.log(insertStr);
@@ -202,6 +201,17 @@ function addPluginVersion(req, res)
             res.send(JSON.stringify(retStr));
         }
     });
+
+    var updateStr = "UPDATE " + db.plugin_table + " SET \"newestVersion\"='" + req.body.version
+            + "' WHERE \"pluginId\"='" + req.body.pluginId + "';";
+    console.log(updateStr);
+
+    myClient.query(updateStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+    });
 }
 
 function deletePluginHandler(result)
@@ -213,26 +223,50 @@ function deletePluginHandler(result)
 function deletePlugin(req, res, next)
 {
     console.log("Enter deletePlugin");
+    console.log(req.body);
+    console.log(req.session.vendorID);
     
-    var plugin_name = req.query.plugin_name;
+    var pluginId = req.body.pluginId;
     var vendorID = req.session.vendorID;
 
-    console.log(plugin_name);
+    var queryStr = "DELETE FROM plugin_version" 
+                  + " WHERE \"pluginId\"='"
+                  + pluginId
+                  + "';";
 
-    var query_str = "DELETE FROM " + db.plugin_table 
-                  + " WHERE vendor_id = '"
-                  + vendorID
-                  + "' and plugin_name = '"
-                  + plugin_name
-                  + "';"
+    console.log(queryStr);
 
-    console.log(query_str);
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
 
-    var db_query = client.query(query_str);
+        var deleteStr = "DELETE FROM " + db.plugin_table
+                + " WHERE \"pluginId\"='" + pluginId 
+                + "' AND \"vendorId\"='" + vendorID
+                + "';";
+
+        console.log(deleteStr);
+
+        myClient.query(deleteStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                return;
+            }
+
+            var retStr = { ret: 0 };
+
+            res.send(JSON.stringify(retStr));
+        });
+    });
+
+
+    /*var db_query = client.query(query_str);
     db_query.res = res;
 
     db_query.on('end', deletePluginHandler);
-    db_query.on('error', db_error_handler);
+    db_query.on('error', db_error_handler);*/
 
 }
 

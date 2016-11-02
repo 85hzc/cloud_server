@@ -169,7 +169,26 @@ function deleteFirmware(req, res, next)
 
 }
 
+function queryFirmwareVersion(req, res, next) {
+    console.log("Enter query firmware version");
+    console.log(req.body);
+
+    var selectStr = "SELECT * FROM firmware_version WHERE \"firmwareId\"='" + req.body.firmwareId + "';";
+
+    myClient.query(selectStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        res.render('allFirmwareVersion',  {
+                    result: result
+                });
+    })
+}
+
 module.exports.queryAllFirmware = queryAllFirmware;
 module.exports.addFirmware = addFirmware;
 module.exports.deleteFirmware = deleteFirmware;
 module.exports.addFirmwareVersion = addFirmwareVersion;
+module.exports.queryFirmwareVersion = queryFirmwareVersion;

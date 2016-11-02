@@ -74,6 +74,17 @@ router.post('/deletePlugin', function(req, res, next) {
     }
 });
 
+router.post('/queryPluginVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.queryPluginVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
+
 router.get('/updatePluginView', function(req, res, next) {
     res.render('updatepluginview', {plugname : req.query.plugname, plugdesc : req.query.plugdesc});
 });

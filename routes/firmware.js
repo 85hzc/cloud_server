@@ -113,4 +113,14 @@ router.post('/fileupload', upload.single('thumbnail'), function(req, res, next) 
 
 });
 
+router.post('/queryFirmwareVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.queryFirmwareVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
 module.exports = router;

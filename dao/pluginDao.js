@@ -270,8 +270,27 @@ function deletePlugin(req, res, next)
 
 }
 
+function queryPluginVersion(req, res, next) {
+    console.log("Enter query Plugin version");
+    console.log(req.body);
+
+    var selectStr = "SELECT * FROM plugin_version WHERE \"pluginId\"='" + req.body.pluginId + "';";
+
+    myClient.query(selectStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        res.render('allPluginVersion',  {
+                    result: result
+                });
+    })
+}
+
 module.exports.addPlugin = addPlugin;
 module.exports.addPluginVersion = addPluginVersion;
 module.exports.deletePlugin = deletePlugin;
 
 module.exports.queryAllPlugin = queryAllPlugin;
+module.exports.queryPluginVersion = queryPluginVersion;

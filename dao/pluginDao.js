@@ -122,10 +122,10 @@ function addPlugin(req, res, next)
                       + "(\"vendorId\",\"pluginName\",\"pluginDesc\",\"newestVersion\")" 
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
-                      + req.body.plugin_name + "', '"
-                      + req.body.plugin_desc + "', '"
-                      + req.body.newestVersion  
-                      + "');";
+                      + req.body.pluginName + "', '"
+                      + req.body.pluginDesc + "', '"
+                      + req.body.version  
+                      + "') RETURNING \"pluginId\";";
 
     console.log(insertStr);
     
@@ -140,7 +140,7 @@ function addPlugin(req, res, next)
 
         console.log("pluginDir="+fileDir);
 
-        var updateStr = "UPDATE " + db.plugin_table + "SET \"pluginDir\"='" 
+        var updateStr = "UPDATE " + db.plugin_table + " SET \"pluginDir\"='" 
                     + fileDir + "' WHERE \"pluginId\"='" + pluginId + "';";
 
         console.log(updateStr);
@@ -168,7 +168,7 @@ function addPlugin(req, res, next)
         });
 
     });
-    /*var db_query = client.query(insert_str);
+    /*var db_query = client.query(insertStr);
 
     db_query.req = req;
     db_query.res = res;

@@ -12,6 +12,7 @@ var ejs = require('ejs');
 
 var session = require('express-session');
 var plugins = require('./routes/plugins');
+var firmware = require('./routes/firmware');
 var app = express();
 
 
@@ -46,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/plugin', plugins);
+app.use('/firmware', firmware);
 app.use(express.query());
 
 

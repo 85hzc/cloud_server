@@ -12,6 +12,8 @@ var upload = multer({dest:"./public"});
 var pluginDao = require('../dao/pluginDao');
 var equipmentDao = require('../dao/equipmentDao');
 
+var check = require('check');
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   //res.send('respond with a resource');
@@ -45,35 +47,13 @@ router.post('/addPlugin', function(req, res, next) {
     }
 });
 
-function deleteFileDir(path)
-{
-    var files = [];
-
-    if (fs.existsSync(path)) {
-
-        files = fs.readdirSync(path);
-
-        files.forEach(function(file, index) {
-            var curPath = path + '/' + file;
-            if (fs.statSync(curPath).isDirectory()) {
-                deleteFileDir(curPath);
-            }
-            else {
-                fs.unlinkSync(curPath);
-            }
-        });
-
-        fs.rmdirSync(path);
-    }
-};
-
 router.post('/deletePlugin', function(req, res, next) {
     if (req.session.hasLogined) {
 
         var path = db.file_save_dir + '/' + req.session.vendorName  + '/plugin/' 
             + req.body.pluginId;
         
-        deleteFileDir(path);
+        check.file_delete(path);
 
         pluginDao.deletePlugin(req, res, next);
     } else {

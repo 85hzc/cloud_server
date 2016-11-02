@@ -105,16 +105,29 @@
         "password" varchar(64),
         "email" varchar(128)
    );
-
-   CREATE TABLE vendor
+   
+   CREATE TABLE firmware_table
    (
-        "vendorId" bigserial PRIMARY KEY,
-        "username" varchar(64),
-        "password" varchar(64),
-        "email" varchar(128)
+        "firmwareId" bigserial PRIMARY KEY,
+        "firmwareName" varchar(64),
+        "firmwareDesc" varchar(256),
+        "firmwareDir" varchar(256),
+        "newestVersion" varchar(32),
+        "vendorId" bigint REFERENCES vendor("vendorId")
+
    );
 
-   -----------------------------------------------------------
+   CREATE TABLE firmware_version
+   (
+        "firmwareId" bigint REFERENCES firmware_table ("firmwareId"),
+        "version"  varchar(32),
+        "changeLog" varchar(512),
+        "fileName" varchar(64),
+        "createTime"  timestamptz
+   );
+
+
+      -----------------------------------------------------------
                       TABLES TEST VALUES
    -----------------------------------------------------------
    INSERT INTO user_table VALUES ('201607201508000001', 'james', 'gdyb21LQTcIANtvYMT7QVQ==', '北辰', 'jianzhi.guan@feixun.com.cn');

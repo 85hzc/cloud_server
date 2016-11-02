@@ -29,16 +29,29 @@ router.post('/addFirmware', function(req, res, next) {
     }
 });
 
+/*delete local file*/
 router.post('/deleteFirmware', function(req, res, next) {
     if (req.session.hasLogined) {
 
         var path = db.file_save_dir + '/' + req.session.vendorName  + '/firmware/' 
             + req.body.firmwareId;
-        
+
         check.file_delete(path);
 
+    }
+    else {
+        res.render('login');
+    }
+
+    next();
+});
+
+router.post('/deleteFirmware', function(req, res, next) {
+    if (req.session.hasLogined) {
+
         firmwareDao.deleteFirmware(req, res, next);
-    } else {
+    }
+    else {
         res.render('login');
     }
 });

@@ -47,16 +47,29 @@ router.post('/addPlugin', function(req, res, next) {
     }
 });
 
+/*delete local file*/
 router.post('/deletePlugin', function(req, res, next) {
-    if (req.session.hasLogined) {
+    if (req.session.hasLogined){
 
         var path = db.file_save_dir + '/' + req.session.vendorName  + '/plugin/' 
             + req.body.pluginId;
-        
+
         check.file_delete(path);
 
+    }
+    else {
+        res.render('login');
+    }
+
+    next();
+});
+
+router.post('/deletePlugin', function(req, res, next) {
+    if (req.session.hasLogined) {
+
         pluginDao.deletePlugin(req, res, next);
-    } else {
+    }
+    else {
         res.render('login');
     }
 });

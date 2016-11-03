@@ -13,6 +13,7 @@ var ejs = require('ejs');
 var session = require('express-session');
 var plugins = require('./routes/plugins');
 var firmware = require('./routes/firmware');
+var dev = require('./routes/dev');
 var app = express();
 
 
@@ -48,6 +49,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/plugin', plugins);
 app.use('/firmware', firmware);
+app.use('/dev', dev);
 app.use(express.query());
 
 

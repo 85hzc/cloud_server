@@ -6,6 +6,13 @@ var myClient = new pg.Client(pgString);
 
 myClient.connect();
 
+function send_stat(res, values) {
+    var retStr = {
+        values: values
+    };
+    res.send(JSON.stringify(retStr));
+}
+
 function addDataModel(req, res, next) {
     console.log("Enter add data model.");
     console.log(req.body);
@@ -109,6 +116,83 @@ function deleteDataModel(req, res, next) {
     
 }
 
+function stat(req, res, next) {
+    console.log("Enter device statistics.");
+
+    var values = new Array();
+    var stat = 3;
+
+    /*developer counts*/
+    var vendorStr = "SELECT count(*) FROM " +  db.vendor_table + ";";
+    console.log(vendorStr);
+
+    myClient.query(vendorStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "开发者人数",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
+    /*device counts*/
+    var devStr = "SELECT count(*) FROM iot_device;";
+    console.log(devStr);
+
+    myClient.query(devStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "设备数量",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
+    /*online device counts*/
+    var devOnlineStr = "SELECT count(*) FROM iot_device WHERE online=true;";
+    console.log(devOnlineStr);
+
+    myClient.query(devOnlineStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "在线设备数量",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+}
+
 module.exports.addDataModel = addDataModel;
 module.exports.updateDataModel = updateDataModel;
 module.exports.deleteDataModel = deleteDataModel;
+module.exports.stat = stat;

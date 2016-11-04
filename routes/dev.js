@@ -96,6 +96,11 @@ router.post('/deleteDataModel', function(req, res, next) {
     }    
 });
 
+router.get('/stat', function(req, res, next) {
+    if (req.session.hasLogined) {
+        devDao.stat(req, res, next);
+    }
+});
 
 router.get('/dataModel', function(req, res, next) {
     if (req.session.hasLogined) {

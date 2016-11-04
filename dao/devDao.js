@@ -120,7 +120,7 @@ function stat(req, res, next) {
     console.log("Enter device statistics.");
 
     var values = new Array();
-    var stat = 3;
+    var stat = 4;
 
     /*developer counts*/
     var vendorStr = "SELECT count(*) FROM " +  db.vendor_table + ";";
@@ -190,6 +190,30 @@ function stat(req, res, next) {
 
         if (stat == 0) send_stat(res, values);
     });
+
+    /*plugin counts*/
+    var pluginStr = "SELECT count(*) FROM " + db.plugin_table + ";";
+    console.log(pluginStr);
+
+    myClient.query(pluginStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "插件数量",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
 }
 
 module.exports.addDataModel = addDataModel;

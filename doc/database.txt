@@ -14,8 +14,16 @@
     #ALTER TABLE iot_dev RENAME COLUMN "definition" TO "devDataModel";  //重命名表的列名
     #alter table iot_dev_datamodel add column "firmwareId" bigint;
     #alter table iot_dev_datamodel add column "pluginId" bigint;
+    #alter table iot_dev_datamodel add column "vendorId" bigint;
+    #alter table iot_dev_datamodel add column "devDesc" varchar(256);
+
     #alter table plugin_table add column "vendorId" bigint;
+    #ALTER TABLE plugin_table RENAME COLUMN "newestVersion" TO "publishVersion";  //重命名表的列名
+    #alter table plugin_version add column "md5" varchar(64);
+
     #alter table firmware_table add column "vendorId" bigint;
+    #ALTER TABLE firmware_table RENAME COLUMN "newestVersion" TO "publishVersion";  //重命名表的列名
+    #alter table firmware_version add column "md5" varchar(64);
 
 3. table definition
    -----------------------------------------------------------

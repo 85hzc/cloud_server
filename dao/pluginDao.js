@@ -91,20 +91,48 @@ function queryAllPlugin(req, res, next)
 {
     console.log("Enter queryAllPlugin");
     console.log(req.session.vendorID);
+
     var vendorID = req.session.vendorID;
-    var query_str = "SELECT * from " + db.plugin_table
+    var values = new Array();
+
+    var queryStr = "SELECT * from " + db.plugin_table
                    + " WHERE \"vendorId\" = '"
                    + vendorID
                    + "';";
 
-    console.log(query_str);
-    var db_query = client.query(query_str);
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        result.rows.forEach(function(row) {
+            var value = {
+                pluginId: row.pluginId,
+                pluginName: row.pluginName,
+                pluginDesc: row.pluginDesc
+            };
+
+            values.push(value);
+        });
+
+        var retStr = {
+            ret: 0,
+            values: values
+        };
+
+        res.send(JSON.stringify(retStr));
+    });
+
+    /*var db_query = client.query(query_str);
     db_query.req = req;
     db_query.res = res;
     db_query.rows = new Array();
 
     db_query.on('row', db_row_handler);
-    db_query.on('end', queryAllPluginHandler);
+    db_query.on('end', queryAllPluginHandler);*/
 
 }
 
@@ -179,11 +207,12 @@ function addPlugin(req, res, next)
 
 function addPluginVersion(req, res)
 {
-    var insertStr = "INSERT INTO plugin_version (\"pluginId\", \"version\", \"changeLog\", \"fileName\") "
+    var insertStr = "INSERT INTO plugin_version (\"pluginId\", \"version\", \"changeLog\", \"fileName\", md5) "
             + "VALUES('" + req.body.pluginId + "', '"
             + req.body.version + "', '"
             + req.body.versionDesc + "', '"
-            + req.file.originalname
+            + req.file.originalname + "','"
+            + req.body.md5
             + "');";
 
     console.log(insertStr);
@@ -270,9 +299,40 @@ function deletePlugin(req, res, next)
 
 }
 
+function deleteVersion(req, res, next)
+{
+    console.log("Enter deleteVersion");
+    console.log(req.body);
+    
+    var pluginId = req.body.pluginId;
+    var version = req.body.version;
+
+    var queryStr = "DELETE FROM plugin_version" 
+                  + " WHERE \"pluginId\"='"
+                  + pluginId + "' AND version='"
+                  + version
+                  + "';";
+
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var retStr = { ret: 0 };
+
+        res.send(JSON.stringify(retStr));
+    });
+
+}
+
 function queryPluginVersion(req, res, next) {
     console.log("Enter query Plugin version");
     console.log(req.body);
+
+    var values = new Array();
 
     var selectStr = "SELECT * FROM plugin_version WHERE \"pluginId\"='" + req.body.pluginId + "';";
 
@@ -282,15 +342,118 @@ function queryPluginVersion(req, res, next) {
             return;
         }
 
-        res.render('allPluginVersion',  {
-                    result: result
-                });
-    })
+        result.rows.forEach(function(row) {
+            var value = {
+                version: row.version,
+                changeLog: row.changeLog,
+                createTime: row.createTime,
+                md5: row.md5
+            };
+
+            values.push(value);
+        }); 
+
+        var queryStr = "SELECT \"publishVersion\" FROM " + db.plugin_table
+                        + " WHERE \"pluginId\"='" + req.body.pluginId + "';";
+
+        console.log(queryStr);
+
+        myClient.query(queryStr, function(err, result1) {
+            if (err) {
+                console.error(err.stack);
+                return;
+            }
+
+            var version = result1.rows[0].publishVersion;
+
+            var retStr = {
+                ret: 0,
+                pluginId: req.body.pluginId,
+                publishVersion: version,
+                values: values
+            };
+
+            res.send(JSON.stringify(retStr));
+        });
+
+    });
+}
+
+function publishVersion(req, res, next) {
+    console.log("Enter publish verison");
+    console.log(req.body);
+
+    var pluginId = req.body.pluginId;
+    var version = req.body.version;
+
+    var updateStr = "UPDATE " + db.plugin_table
+                    + " SET \"publishVersion\"='"
+                    + version + "' WHERE \"pluginId\"='"
+                    + pluginId
+                    + "';";
+
+    console.log(updateStr);
+
+    myClient.query(updateStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var retStr = { ret: 0 };
+        res.send(JSON.stringify(retStr));
+    });
+}
+
+
+function queryPluginById(req, res, next) {
+    console.log("Enter query plugin by id");
+    console.log(req.body);
+
+    var pluginId = req.body.pluginId;
+    var ret = 0;
+    var value;
+
+    var selectStr = "SELECT * FROM " + db.plugin_table
+                + " WHERE \"pluginId\"='"
+                + pluginId
+                + "';";
+
+    console.log(selectStr);
+
+    myClient.query(selectStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        if (result.rowCount == 1) {
+            value = {
+                pluginId: pluginId,
+                pluginName: result.rows[0].pluginName,
+                pluginDesc: result.rows[0].pluginDesc
+            };
+        }
+        else {
+            ret = 1;
+        }
+
+        var retStr = {
+            ret: ret,
+            values: value
+        };
+
+        res.send(JSON.stringify(retStr));
+
+    });
 }
 
 module.exports.addPlugin = addPlugin;
 module.exports.addPluginVersion = addPluginVersion;
 module.exports.deletePlugin = deletePlugin;
+module.exports.deleteVersion = deleteVersion;
+module.exports.publishVersion = publishVersion;
 
 module.exports.queryAllPlugin = queryAllPlugin;
 module.exports.queryPluginVersion = queryPluginVersion;
+module.exports.queryPluginById = queryPluginById;

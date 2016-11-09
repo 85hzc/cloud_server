@@ -28,6 +28,14 @@ router.get('/allPlugin', function(req, res, next) {
       res.render('login');
     }
 });
+router.get('/addPlugin', function(req, res, next) {
+    console.log("Enter allPlugin");
+    if (req.session.hasLogined) {
+        res.render('addplugin');
+    } else {
+      res.render('login');
+    }
+});
 
 router.get('/addPluginView', function(req, res, next) {
     console.log(req.session.vendorID);
@@ -74,6 +82,32 @@ router.post('/deletePlugin', function(req, res, next) {
     }
 });
 
+router.post('/deleteVersion', function(req, res, next) {
+    if (req.session.hasLogined){
+
+        var path = db.file_save_dir + '/' + req.session.vendorName  + '/plugin/' 
+            + req.body.pluginId + '/' + req.body.version; 
+
+        check.file_delete(path);
+
+    }
+    else {
+        res.render('login');
+    }
+
+    next();
+});
+
+router.post('/deleteVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.deleteVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
 router.post('/queryPluginVersion', function(req, res, next) {
     if (req.session.hasLogined) {
 
@@ -84,6 +118,25 @@ router.post('/queryPluginVersion', function(req, res, next) {
     }
 });
 
+router.post('/publishVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.publishVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
+router.post('/queryPluginById', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.queryPluginById(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
 
 router.get('/updatePluginView', function(req, res, next) {
     res.render('updatepluginview', {plugname : req.query.plugname, plugdesc : req.query.plugdesc});

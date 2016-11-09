@@ -230,17 +230,6 @@ function addPluginVersion(req, res)
             res.send(JSON.stringify(retStr));
         }
     });
-
-    var updateStr = "UPDATE " + db.plugin_table + " SET \"newestVersion\"='" + req.body.version
-            + "' WHERE \"pluginId\"='" + req.body.pluginId + "';";
-    console.log(updateStr);
-
-    myClient.query(updateStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-            return;
-        }
-    });
 }
 
 function deletePluginHandler(result)

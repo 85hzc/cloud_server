@@ -18,11 +18,14 @@ function addDataModel(req, res, next) {
     console.log(req.body);
 
     var ret = 1;
+    var vendorID = req.session.vendorID;
 
-    var insertStr = "INSERT INTO iot_dev_datamodel(\"manufacture\",\"manufactureDataModelId\")"
+    var insertStr = "INSERT INTO iot_dev_datamodel(\"manufacture\",\"manufactureDataModelId\",\"devDesc\",\"vendorId\")"
                 + " VALUES('"
                 + req.body.manufacture + "', '"
-                + req.body.manufactureDataModelId
+                + req.body.manufactureDataModelId + "', '"
+                + req.body.devDesc + "', '"
+                + vendorID
                 + "') RETURNING \"dataModelId\";";
 
     console.log(insertStr);
@@ -95,32 +98,48 @@ function deleteDataModel(req, res, next) {
 
     var ret = 1;
 
-    var deleteStr = "DELETE FROM iot_dev_datamodel"
-                    + " WHERE \"dataModelId\"='"
-                    + req.body.dataModelId 
+    var queryStr = "DELETE FROM iot_device WHERE \"deviceDataModelId\"='"
+                    + req.body.dataModelId
                     + "';";
 
-    console.log(deleteStr);
+    console.log(queryStr);
 
-    myClient.query(deleteStr, function(err, result) {
+    myClient.query(queryStr, function(err, result) {
         if (err) {
             console.error(err.stack);
+            return;
         }
-        else {
-            ret = 0;
-        }
+        
+        var deleteStr = "DELETE FROM iot_dev_datamodel"
+                    + " WHERE \"dataModelId\"='"
+                    + req.body.dataModelId 
+                    + "' AND \"vendorId\"='"
+                    + req.session.vendorID
+                    + "';";
 
-        var retStr = {ret: ret};
-        res.send(JSON.stringify(retStr));
+        console.log(deleteStr);
+
+        myClient.query(deleteStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+            }
+            else {
+                ret = 0;
+            }
+
+            var retStr = {ret: ret};
+            res.send(JSON.stringify(retStr));
+        });
+
     });
-    
+
 }
 
 function stat(req, res, next) {
     console.log("Enter device statistics.");
 
     var values = new Array();
-    var stat = 4;
+    var stat = 6;
 
     /*developer counts*/
     var vendorStr = "SELECT count(*) FROM " +  db.vendor_table + ";";
@@ -133,7 +152,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "开发者人数",
+            name: "开发者总数",
             count: result.rows[0].count
         };
 
@@ -156,7 +175,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "设备数量",
+            name: "设备总数",
             count: result.rows[0].count
         };
 
@@ -179,7 +198,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "在线设备数量",
+            name: "在线设备总数",
             count: result.rows[0].count
         };
 
@@ -202,7 +221,53 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "插件数量",
+            name: "插件总数",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
+    /*app users counts*/
+    var appStr = "SELECT count(*) FROM user_table;";
+    console.log(appStr);
+
+    myClient.query(appStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "APP账号总数",
+            count: result.rows[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
+    /*datamodel counts*/
+    var datamodelStr = "SELECT count(*) FROM iot_dev_datamodel;";
+    console.log(datamodelStr);
+
+    myClient.query(datamodelStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "设备类型总数",
             count: result.rows[0].count
         };
 
@@ -216,7 +281,88 @@ function stat(req, res, next) {
 
 }
 
+function queryAllDev(req, res, next) {
+    console.log("Enter query all dev");
+    console.log(req.session.vendorID);
+
+    var vendorID = req.session.vendorID;
+    var values = new Array();
+
+    var queryStr = "SELECT * FROM iot_dev_datamodel WHERE \"vendorId\"='"
+                + vendorID
+                + "';";
+
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var jsonIsExist;
+
+        result.rows.forEach(function(row) {
+            if (row.devDataModel != null) {
+                jsonIsExist = 1;
+            }
+            else {
+                jsonIsExist = 0;
+            }
+
+            var value = {
+                dataModelId: row.dataModelId,
+                manufacture: row.manufacture,
+                manufactureDataModelId: row.manufactureDataModelId,
+                devDesc: row.devDesc,
+                jsonIsExist: jsonIsExist,
+                pluginId: row.pluginId,
+                firmwareId: row.firmwareId
+            };
+
+            values.push(value);
+        });
+
+        var retStr = {
+            ret: 0,
+            values: values
+        };
+
+        res.send(JSON.stringify(retStr));
+    });
+}
+
+function addPlugin(req, res, next) {
+    console.log("Enter dev add plugin");
+    console.log(req.body);
+
+    var pluginId = req.body.pluginId;
+    var dataModelId = req.body.dataModelId;
+
+    var updateStr = "UPDATE iot_dev_datamodel SET \"pluginId\"='"
+                + pluginId + "' WHERE \"dataModelId\"='"
+                + dataModelId
+                + "';";
+
+    console.log(updateStr);
+
+    myClient.query(updateStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var retStr = { ret: 0 };
+
+        res.send(JSON.stringify(retStr));
+    });
+}
+
+
+
 module.exports.addDataModel = addDataModel;
 module.exports.updateDataModel = updateDataModel;
 module.exports.deleteDataModel = deleteDataModel;
 module.exports.stat = stat;
+module.exports.queryAllDev = queryAllDev;
+module.exports.addPlugin = addPlugin;

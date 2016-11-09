@@ -102,6 +102,18 @@ router.get('/stat', function(req, res, next) {
     }
 });
 
+router.get('/allDev', function(req, res, next) {
+    if (req.session.hasLogined) {
+        devDao.queryAllDev(req, res, next);
+    }
+});
+
+router.post('/addPlugin', function(req, res, next) {
+    if (req.session.hasLogined) {
+        devDao.addPlugin(req, res, next);
+    }    
+});
+
 router.get('/dataModel', function(req, res, next) {
     if (req.session.hasLogined) {
         res.render('datamodel');

@@ -12,9 +12,9 @@
     #ALTER TABLE iot_device alter COLUMN "deviceDataModelId" set data TYPE bigint;
     #ALTER TABLE iot_device ALTER COLUMN online SET DEFAULT false;
     #ALTER TABLE iot_dev RENAME COLUMN "definition" TO "devDataModel";  //重命名表的列名
-    #alter table iot_dev_datamodel add column "firmwareId" bigint;
-    #alter table iot_dev_datamodel add column "pluginId" bigint;
-    #alter table iot_dev_datamodel add column "vendorId" bigint;
+    #alter table iot_dev_datamodel add column "firmwareId" bigint REFERENCES firmware_table ("firmwareId");
+    #alter table iot_dev_datamodel add column "pluginId" bigint REFERENCES plugin_table ("pluginId");
+    #alter table iot_dev_datamodel add column "vendorId" bigint REFERENCES vendor("vendorId");
     #alter table iot_dev_datamodel add column "devDesc" varchar(256);
 
     #alter table plugin_table add column "vendorId" bigint;

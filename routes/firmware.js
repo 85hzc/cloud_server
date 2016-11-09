@@ -56,6 +56,32 @@ router.post('/deleteFirmware', function(req, res, next) {
     }
 });
 
+router.post('/deleteVersion', function(req, res, next) {
+    if (req.session.hasLogined){
+
+        var path = db.file_save_dir + '/' + req.session.vendorName  + '/firmware/' 
+            + req.body.firmwareId + '/' + req.body.version; 
+
+        check.file_delete(path);
+
+    }
+    else {
+        res.render('login');
+    }
+
+    next();
+});
+
+router.post('/deleteVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        firmwareDao.deleteVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
 function moveFile(srcFile, dstFile, req, res) {
     var sf = fs.createReadStream(srcFile);
     var df = fs.createWriteStream(dstFile);
@@ -116,10 +142,27 @@ router.post('/fileupload', upload.single('thumbnail'), function(req, res, next) 
 router.post('/queryFirmwareVersion', function(req, res, next) {
     if (req.session.hasLogined) {
 
-        pluginDao.queryFirmwareVersion(req, res, next);
+        firmwareDao.queryFirmwareVersion(req, res, next);
     }
     else {
         res.render('login');
+    }
+});
+
+router.post('/publishVersion', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        firmwareDao.publishVersion(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
+router.post('/queryFirmware', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        firmwareDao.queryFirmware(req, res, next);
     }
 });
 

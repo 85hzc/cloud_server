@@ -37,8 +37,9 @@ router.get('/', function(req, res, next) {
     {
         return;
     }
-    
-    res.render('welcome');
+
+  
+    res.render('main');
     
    
 //  res.render('index', { title: 'Express' });

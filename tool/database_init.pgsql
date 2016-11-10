@@ -8,15 +8,71 @@ CREATE TABLE user_table
     "email" varchar(128)
 );
 
+DROP TABLE IF EXISTS vendor;
+CREATE TABLE vendor
+(
+    "vendorId" bigserial PRIMARY KEY,
+    "username" varchar(64),
+    "password" varchar(64),
+    "email" varchar(128)
+);
+
+DROP TABLE IF EXISTS plugin_table;
+CREATE TABLE plugin_table
+(
+    "pluginId" bigserial PRIMARY KEY,
+    "pluginName" varchar(64) default '',
+    "pluginDesc" varchar(256) default '',
+    "pluginDir" varchar(256) default '',
+    "publishVersion" varchar(32) default '',
+    "vendorId" bigint REFERENCES vendor("vendorId"),
+);
+
+DROP TABLE IF EXISTS plugin_version;
+CREATE TABLE plugin_version
+(
+    "pluginId" bigint REFERENCES plugin_table ("pluginId"),
+    "version" varchar(32) default '',
+    "changeLog" varchar(512) default '',
+    "fileName" varchar(64) default '',
+    "md5" varchar(64) default '',
+    "createTime"  timestamptz
+);
+
+
+DROP TABLE IF EXISTS firmware_table;
+CREATE TABLE firmware_table
+(
+    "firmwareId" bigserial PRIMARY KEY,
+    "firmwareName" varchar(64),
+    "firmwareDesc" varchar(256),
+    "firmwareDir" varchar(256) default '',
+    "publishVersion" varchar(32) default '',
+    "vendorId" bigint REFERENCES vendor("vendorId")
+);
+
+DROP TABLE IF EXISTS firmware_version;
+CREATE TABLE firmware_version
+(
+    "firmwareId" bigint REFERENCES firmware_table ("firmwareId"),
+    "version" varchar(32) default '',
+    "changeLog" varchar(512) default '',
+    "fileName" varchar(64) default '',
+    "md5" varchar(256) default '',
+    "createTime"  timestamptz
+);
+
 DROP TABLE IF EXISTS iot_dev_datamodel;
 CREATE TABLE iot_dev_datamodel
 (
     "dataModelId" bigserial PRIMARY KEY,
     "devDataModel" json,
+    "devDesc" varchar(256),
     "manufacture" varchar(64),
     "manufactureDataModelId" bigint,
-    "pluginId" bigint,
-    "firmwareId" bigint,
+    "pluginId" bigint REFERENCES plugin_table ("pluginId"),
+    "firmwareId" bigint REFERENCES firmware_table ("firmwareId"),
+    "vendorId" bigint REFERENCES vendor("vendorId"),
     "createTime" timestamptz
 );
 
@@ -40,28 +96,8 @@ DROP TABLE IF EXISTS dev_user_mapping;
 CREATE TABLE dev_user_mapping
 (
     "deviceId" bigint REFERENCES iot_device ("deviceId"),
-    "userId" bigint REFERENCES user ("userId"),
+    "userId" bigint REFERENCES user_table ("userId"),
     "userDevData" json
-);
-
-DROP TABLE IF EXISTS plugin_table;
-CREATE TABLE plugin_table
-(
-    "pluginId" bigserial PRIMARY KEY,
-    "pluginName" varchar(64) default ''
-    "pluginDesc" varchar(256) default ''
-    "pluginDir" varchar(256) default ''
-    "newestVersion" varchar(32) default ''
-);
-
-DROP TABLE IF EXISTS plugin_version;
-CREATE TABLE plugin_version
-(
-    "pluginId" bigint REFERENCES plugin_table ("pluginId"),
-    "version" varchar(32) default '',
-    "changeLog" varchar(512) default '',
-    "fileName" varchar(64) default '',
-    "md5" varchar(256) default ''
 );
 
 DROP TABLE IF EXISTS gateway_plugin;
@@ -72,20 +108,4 @@ CREATE TABLE gateway_plugin
     "version" varchar(32) default '',
 );
 
-DROP TABLE IF EXISTS firmware_table;
-CREATE TABLE firmware_table
-(
-    "firmwareId" bigserial PRIMARY KEY,
-    "firmwareDir" varchar(256) default '',
-    "newestVersion" varchar(32) default ''
-);
 
-DROP TABLE IF EXISTS firmware_version;
-CREATE TABLE firmware_version
-(
-    "firmwareId" bigint REFERENCES firmware_table ("firmwareId"),
-    "version" varchar(32) default '',
-    "changeLog" varchar(512) default '',
-    "fileName" varchar(64) default '',
-    "md5" varchar(256) default ''
-);

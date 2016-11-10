@@ -265,6 +265,60 @@
 		    ]
        }', 'feixun', '13', '2003-04-12 04:05:06 America/New_York');
 
+   INSERT INTO iot_dev_datamodel("devDataModel","manufacture","manufactureDataModelId","createTime") VALUES ('{
+           "controls": [
+           {
+           "param": "power",
+           "type": "switch",
+           "displayType": "static",
+           "display":"开关",
+           "default": "1"
+           },
+           {
+           "param": "bright",
+           "type": "switch",
+           "displayType": "static",
+           "display":"亮度",
+           "default": "10"
+           }
+   ], 
+       "settings": [
+       {
+           "param": "name",
+           "type": "text",
+           "display":"设备名称",
+           "default": "请输入设备别名"
+       }
+       ],
+       "info": [
+       {
+           "param": "type",
+           "type": "text",
+           "display" : "设备类型"
+       },
+       {
+           "param": "modleId",
+           "type": "text",
+           "display" : "类型编号"
+       },
+       {
+           "param": "manufacture",
+           "type": "text",
+           "display" : "生产厂商"
+       },
+       {
+           "param": "manufactureSN",
+           "type": "text",
+           "display" : "序列号"
+       },
+       {
+           "param": "softwareVersion",
+           "type": "text",
+           "display" : "软件版本"
+       }
+       ]
+   }', 'Philips', '1', '2016-11-10 04:05:06 America/New_York');
+
 
    INSERT INTO iot_device("deviceId","deviceDataModelId","manufacture","manufactureSN",online,"devData","firstOnlineTime","lastOnlineTime","userId") 
    VALUES ('201607201508000001', '1', 'haha', 'HAHA00000001', 'true', '{

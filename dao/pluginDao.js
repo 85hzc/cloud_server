@@ -151,7 +151,7 @@ function addPlugin(req, res, next)
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
                       + req.body.pluginName + "', '"
-                      + req.body.pluginDes
+                      + req.body.pluginDesc
                       + "') RETURNING \"pluginId\";";
 
     console.log(insertStr);

@@ -104,3 +104,52 @@ function onNewConnection(socket) {
             console.log("onNewConnection"+Date.now());
     });*/
 }
+
+
+var net = require('net');
+var gateway_tcp = require('gateway_tcp');
+
+var PORT = 4001;
+
+var tcpServer = net.createServer();
+var sockets= [];
+
+tcpServer.on('connection', function(socket) {
+    socket.name = socket.remoteAddress + ':' + socket.remotePort;
+
+    socket.setKeepAlive(true);
+    socket.id = devConn.newConnection(socket);
+
+    sockets.push(socket);
+
+    socket.on('data', function(data) {
+        gateway_tcp.message_handle(data, socket);
+    });
+
+    socket.on('end', function() {
+        sockets.splice(sockets.indexOf(socket), 1);
+    });
+
+    socket.on('close', function() {
+        console.log("close:" + socket.name);
+
+        if(typeof(socket.id) == 'undefined') {
+            console.log("socket.id is undefined!");
+            return;
+        }
+        devConn.releaseConnection(socket.id);
+    });
+
+    socket.on('timeout', function() {
+        socket.end();
+    });
+
+    socket.on('error', function(error) {
+        console.log(error);
+        connection.end();
+    });
+});
+
+tcpServer.listen(PORT);
+
+//console.log("TCP Server Listening on " + PORT);

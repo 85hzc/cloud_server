@@ -7,22 +7,21 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
 		<script type="text/javascript" src="js/public.js" ></script>
-		<link rel="stylesheet" href="css/addPluginVersion.css" />
-		<title>添加插件</title>
+		<link rel="stylesheet" href="css/addFirmware.css" />
+		<title>添加固件</title>
 	</head>
 
 	<body>
 		<div id="pluginContainer">
 			<div class="pluginTitle">
-	          <a class="backBtn" href="pluginVersion.html">取消</a>添加插件</div>
-
+	          <a class="backBtn" href="pluginVersion.html">取消</a>添加固件</div>
 			<form action="/plugin/fileupload" method="post" enctype="multipart/form-data">
 				<div class="inputContainer">
-					<span class="nameSpan">插件版本</span><input class="inputName" type="text" name="version" placeholder="插件版本" />
+					<span class="nameSpan">版本号</span><input class="inputName" type="text" name="version" placeholder="插件版本" />
 					<span class="nameSpan">md5值</span><input class="inputDesc" type="text" name="versionDesc" placeholder="md5值" />
-					<span class="nameSpan">版本说明</span><input class="inputDesc" type="text" name="versionDesc" placeholder="版本说明" />
+					<span class="nameSpan">修改说明</span><input class="inputDesc" type="text" name="versionDesc" placeholder="版本说明" />
 					<span class="nameSpan">选择插件</span><input class="inputDesc" type="file" name="versionDesc" placeholder="" />
-					<input class="inputSubmit" type="submit" value="添加版本" />
+					<input class="inputSubmit" type="submit" value="添加固件" />
 				</div>
 			</form>
 		</div>

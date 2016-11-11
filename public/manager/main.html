@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" href="css/index.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
+		<script type="text/javascript" src="js/public.js" ></script>
 		<script type="text/javascript" src="js/main.js" ></script>
 		<title>后台管理</title>
 	</head>
@@ -19,15 +20,18 @@
 	</div>
 	<!--左边导航-->
 	<div id="leftnav">
-		<a href="help.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />开发指南</div></a>
+		<a  href="help.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />开发指南</div></a>
+		<a  href="device.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />设备类型管理</div></a>
 		<a href="plugin.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />插件管理</div></a>
-		<a href="plugin.html" target="iframe1"><div class="navCell"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />设备类型管理</div></a>
+
 	</div>
 	
 	<!--中间iframe容器-->
 	<div id="middleContainer"><!--标题导航-->
 	<div id="titleNav">
-		<span class="selectTitle">开发指南</span>
+		<div class="titleContainer">
+		<a href="" class="selectTitle" target="iframe1">开发指南</a>
+		</div>
 		<div class="jiantou"><div class="jtBlock"></div></div>
 	</div>
 	<div class="iframeContainer">
@@ -45,8 +49,10 @@
 		$(this).addClass("toggleGray").parent().siblings().children().removeClass("toggleGray");
 		$(".leftBlcok").removeClass("blue");
 		$(this).children(".leftBlcok").addClass("blue");
-		//修改标题
+		//修改标题与链接
 		$(".selectTitle").text($(this).text());
+		$(".selectTitle").attr("href",$(this).parent().attr("href"));
+	
 	});
 	$("#leftnav .navCell").on("mouseover",function(){
 		$(this).addClass("toggleColor").parent().siblings().children().removeClass("toggleColor");
@@ -71,6 +77,12 @@
 	$(".jiantou").on("click",function(){
 		$("#middleContainer").toggleClass("fullScreen");
 	});
+	//标题导航点击
+	
+	  $(".selectTitle").on("click",function(){
+  	        $(this).next().remove();
+  });
+	
 	});//documentReady
 	
 	</script>

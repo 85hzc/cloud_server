@@ -102,3 +102,21 @@ a{
 	border: 1px solid #46b8da;
 }
 /*table结束*/
+
+/*返回按钮*/
+.backBtn{
+	line-height: 13px;
+	padding: 4px 6px;
+	border: 1px solid rgb(204, 204, 204);
+	cursor: pointer;
+	border-radius: 2px;
+	display: block;
+	position: absolute;
+	right: 10px;
+	top: 7px;
+	color:black;
+	
+}
+.backBtn:hover{
+	background: gainsboro;
+}

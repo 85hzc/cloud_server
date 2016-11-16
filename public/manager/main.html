@@ -4,11 +4,13 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" href="css/index.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
-		<script type="text/javascript" src="js/public.js" ></script>
 		<script type="text/javascript" src="js/main.js" ></script>
 		<title>后台管理</title>
 	</head>
 	<body>
+		<!--记录数据-->
+		<div id="fileName" fileNam="main"></div>
+		<!--记录数据-->
 	<!--头部-->
 	<div id="header">
 			<div class="heading" >后台管理</div>
@@ -40,18 +42,39 @@
 
 	</div>
 		
+	<!--返回按钮-->
+    <div class="bigBackBtn fobidSelect">返回</div>
+    <!--返回按钮-->
 	</body>
 	<script>
 	$(function(){
+	/*主页停止返回*/
+		$(".bigBackBtn").on("click",function(){
+			var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
+			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+				return;
+			}
+			history.back();
+		});
+		
+		
+		if(setTitleHeader){
+			setTitleHeader();
+		}
+		
 		
 	var quitUrl = "/quit";
+	
 	$("#leftnav .navCell").on("click",function(){
+		
 		$(this).addClass("toggleGray").parent().siblings().children().removeClass("toggleGray");
 		$(".leftBlcok").removeClass("blue");
 		$(this).children(".leftBlcok").addClass("blue");
 		//修改标题与链接
 		$(".selectTitle").text($(this).text());
 		$(".selectTitle").attr("href",$(this).parent().attr("href"));
+		//删除前面
+		$(".titleContainer").find(".selectTitle").not(":eq(0)").remove();
 	
 	});
 	$("#leftnav .navCell").on("mouseover",function(){
@@ -85,5 +108,17 @@
 	
 	});//documentReady
 	
+	
+	/*改变返回按钮文字*/
+	$("#iframe1").on("load",function(){
+			var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
+			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+				$(".bigBackBtn").text("首页");
+			}else{
+				$(".bigBackBtn").text("返回");
+			}
+	});
+	
 	</script>
+	<script type="text/javascript" src="js/public.js" ></script>
 </html>

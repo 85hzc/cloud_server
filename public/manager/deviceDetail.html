@@ -6,31 +6,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
 		<link rel="stylesheet" href="css/deviceDetail.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
-
-		<script type="text/javascript" src="js/public.js" ></script>
-		<title>插件管理</title>
+		<title fileNam="deviceDetail">插件管理</title>
 	</head>
 	<body>
-		
+		<!--记录数据-->
+		<div id="fileName" fileNam="deviceDetail"></div>
+		<!--记录数据-->
 		<div class="pluginContainer" >
-			<div class="pluginTitle">设备信息</div>
+			<div class="pluginTitle">
+				<a class="backBtn" >返回</a>设备信息</div>
 			<div class="tableContainer">
-			<table  class="detailTB">
+			<table  class="detailTB" id="tableDeviceDetail">
 				<tr>
 					<th>名称</th>
-					<th>版本号</th>
-					<th>md5</th>
-					<th>修改记录</th>
-					<th>dataModel文件</th>
+					<th>厂商</th>
 					<th>插件</th>
+					<th>厂商设备类型表示符</th>
+					<th>dataModel文件</th>
+					<th>设备描述</th>
 				</tr>
-				<tr>
+				<tr id="cellDetail">
 					<td>设备</td>
-					<td>10.1</td>
-					<td>v1.0.1</td>
-					<td>v1.0.1</td>
-					<td>v1.0.1</td>
-					<td>这是这是个啊是否这是个啊是否这是个</td>
+					<td name="manufacture">10.1</td>
+					<td pluginId>v1.0.1</td>
+					<td name="manufactureDataModelId">v1.0.1</td>
+					<td name="jsonIsExist">v1.0.1</td>
+					<td name="devDesc">这是这是个啊是否这是个啊是否这是个</td>
 					<!--<td><a class="pluginVersion blueBut" href="pluginVersion.html">发布</a> <a class="pluginDelete redBtn">删除</a></td>-->
 				</tr>
 			</table>
@@ -40,24 +41,26 @@
 		
 		<div class="pluginContainer" >
 			<div class="pluginTitle">可用固件</div>
-			<a class="addPluginBtn" href="addPlugin.html">添加固件</a>
+			<a class="addPluginBtn" href="addFirmwareVersion.html">添加固件</a>
 			<div class="tableContainer">
-			<table id="table" class="detailTB">
+			<table id="tableFirmware" class="detailTB">
 				<tr>
 					<th>版本号</th>
 					<th>md5</th>
 					<th>修改记录</th>
 					<th>操作</th>
 				</tr>
-				<tr>
-					<td>10.1</td>
-					<td>v1.0.1</td>
-					<td>这是这是个啊是否这是个啊是否这是个</td>
-					<td><a class="pluginVersion blueBut" href="pluginVersion.html">发布</a> <a class="pluginDelete redBtn">删除</a></td>
+				<tr id="cellFirmware" style="display: none">
+					<td name="version">10.1</td>
+					<td name="md5">v1.0.1</td>
+					<td name="changeLog">这是这是个啊是否这是个啊是否这是个</td>
+					<td><a class="pluginVersion blueBut" >发布</a> <a class="pluginDelete redBtn">删除</a></td>
 				</tr>
 			</table>
 			</div>
 			<div style="height: 15px;"></div>
 		</div>
 	</body>
+	<script type="text/javascript" src="js/public.js" ></script>
+	<script type="text/javascript" src="js/netWokr.js" ></script>
 </html>

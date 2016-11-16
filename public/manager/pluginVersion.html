@@ -5,10 +5,12 @@
 		<link rel="stylesheet" href="css/public.css" />
 		<link rel="stylesheet" href="css/pluginVersion.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
-		<script type="text/javascript" src="js/public.js" ></script>
-		<title>插件版本</title>
+		<title fileNam="pluginVersion">插件版本</title>
 	</head>
 	<body>
+		<!--记录数据-->
+		<div id="fileName" fileNam="pluginVersion"></div>
+		<!--记录数据-->
 		<div id="pluginContainer">
 			<div class="pluginTitle">
 				版本列表
@@ -23,10 +25,10 @@
 					<th>修改说明</th>
 					<th>操作</th>
 				</tr>
-				<tr>
-					<td>v1.0.1</td>
-					<td>123412421434</td>
-					<td>这是这是个啊是否这是个啊是否这是个</td>
+				<tr id="cell"  style="display: none;">
+					<td name="version">v1.0.1</td>
+					<td name="md5">123412421434</td>
+					<td name="changeLog">这是这是个啊是否这是个啊是否这是个</td>
 					<td><a class="pluginVersion blueBut">发布</a> <a class="pluginDelete redBtn">删除</a></td>
 				</tr>
 			</table>
@@ -34,4 +36,6 @@
 			<div style="height: 15px;"></div>
 		</div>
 	</body>
+<script type="text/javascript" src="js/public.js" ></script>
+<script type="text/javascript" src="js/netWokr.js" ></script>
 </html>

@@ -42,6 +42,18 @@ router.post('/addDataModel', function(req, res, next) {
     }    
 });
 
+/*修改dataModel设备类型*/
+router.post('/changeDataModel', function(req, res, next) {
+
+    if (req.session.hasLogined) {
+console.log("enter router changeDataModel");
+        devDao.changeDataModel(req, res, next);
+    }    
+});
+/*修改dataModel设备类型*/
+
+
+
 router.post('/fileupload', upload.single('thumbnail'), function(req, res, next) {
     console.log(req.file);
     console.log(req.body);

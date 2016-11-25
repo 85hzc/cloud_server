@@ -35,8 +35,8 @@
 		//这是最新的版本
 		$(function() {
 
-			$('#username').keyup(function(){
-if($("#username").val() == ""){
+		$('#username').keyup(function(){
+                             if($("#username").val() == ""){
 	$('.usernameLabel').css({
 
 		"display":"none"
@@ -106,7 +106,7 @@ if($("#username").val() == ""){
 		<!--记录数据-->
 		<img class="bg" src="img/login_bg.jpg" />
 		<div id="loginContainer">
-			<div class="loginWelcom">欢迎来到后台管理系统</div>
+			<div class="loginWelcom">欢迎来到斐讯开放平台</div>
 		<form id="loginform" action="/register_page" method="post" name="form">
 			<div class="inputDiv">
 				<div class="loginIcon"><img  src="img/login_name.png" /></div>

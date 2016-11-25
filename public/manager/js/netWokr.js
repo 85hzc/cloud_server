@@ -2,6 +2,12 @@
  * 1.不需要显示的数据如pluginId由影藏的td的text保存
  * 
  */
+function clearInput() {
+	return;
+	$("input[type='text']").val("");
+	$("input[type='file']").val("");
+}
+
 /*1.接口url  thumbnail*/
 var allPluginUrl = "/plugin/allPlugin"; //get
 var queryPluginUrl = "/plugin/queryPluginVersion"; //post
@@ -15,6 +21,7 @@ var addDeviceUrl = "/dev/addDataModel";
 var addDataModelUrl = "/dev/fileupload";
 var addDevicePluginUrl = "/dev/addPlugin";
 var deleteDeviceUrl = "/dev/deleteDataModel";
+var changDataModel = "/dev/changeDataModel";
 var queryFirmwareVersionUrl = "/firmware/queryFirmwareVersion";
 var publishFirmwareVersionUrl = "/firmware/publishVersion";
 var deleteFirmwareVersionUrl = "/firmware/deleteVersion";
@@ -46,7 +53,7 @@ var addFirmwareUrl = "/firmware/addFirmware";
 		case "deviceDetail":
 			deviceDetail();
 			break;
-			
+
 		case "addFirmwareVersion":
 			addFirmwareVersion();
 			break;
@@ -56,7 +63,7 @@ var addFirmwareUrl = "/firmware/addFirmware";
 })();
 /*2.判断哪个*/
 /*---------------------------------3.添加cell方法----------------------------*/
-function addCell(table, cell, arr) {
+function addCell(table, cell, arr,keyname) {
 	for(var i = 0; i < arr.length; i++) {
 		var dic = arr[i];
 		var cell1 = $(cell).clone();
@@ -65,8 +72,8 @@ function addCell(table, cell, arr) {
 			if($(cell1).children().length != 0) { //判断cell本身是不是只有一个元素
 				$(cell1).find("[name=" + key + "]").text(dic[key]);
 			} else {  
-                                     if(key=="pluginName"){  
-					$(cell1).text(dic[key]).val(dic["pluginId"]?dic["pluginId"]:null);}//if2
+                                     if(key==keyname){
+					$(cell1).text(dic[key]).val(dic[keyname]?dic[keyname]:null);}//if2
 			}
 		}
 		$(cell1).show();
@@ -82,8 +89,8 @@ function addCell2(table, cell, arr, publishVersion) {
 		for(var key in dic) {
 			$(cell1).find("[name=" + key + "]").text(dic[key]);
 			if(dic["version"] == publishVersion) {
-				$(cell1).find(".pluginVersion").text("在线").css("background", "orange");
-				$(cell1).find(".pluginDelete").hide();
+				$(cell1).find(".pluginDelete").text("在线").css("background", "orange");
+				//$(cell1).find(".pluginDelete").hide();
 			}
 		}
 		$(cell1).show();
@@ -91,16 +98,24 @@ function addCell2(table, cell, arr, publishVersion) {
 	} //for 
 
 } //addCell2
-/*----------------------------遍历input-------------------------------*/
+/*----------------------------遍历form内容input和textarea-------------------------------*/
 function getInputName(formId) {
 	var json = {};
 	var inputs = $(formId + " input");
+	var textareas = $(formId + " textarea");
 
 	for(var i = 0; i < 　inputs.length; i++) {
 		var inputa = $(inputs[i]);
 		var name = $(inputs[i]).attr("name");
 		if(name) {
 			json[name] = $(inputs[i]).val();
+		}
+	} //for
+	for(var i = 0; i < 　textareas.length; i++) {
+		var textarea = $(textareas[i]);
+		var tname = $(textareas[i]).attr("name");
+		if(tname) {
+			json[tname] = $(textareas[i]).val();
 		}
 	} //for
 	return json;
@@ -161,10 +176,11 @@ function setPluginData(data){
 	/*----------------------------------删除插件-----------------------------------------*/
 	$(".pluginDelete").on("click", function() {
 
+
 		var sure = confirm("确定删除吗?");
 		var pluginId = $(this).parent().siblings("[name='pluginId']").text();
 		if(sure) {
-
+clearInput();
 			$.ajax({
 				type: "post",
 				url: deletePluginUrl,
@@ -195,6 +211,9 @@ function pluginVersion() {
 	var thisdata = {
 		"pluginId": pluginId
 	};
+
+
+	var queryData = null;//读取所有插件版本
 
 	$.ajax({
 		type: "post",
@@ -228,7 +247,7 @@ function pluginVersion() {
 */
        function pluginVersionCallBack(data){
 
-        var queryData = JSON.parse(data);
+        queryData = JSON.parse(data);
 	var publishVersion = queryData.publishVersion;
 
 	var queryArr = queryData.values;
@@ -236,6 +255,10 @@ function pluginVersion() {
 	addCell2("#table", "#cell", queryArr, publishVersion);
 	/*--------------------------------------删除插件版本----------------------------*/
 	$(".pluginDelete").on("click", function() {
+		if($(this).text() == "在线"){
+			alert("在线版本无法操作");
+			return;
+		}
 		var version = $(this).parent().siblings("[name='version']").text();
 		var thisdata = {
 			"pluginId": pluginId,
@@ -243,6 +266,7 @@ function pluginVersion() {
 		};
 		var sure = confirm("确定删除吗?");
 		if(sure){
+			clearInput();
 		$.ajax({
 			type: "post",
 			url: deletePluginVersionUrl,
@@ -259,33 +283,34 @@ function pluginVersion() {
 		}//if
 	});
 	/*三：---------------------------------发布插件版本----------------------------------*/
-	$(".pluginVersion").on("click", function() {
-		if($(this).text() == "在线") {
-			alert("此版本已发布");
-			return;
-		}
-		var sure = confirm("确定发布?");
-                        var version = $(this).parent().siblings("[name='version']").text();
+     //选择固件版本下拉框获取数据
+		   addCell("#selectVersion", "#selectCell", queryArr,"version");
+	       $(".publishPluginVersion").on("click", function() {
+			   if ($("#selectVersion").prop("selectedIndex") == 0){
+				   alert("请选择版本!");
+				   return;
+			   }
+		    var version =  $(".selectedVersion").val();
 			var thisdata = {
 				"pluginId": pluginId,
 				"version": version
 			};
 
-		if(sure) {
-			
+			clearInput();
 			$.ajax({
 				type: "post",
 				url: publishVersionUrl,
 				async: true,
 				data: thisdata,
 				success: function() {
+					alert("发布成功");
 					window.location.reload();
 				},
 				error: function() {
 					alert("发布失败请重试!");
 				}
 			});
-		} //if
+
 	});
 }//pluginVersionCallBack
 } /*二：查询插件版*/
@@ -296,6 +321,7 @@ function addPlugin() {
 	$(".inputSubmit").on("click", function() {
 
 		var thisdata = getInputName("#addPluginForm");
+		alert(thisdata.pluginDesc);
 
 		$.ajax({
 			type: "post",
@@ -308,6 +334,7 @@ function addPlugin() {
 					if(!sure) {
 						history.back();
 					}
+					clearInput();
 				}
 			},
 			error: function() {
@@ -340,6 +367,7 @@ function addPluginVersion() {
 				if(!sure) {
 					history.back();
 				}
+				clearInput();
 			},
 			error: function(XmlHttpRequest, textStatus, errorThrown) {
 				alert("上传失败");
@@ -395,6 +423,7 @@ function device() {
 		var dataD = {"dataModelId":dataModelId};
 		var sure = confirm("确定删除吗?");
 		if(sure) {
+			clearInput();
 			$.ajax({
 				type: "post",
 				url: deleteDeviceUrl,
@@ -416,10 +445,8 @@ function device() {
 /*------------------------------------查看详情-------------------------------------------*/	
 	$(".pluginVersion").on("click",function(){
 
-
-		
 	var data = getDataFromEle("#cell",this,"name");
-        var dataStr = JSON.stringify(data); alert(dataStr);	
+		var dataStr = JSON.stringify(data);//alert(dataStr);
 	window.sessionStorage.deviceDataStr = dataStr;
 		
 		
@@ -440,7 +467,7 @@ function addDevice() {
                         //alert(data);
                         var data1 = JSON.parse(data);
 			var arr = data1.values;
-			addCell("#tablePlugin", "#cellPlugin", arr);
+			addCell("#tablePlugin", "#cellPlugin", arr,"pluginName");
 		},
 		error: function() {
 			//			alert("加载失败尝试刷新页面");
@@ -480,7 +507,7 @@ $.ajax({
 	data:thisData,
 	async:true,
 	success:function(data){
-alert("1成功");
+//alert("1成功");
 		/*----------------上传dataModel文件----------------*/
                 var data1 = JSON.parse(data);
 		var dataModelId = data1.dataModelId;
@@ -491,7 +518,7 @@ alert("1成功");
 				"dataModelId":dataModelId
 			},
 			success: function(data) {
-alert("2成功");
+//alert("2成功");
 		   /*--------------选择插件----------------*/
 		      var pluginId  = $("#tablePlugin").val();
 
@@ -502,7 +529,7 @@ alert("2成功");
 		      	data:dataP,
 		      	async:true,
 		      	success:function(data){
-		      		alert("添加插件成功");
+		      		//alert("添加插件成功");
 					/*--------------添加固件------------*/
 					$.ajax({
 						type: "post",
@@ -512,7 +539,14 @@ alert("2成功");
 						},
 						async: true,
 						success: function (data) {
-							alert("添加固件成功");
+							//alert("添加成功");
+							var sure = confirm("添加成功继续上传");
+if(sure){
+   clearInput();
+}else{
+   history.back();
+}
+
 						},
 						error: function () {
 							alert("添加固件失败");
@@ -557,11 +591,80 @@ function deviceDetail(){
 //alert(data);
     var deviceData = JSON.parse(data);
     var firmwareId = deviceData['firmwareId'];
-/*-------------------------------获取设备详细信息--------------------------------------*/  
+	var dataModelId = deviceData['dataModelId'];
+	//alert(dataModelId);
+	//alert(firmwareId);
+	/*--------------------------------------获取所有插件供选择----------------------------------------------*/
+	$.ajax({
+		type: "get",
+		url: allPluginUrl,
+		async: true,
+		success: function(data) {
+			//alert(data);
+			var data1 = JSON.parse(data);
+			var arr = data1.values;
+			addCell("#tablePlugin", "#cellPlugin", arr,"pluginName");
+		},
+		error: function() {
+			alert("加载失败尝试刷新页面");
+		}
+	}); //ajax
+
+	/*---------------------------------------显示修改设备信息的插件----------------------------------------------*/
+    /*-------------------------------获取设备详细信息显示在input中--------------------------------------*/
     for(var key in deviceData){
-    	$("#cellDetail").find("[name="+key+"]").text(deviceData[key]);
+    	$(".inputContainer").find("[name="+key+"]").val(deviceData[key]).text(deviceData[key]);
     }
-/*--------------------------------加载固件版本信息--------------------------------------*/
+
+
+    /*-------------------------------------------修改设备类型点击--------------------------------------------*/
+    $("#changeDevBtn").on("click",function () {
+		var thisdata =  getInputName("#addDevice");
+
+		thisdata.dataModelId =dataModelId;
+
+		$.ajax({
+			type:"post",
+			url:changDataModel,
+			async:true,
+			data:thisdata,
+			success:function (data) {
+				alert("修改设备类型成功");
+			},
+			error:function(){
+				alert("修改设备类型失败");
+			},
+			timeout:3000
+		});
+	});
+	/*-------------------------------------------上传dataModeljson文件--------------------------------------------*/
+
+	$("#uploadDataModelBtn").on("click",function () {
+		//alert("a");
+		$("#addDataModel").ajaxSubmit({
+			type: 'post',
+			url: addDataModelUrl,
+			data: {
+				"dataModelId": dataModelId
+			},
+			success: function (data) {
+				alert("success");
+			},
+			error: function () {
+				alert("fail");
+			}
+		});
+
+
+
+
+
+
+
+	});//click
+	/*-------------------------------------------查询固件版本-----------------------------------------------------*/
+
+
 	var data = {"firmwareId":firmwareId};
 	$.ajax({
 		type:"post",
@@ -592,28 +695,37 @@ function deviceDetail(){
 	};
 */
 function  queryFirmwareVersionSuccess(data) {
-	alert("查询固件版本成功");
+	//alert("查询固件版本成功");
     var data1 = JSON.parse(data);
 	var arr = data1.values;
 	var publishVersion = data1.publishVersion;
 	var firmwareId = data1.firmwareId;
+
 	addCell2("#tableFirmware","#cellFirmware",arr,publishVersion);
 
 	/*--------------------------------------删除固件版本----------------------------*/
 	$(".pluginDelete").on("click", function() {
+		if ($(this).text() == "在线"){
+			alert("在线版本不可操作!");
+
+			return;
+		}
 		var version = $(this).parent().siblings("[name='version']").text();
+		alert(version);
 		var thisdata = {
 			"firmwareId": firmwareId,
 			"version": version
 		};
 		var sure = confirm("确定删除");
 		if(sure){
+			clearInput();
 		$.ajax({
 			type: "post",
 			url: deleteFirmwareVersionUrl,
 			async: true,
 			data: thisdata,
 			success: function() {
+				alert("删除固件版本成功");
 				window.location.reload();
 			},
 			error: function() {
@@ -624,14 +736,20 @@ function  queryFirmwareVersionSuccess(data) {
 	  }//if
 	});
 	/*三：---------------------------------发布固件版本----------------------------------*/
-	$(".pluginVersion").on("click", function() {
-		if($(this).text() == "在线") {
-			alert("此版本已发布");
+	//加载固件列表
+	addCell("#addfirmwareSelect","#addfirmwareCell",arr,"version");
+
+	$(".addfirmwareBtn").on("click", function() {
+		var version = $("#addfirmwareSelect").val();
+		//alert(version);
+
+		if($("#addfirmwareSelect").prop("selectedIndex") == 0) {
+			alert("请选择需要发布的固件版本");
 			return;
 		}
 		var sure = confirm("确定发布?");
 		if(sure) {
-			var version = $(this).parent().siblings("[name='version']").text();
+			clearInput();
 			var thisdata = {
 				"firmwareId": firmwareId,
 				"version": version
@@ -642,6 +760,7 @@ function  queryFirmwareVersionSuccess(data) {
 				async: true,
 				data: thisdata,
 				success: function() {
+					alert("发布成功!");
 					window.location.reload();
 				},
 				error: function() {
@@ -676,6 +795,7 @@ function addFirmwareVersion() {
 				if(!sure){
 					history.back();
 				}
+				clearInput();
 			},
 			error:function(){
 				alert("失败");

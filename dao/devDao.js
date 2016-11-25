@@ -48,6 +48,44 @@ function addDataModel(req, res, next) {
     });
 }
 
+/*修改dataModel设备类型*/
+function changeDataModel(req, res, next) {
+    console.log("Enter change data model.");
+    console.log(req.body);
+
+    var ret = 1;
+    var vendorID = req.session.vendorID;
+   
+
+    var insertStr = "UPDATE iot_dev_datamodel SET "
+                +"\"manufacture\" = '"
+                +req.body.manufacture+"',"
+                +"\"manufactureDataModelId\" = '"
+                +req.body.manufactureDataModelId+"',"
+                +" \"devDesc\" = '"
+                +req.body.devDesc+"'" 
+                +" WHERE \"dataModelId\" = "+req.body.dataModelId+";";
+
+
+    console.log(insertStr);
+
+    myClient.query(insertStr, function(err, result) {
+        if (err) {
+            console.error("错误代码如下");
+            console.error(err.stack);
+        }
+        else {
+            ret = 0;
+        }
+        var retStr = {
+            ret: ret
+        };
+        res.send(JSON.stringify(retStr));
+    });
+}
+
+/*修改dataModel设备类型*/
+
 function updateDataModel(req, res) {
     console.log("Enter datamodel handler");
     console.log(req.body);
@@ -366,3 +404,4 @@ module.exports.deleteDataModel = deleteDataModel;
 module.exports.stat = stat;
 module.exports.queryAllDev = queryAllDev;
 module.exports.addPlugin = addPlugin;
+module.exports.changeDataModel = changeDataModel;

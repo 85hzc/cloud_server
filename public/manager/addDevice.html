@@ -8,7 +8,7 @@
 		<script type="text/javascript" src="js/jquery.1.9.1.js"></script>
 		<script type="text/javascript" src="js/jquery-form.js" ></script>
 		<link rel="stylesheet" href="css/addDevice.css" />
-		<title fileNam="addDevice">添加插件</title>
+		<title fileNam="addDevice">添加设备类型</title>
 	</head>
 
 	<body>
@@ -18,13 +18,12 @@
 		<div class="pluginContainer">
 			<div class="pluginTitle">
 				<a class="backBtn" >取消</a>添加设备</div>
-
 			<div class="inputContainer">
 				<form id="addDevice">
-					<span class="nameSpan">名称</span><input class="inputName" type="text" placeholder="插件版本" />
+					<span class="nameSpan">名称</span><input class="inputName" type="text" placeholder="设备类型名称" />
 					<span class="nameSpan">厂商</span><input class="inputDesc" type="text" name="manufacture" placeholder="厂商名" />
-					<span class="nameSpan">厂商设备标识</span><input class="inputDesc" type="text" name="manufactureDataModelId" placeholder="厂商设备标识" />
-					<span class="nameSpan">描述</span><input class="inputDesc" type="text" name="devDesc" placeholder="设备描述" />
+					<span class="nameSpan">厂商数据模型ID</span><input class="inputDesc" type="text" name="manufactureDataModelId" placeholder="厂商数据模型ID" />
+					<span class="nameSpan">描述</span><textarea class="inputDesc"  name="devDesc" placeholder="设备描述" style="height: 85px;"></textarea>
 				</form>
 				<form id="addPLugin">
 				<span class="nameSpan">选择插件</span>
@@ -37,35 +36,8 @@
                 </form>
 				<input class="inputSubmit" type="button" value="提交" />
 			</div>
-
 			<div style="height: 1px;"></div>
 		</div>
-		<!--固件列表-->
-		<!--<div class="pluginContainer">
-			<div class="pluginTitle">固件列表</div>
-			<a class="addPluginBtn" href="addPlugin.html">添加固件</a>
-			<div class="tableContainer">
-				<table id="table">
-					<tr>
-						<th>版本号</th>
-						<th>md5</th>
-						<th>修改记录</th>
-						<th>操作</th>
-					</tr>
-					<tr>
-						<td>10.1</td>
-						<td>v1.0.1</td>
-						<td>这是这是个啊是否这是个啊是否这是个</td>
-						<td>
-							<a class="pluginVersion blueBut" href="pluginVersion.html">发布</a>
-							<a class="pluginDelete redBtn">删除</a>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div style="height: 15px;"></div>
-
-		</div>-->
 	</body>
 	<script type="text/javascript" src="js/public.js"></script>
 	<script type="text/javascript" src="js/netWokr.js"></script>

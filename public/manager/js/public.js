@@ -28,10 +28,10 @@ function setTitleHeader() {
 	//设备
 	var addDevice = '<a href="addDevice.html" class="selectTitle" target="iframe1">/ 添加设备</a>';
 	var deviceDetail = '<a href="deviceDetail.html" class="selectTitle" target="iframe1">/ 设备详情</a>';
-	var addFirmware = '<a href="deviceDetail.html" class="selectTitle" target="iframe1">/ 设备详情</a>'+
+	var addFirmwareVersion = '<a href="deviceDetail.html" class="selectTitle" target="iframe1">/ 设备详情</a>'+
                        '<a href="addFirmware.html" class="selectTitle" target="iframe1">/ 添加固件</a>';
      
-    var titleJson = {"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmware":addFirmware};
+    var titleJson = {"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmwareVersion":addFirmwareVersion};
       //删除
      $(".titleContainer",parent.document).find(".selectTitle").not(":first").remove();
     var fileName = $("#fileName").attr("fileNam");

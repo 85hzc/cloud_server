@@ -112,7 +112,8 @@ function queryAllPlugin(req, res, next)
             var value = {
                 pluginId: row.pluginId,
                 pluginName: row.pluginName,
-                pluginDesc: row.pluginDesc
+                pluginDesc: row.pluginDesc,
+                publishVersion: row.publishVersion
             };
 
             values.push(value);

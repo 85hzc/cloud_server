@@ -20,11 +20,12 @@ function addDataModel(req, res, next) {
     var ret = 1;
     var vendorID = req.session.vendorID;
 
-    var insertStr = "INSERT INTO iot_dev_datamodel(\"manufacture\",\"manufactureDataModelId\",\"devDesc\",\"vendorId\")"
+    var insertStr = "INSERT INTO iot_dev_datamodel(\"manufacture\",\"manufactureDataModelId\",\"devDesc\",\"name\",\"vendorId\")"
                 + " VALUES('"
                 + req.body.manufacture + "', '"
                 + req.body.manufactureDataModelId + "', '"
                 + req.body.devDesc + "', '"
+                + req.body.name + "', '"
                 + vendorID
                 + "') RETURNING \"dataModelId\";";
 
@@ -355,7 +356,8 @@ function queryAllDev(req, res, next) {
                 devDesc: row.devDesc,
                 jsonIsExist: jsonIsExist,
                 pluginId: row.pluginId,
-                firmwareId: row.firmwareId
+                firmwareId: row.firmwareId,
+                name: row.name
             };
 
             values.push(value);

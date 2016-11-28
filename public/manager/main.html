@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<link rel="stylesheet" href="css/all.css"/>
 		<link rel="stylesheet" href="css/index.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
 		<script type="text/javascript" src="js/main.js" ></script>
@@ -48,13 +49,19 @@
 	</body>
 	<script>
 	$(function(){
+		/*显示用户名*/
+		$(".userName").text(window.sessionStorage.userName);
+
 	/*主页停止返回*/
 		$(".bigBackBtn").on("click",function(){
+
 			var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
 			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
 				return;
 			}
 			history.back();
+			$("#iframe1").contentWindow.href=document.referrer;
+
 		});
 		
 		
@@ -86,7 +93,9 @@
 		$(this).children(".leftBlcok").removeClass("red");
 	});	
 		$(".logout").on("click",function(){
-		alert("Chenggongggg");
+		//alert("");
+			/*清空username*/
+			window.sessionStorage.userName = "请登录";
 		$.ajax({
 			type:"get",
 			url:quitUrl,

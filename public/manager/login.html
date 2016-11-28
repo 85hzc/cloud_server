@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/all.css"/>
 	<link rel="stylesheet" href="css/login.css" />
 	<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
 	<script type="text/javascript" src="js/cookieFunction.js" ></script>
@@ -17,6 +18,8 @@
 			$('#password').val(password);
 
 			$('#loginform').submit(function(event){
+				//存储用户名
+				window.sessionStorage.userName = $('#username').val();
 				//var ischecked = document.getElementById('rememberpw').checked;
 				//alert("hi");
 				//alert(hex_md5('aaaa'));

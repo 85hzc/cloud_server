@@ -4,6 +4,8 @@
 		<meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <link rel="stylesheet" href="css/all.css"/>
+
 		<link rel="stylesheet" href="css/deviceDetail.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
 		<script type="text/javascript" src="js/jquery-form.js" ></script>
@@ -21,15 +23,15 @@
 
 			<div class="inputContainer">
 				<form id="addDevice">
-					<span class="nameSpan">名称</span><input class="inputName" type="text" placeholder="设备类型名称" />
+					<span class="nameSpan">名称</span><input class="inputName" type="text" placeholder="设备类型名称" name="name"/>
 					<span class="nameSpan">厂商</span><input class="inputDesc" type="text" name="manufacture" placeholder="厂商名" />
 					<span class="nameSpan">厂商数据模型ID</span><input class="inputDesc" type="text" name="manufactureDataModelId" placeholder="厂商数据模型ID" />
 					<span class="nameSpan">描述</span><textarea class="inputDesc"  name="devDesc" placeholder="设备描述"  style="height: 85px"></textarea>
 				</form>
 				<form id="addPLugin">
 					<span class="nameSpan">选择插件</span>
-					<select class="inputDesc" id="tablePlugin"  name="">
-						<option id="cellPlugin" class="option" name="pluginId">未选择插件</option>
+					<select class="inputDesc" id="tablePlugin"  name="" >
+						<option id="cellPlugin" class="option pluginId" name="pluginId">未上传插件</option>
 					</select>
 				</form>
 				<!--<form id="addDataModel" method="post" enctype="multipart/form-data">
@@ -47,9 +49,9 @@
 				<a class="backBtn" >取消</a>上传dataModel</div>
 			<div class="inputContainer">
 				<form id="addDataModel" method="post" enctype="multipart/form-data">
-					<span class="nameSpan">上传dataModel</span><input class="inputDesc" type="file" name="thumbnail" placeholder="" />
+					<span class="nameSpan jsonIsExist" name="jsonIsExist">未上传</span><input class="smallInput inputDesc " type="file" name="thumbnail" placeholder="" />
 				</form>
-				<input id="uploadDataModelBtn" class="inputSubmit" type="button" value="上传" />
+				<input id="uploadDataModelBtn" class="smallBtn inputSubmit " type="button" value="上传" />
 			</div>
 			<div style="height: 1px;"></div>
 		</div>

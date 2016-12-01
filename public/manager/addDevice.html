@@ -7,6 +7,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js"></script>
 		<script type="text/javascript" src="js/jquery-form.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js"></script>
         <link rel="stylesheet" href="css/all.css "/>
 		<link rel="stylesheet" href="css/addDevice.css" />
 		<title fileNam="addDevice">添加设备类型</title>
@@ -20,8 +21,8 @@
 			<div class="pluginTitle">
 				<a class="backBtn" >取消</a>添加设备类型</div>
 			<div class="inputContainer">
-				<form id="addDevice">
-					<span class="nameSpan">名称</span><input class="inputName" type="text" name="name" placeholder="设备类型名称" />
+				<form id="addDevice" name="addDevice" action="">
+					<a><span class="nameSpan">名称</span><input class="inputName" type="text" name="name" placeholder="设备类型名称" /></a>
 					<span class="nameSpan">厂商</span><input class="inputDesc" type="text" name="manufacture" placeholder="厂商名" />
 					<span class="nameSpan">厂商数据模型ID</span><input class="inputDesc" type="text" name="manufactureDataModelId" placeholder="厂商数据模型ID" />
 					<span class="nameSpan">描述</span><textarea class="inputDesc"  name="devDesc" placeholder="设备描述" style="height: 85px;"></textarea>
@@ -33,7 +34,7 @@
 				</select>
 				</form>
 				<form id="addDataModel" method="post" enctype="multipart/form-data">
-				<span class="nameSpan">上传dataModel</span><input class="inputDesc" type="file" name="thumbnail" placeholder="" />
+				<span class="nameSpan">上传dataModel</span><input class="inputDesc file" type="file" name="thumbnail" placeholder="" />
                 </form>
 				<input class="inputSubmit" type="button" value="提交" />
 			</div>
@@ -42,5 +43,7 @@
 	</body>
 	<script type="text/javascript" src="js/public.js"></script>
 	<script type="text/javascript" src="js/netWokr.js"></script>
+
+
 
 </html>

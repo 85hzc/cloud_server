@@ -40,6 +40,7 @@ var publishFirmwareVersionUrl = "/firmware/publishVersion";
 var deleteFirmwareVersionUrl = "/firmware/deleteVersion";
 var addFirmwareVersionUrl = "/firmware/fileupload";
 var addFirmwareUrl = "/firmware/addFirmware";
+var getStatusUrl = "/dev/stat";
 /*1.接口url*/
 /*2.判断哪个*/
 (function getdata() {
@@ -66,14 +67,58 @@ var addFirmwareUrl = "/firmware/addFirmware";
 		case "deviceDetail":
 			deviceDetail();
 			break;
-
 		case "addFirmwareVersion":
 			addFirmwareVersion();
+			break;
+		case "status":
+			status();
 			break;
 		default:
 			break;
 	}
 })();
+/*-------------------------------------------------判断是否是json-----------------------------------*/
+function  strIsJson(str) {
+	try{
+		JSON.parse(str);
+	}catch (e){
+
+		return false;
+	}
+	return true;
+}
+
+/*-------------------------------------------------读取本地文件-----------------------------------*/
+function upload(input,callback) {
+	//支持chrome IE10
+	if (window.FileReader) {
+		var file = input.files[0];
+		filename = file.name.split(".")[0];
+		var reader = new FileReader();
+		reader.onload = function() {
+			callback(this.result);
+		}
+		reader.readAsText(file);
+	}
+	//支持IE 7 8 9 10
+	else if (typeof window.ActiveXObject != 'undefined'){
+		var xmlDoc;
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = false;
+		xmlDoc.load(input.value);
+		callback(xmlDoc.xml);
+	}
+	//支持FF
+	else if (document.implementation && document.implementation.createDocument) {
+		var xmlDoc;
+		xmlDoc = document.implementation.createDocument("", "", null);
+		xmlDoc.async = false;
+		xmlDoc.load(input.value);
+		callback(xmlDoc.xml);
+	} else {
+		alert('error');
+	}
+}//upload
 /*2.判断哪个*/
 /*---------------------------------3.添加cell方法----------------------------*/
 function addCell(table, cell, arr,keyname) {
@@ -165,13 +210,36 @@ function getDataFromEle(parentEle,clickEle,attrName){
 		}
 	   return data;
 }
-/*-------------------------------打印遍历json-----------------------------------------*/
+/*-----------------------------------打印遍历json-------------------------------------------*/
 function logJson(myJson){
 	for(var key in myJson){
 		console.log(myJson[key]);
 	}
 }
-/*-------------------------------查看插件-----------------------------------------*/
+/*------------------------------------表单验证---------------------------------------------*/
+function  checkForm(form,btn,rulesJson,messagesJson,successFun) {
+	$(btn).on("click",function () {
+
+		$(form).submit();
+	});
+
+	$(form).validate({
+		invalidHandler:function () {
+			return false;
+		},
+		submitHandler: function(form) {
+			successFun(form);
+		},
+		errorPlacement: function(error, element) {
+			error.insertBefore(element);
+		},
+		rules:rulesJson ,
+		messages: messagesJson
+	});
+
+}
+
+/*-------------------------------------查看插件---------------------------------------------*/
 /*一.设置插件数据*/
 function plugin() {
 	
@@ -258,24 +326,7 @@ function pluginVersion() {
                     timeout:5000
 
 	}); //ajax
-/*
-	var queryData = {
-		"pluginId": '1',
-		"ret": 0,
-		"publishVersion": 'V1.0.2',
-		"values": [{
-			"version": 'V1.0.1',
-			"changeLog": null,
-			"createTime": null,
-			"md5": "xxxxxxx"
-		}, {
-			"version": 'V1.0.2',
-			"changeLog": null,
-			"createTime": null,
-			"md5": "xxxxxxx"
-		}]
-	};
-*/
+
        function pluginVersionCallBack(data){
 
         queryData = JSON.parse(data);
@@ -349,7 +400,17 @@ function pluginVersion() {
 /*三：---------------------------------添加插件----------------------------------*/
 function addPlugin() {
 
-	$(".inputSubmit").on("click", function() {
+	checkForm("#addPluginForm",".inputSubmit",{
+		pluginName:"required",
+		pluginDesc:"required"
+	},{
+		pluginName:"请输入插件名",
+		pluginDesc:"请输入插件描述"
+	},function (form) {
+		submitPlugin();
+	});
+
+	function submitPlugin() {
 
 		var thisdata = getInputName("#addPluginForm");
 		//alert(thisdata.pluginDesc);
@@ -373,19 +434,34 @@ function addPlugin() {
 			}
 		}); //ajax
 
-	}); //click  
+	}//submitPlugin
 } //addPlugin
 
 /*------------------------------四:添加插件版本-----------------------------------*/
 
 function addPluginVersion() {
 
+	checkForm("#addVersionForm",".inputSubmit",{
+		version:"required",
+		md5:"required",
+		versionDesc:"required",
+		thumbnail:"required"
+	},{
+		version:"请输入版本号",
+		md5:"请输入md5值",
+		versionDesc:"请输入描述",
+		thumbnail:"请选择插件"
+
+	},function (form) {
+
+		submitPluginVersion();
+	});
+
 	var json = getInputName("#addVersionForm");
 	var pluginId = $("#fileName", parent.document).attr("pluginId");
 	json["pluginId"] = pluginId;
-
 	//ajaxSonsubmit会自动获取input内容
-	$(".inputSubmit").on("click", function() {
+	function submitPluginVersion() {
 		$("#addVersionForm").ajaxSubmit({
 			type: 'post',
 			url: addPluginVersionUrl,
@@ -405,7 +481,7 @@ function addPluginVersion() {
 			}
 		}); //ajax
 
-	}); //onclick
+	}//submitPluginVersion
 } //addPluginVersion
 /*-----------------------------设备类型管理------------------------------------------*/
 
@@ -488,7 +564,34 @@ function device() {
 
 /*--------------------------------------添加设备------------------------------------*/
 function addDevice() {
-	
+	//表单验证
+	checkForm("#addDevice",".inputSubmit",{
+		name: "required",
+		manufacture: "required",
+		manufactureDataModelId: {
+			required: true,
+			number:true,
+		}
+	},{
+		name: "请输入设备名称",
+		manufacture: "请输入厂商名",
+		manufactureDataModelId: {
+			required: "请输厂商数据模型ID",
+			number: "厂商数据模型ID必须为数字"
+		},
+
+	},function (form) {
+
+		//验证文件是否为jison
+		upload($(".file")[0],function (result) {
+			if(!strIsJson(result)){
+				alert("文件格式错误,必须为json格式!");
+			}else {
+				submitDev();
+			}
+		});//upload
+
+	});
 /*--------------------------------------获取所有插件供选择-----------------------------*/
 	$.ajax({
 		type: "get",
@@ -505,30 +608,12 @@ function addDevice() {
 		}
 	}); //ajax
 
-/*
-	var data = {
-		"ret": 0,
-		"values": [{
-			"pluginId": "6",
-			"pluginName": '1',
-			"pluginDesc": '加载的插件描述'
-		}, {
-			"pluginId": "9",
-			"pluginName": '2',
-			"pluginDesc": 'xxxxx'
-		}, {
-			"pluginId": "7",
-			"pluginName": '3',
-			"pluginDesc": 'xxxxx'
-		}]
-	};
 
-	var arr = data.values;
-	addCell("#tablePlugin", "#cellPlugin", arr);  
-*/
-/*-------------------------------提交按钮点击----------------------------------*/
-$(".inputSubmit").on("click",function(){
-	
+/*-------------------------------添加设备函数----------------------------------*/
+function submitDev(){
+
+
+
 /*----------------------------提交设备信息获取id-------------------------------*/
 var thisData = getInputName("#addDevice");
 
@@ -571,7 +656,7 @@ $.ajax({
 						async: true,
 						success: function (data) {
 							//alert("添加成功");
-							var sure = confirm("添加成功继续上传");
+							var sure = confirm("添加成功继续上传　请到详情页修改");
 if(sure){
    clearInput();
 }else{
@@ -579,18 +664,16 @@ if(sure){
 }
 
 						},
-						error: function () {
-							alert("添加固件失败");
+						error: function () {　
+							alert("添加固件失败　请到详情页修改");
 						},
 						timeout: 3000
 					});
 
-
-
 					/*--------------添加固件------------*/
 		      	},
 		      	error:function(){
-		      		alert("3添加插件失败");
+		      		alert("添加插件失败");
 		      	},
                         timeout:2000
 		      });
@@ -598,19 +681,19 @@ if(sure){
 		  /*---------------选择插件---------------*/
 			},
 			error: function() {
-				alert("2上传失败");
+				alert("添加dataModel &&　插件失败　请到详情页修改");
 			}
 		}); //ajaxsubmit
 		/*--------------------------------*/
 	    
 	},//success
 	error:function(){
-		alert("1上传失败");
+		alert("添加设备类型信息 && 插件 && dataModel失败");
 	}
 });//deviceAjax
 	
 	
-});//click
+}//submitDevice
 
 
 
@@ -667,10 +750,32 @@ function deviceDetail(){
 
     	$(".inputContainer").find("[name="+key+"]").val(deviceData[key]).text(deviceData[key]);
     }
+//表单验证
 
+	checkForm("#addDevice","#changeDevBtn",{
+		name: "required",
+		manufacture: "required",
+		manufactureDataModelId: {
+			required: true,
+			number:true,
+		}
+	},{
+		name: "请输入设备名称",
+		manufacture: "请输入厂商名",
+		manufactureDataModelId: {
+			required: "请输厂商数据模型ID",
+			number: "厂商数据模型ID必须为数字"
+		},
 
-    /*-------------------------------------------修改设备类型点击--------------------------------------------*/
-    $("#changeDevBtn").on("click",function () {
+	},function (form) {
+
+		submitDeviceDetail();
+
+	});
+
+    /*-------------------------------------------修改设备类型函数--------------------------------------------*/
+
+		function submitDeviceDetail() {
 		var thisdata =  getInputName("#addDevice");
 
 		thisdata.dataModelId =dataModelId;
@@ -707,24 +812,39 @@ function deviceDetail(){
 			timeout:3000
 		});
 		//修改plugin结束
-	});
+	}//submitDeviceDetail
 	/*-------------------------------------------上传dataModeljson文件--------------------------------------------*/
 
 	$("#uploadDataModelBtn").on("click",function () {
-		//alert("a");
-		$("#addDataModel").ajaxSubmit({
-			type: 'post',
-			url: addDataModelUrl,
-			data: {
-				"dataModelId": dataModelId
-			},
-			success: function (data) {
-				alert("success");
-			},
-			error: function () {
-				alert("fail");
-			}
-		});
+		if ($(".file").val() == ""){
+			alert("请选择文件");
+			return;
+		}
+       upload($(".file")[0],function (result) {
+
+
+		   if(!strIsJson(result)){
+			   alert("文件格式错误,必须为json格式");
+		   }else {
+
+			   $("#addDataModel").ajaxSubmit({
+				   type: 'post',
+				   url: addDataModelUrl,
+				   data: {
+					   "dataModelId": dataModelId
+				   },
+				   success: function (data) {
+					   alert("success");
+				   },
+				   error: function () {
+					   alert("修改失败");
+				   }
+			   });//ajax
+		   }//els
+
+	   });
+
+
 
 
 
@@ -748,24 +868,7 @@ function deviceDetail(){
 		},
 		timeout:3000
 	});
-/*
-	var data = {
-		"firmwareId": "1",
-		"ret": 0,
-		"publishVersion": 'V1.0.2',
-		"values": [{
-			"version": 'V1.0.1',
-			"changeLog": null,
-			"createTime": null,
-			"md5": 'xxxxxxx'
-		}, {
-			"version": 'V1.0.2',
-			"changeLog": null,
-			"createTime": null,
-			"md5": 'xxxxxxx'
-		}]
-	};
-*/
+
 function  queryFirmwareVersionSuccess(data) {
 	//alert(data);
 	//alert("查询固件版本成功");
@@ -876,3 +979,38 @@ function addFirmwareVersion() {
 		}); //ajax
 	}); //onclick
 } //addPluginVersion
+/*-----------------------------------统计status-------------------------------------------------------*/
+
+function status() {
+	$.ajax({
+		type: "get",
+		url: getStatusUrl,
+		async: true,
+		success: statusCallBack,
+		error: function() {
+			alert("查询基本信息失败!");
+		},
+		timeout:3000
+	});
+	
+	
+	function statusCallBack(data) {
+		var  json = JSON.parse(data);
+		var arr = json.values;
+		console.log(arr);
+		for (var i = 0; i < arr.length; i++){
+			var dic = arr[i];
+			var cell1 = $("#cell1").clone(true);
+			var cell2 = $("#cell2").clone(true);
+			cell1.text(dic.name);
+			cell2.text(dic.count);
+			cell1.show();
+			cell2.show();
+			$("#table1").append(cell1);
+			$("#table2").append(cell2);
+
+		}
+	}
+
+
+}

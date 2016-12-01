@@ -9,6 +9,7 @@
 		<link rel="stylesheet" href="css/deviceDetail.css" />
 		<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
 		<script type="text/javascript" src="js/jquery-form.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
 		<title fileNam="deviceDetail">插件管理</title>
 	</head>
 	<body>
@@ -20,7 +21,6 @@
 		<div class="pluginContainer">
 			<div class="pluginTitle">
 				<a class="backBtn" >取消</a>修改设备类型信息</div>
-
 			<div class="inputContainer">
 				<form id="addDevice">
 					<span class="nameSpan">名称</span><input class="inputName" type="text" placeholder="设备类型名称" name="name"/>
@@ -46,10 +46,10 @@
 		<!--添加dataModelId开始-->
 		<div class="pluginContainer">
 			<div class="pluginTitle">
-				<a class="backBtn" >取消</a>上传dataModel</div>
+				<a class="backBtn" >取消</a>修改dataModel</div>
 			<div class="inputContainer">
 				<form id="addDataModel" method="post" enctype="multipart/form-data">
-					<span class="nameSpan jsonIsExist" name="jsonIsExist">未上传</span><input class="smallInput inputDesc " type="file" name="thumbnail" placeholder="" />
+					<span class="nameSpan jsonIsExist" name="jsonIsExist">未上传</span><input class="smallInput inputDesc file" type="file" name="thumbnail" placeholder="" />
 				</form>
 				<input id="uploadDataModelBtn" class="smallBtn inputSubmit " type="button" value="上传" />
 			</div>

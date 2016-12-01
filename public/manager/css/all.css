@@ -36,3 +36,10 @@
 
     user-select:none;
 }
+
+/*表单验证错误文字*/
+label.error{
+    color: red;
+    display: inline;
+
+}

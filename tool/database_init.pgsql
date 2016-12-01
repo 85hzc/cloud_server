@@ -67,6 +67,7 @@ CREATE TABLE iot_dev_datamodel
 (
     "dataModelId" bigserial PRIMARY KEY,
     "devDataModel" json,
+    "name" varchar(64),
     "devDesc" varchar(256),
     "manufacture" varchar(64),
     "manufactureDataModelId" bigint,

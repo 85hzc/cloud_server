@@ -7,29 +7,15 @@ module.exports = {
 
     // First application
     {
-      name      : "APP",
+      name      : "cloud_server",
       script    : "./bin/www",
       env: {
         COMMON_VARIABLE: "true"
       },
       env_production : {
         NODE_ENV: "production",
-        PORT: "3001"
       }
-    },
-
-    // Second application
-    {
-      name      : "GATEWAY",
-      script    : "./bin/www",
-      env: {
-        COMMON_VARIABLE: "true"
-      },
-      env_production : {
-        NODE_ENV: "production",
-        PORT: "4001"
-      }
-    },
+    }
 
   ],
 

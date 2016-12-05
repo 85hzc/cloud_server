@@ -61,6 +61,8 @@ function changeDataModel(req, res, next) {
     var insertStr = "UPDATE iot_dev_datamodel SET "
                 +"\"manufacture\" = '"
                 +req.body.manufacture+"',"
+ 		+"\"name\" = '"
+                +req.body.name+"',"
                 +"\"manufactureDataModelId\" = '"
                 +req.body.manufactureDataModelId+"',"
                 +" \"devDesc\" = '"

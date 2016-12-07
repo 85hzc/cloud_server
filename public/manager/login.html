@@ -5,19 +5,68 @@
 	<link rel="stylesheet" href="css/all.css"/>
 	<link rel="stylesheet" href="css/login.css" />
 	<script type="text/javascript" src="js/jquery.1.9.1.js" ></script>
+	<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
 	<script type="text/javascript" src="js/cookieFunction.js" ></script>
 	<script type="text/javascript" src="js/md5.js" ></script>
 	<title>登陆</title>
+	<style>
+		label.error{
+			font-size:12px;
+			display: inline-block;
+			*display: inline;
+			zoom: 1;
+		}
+	</style>
+
 	<script type="text/javascript">
+		function checkForm(form, rulesJson, messagesJson, successFun) {
+
+
+			$(form).validate({
+				invalidHandler: function () {
+					return false;
+				},
+			/*	submitHandler: function (form) {
+					successFun(form);
+				},*/
+				errorPlacement: function (error, element) {
+					error.insertAfter(element);
+				},
+				rules: rulesJson,
+				messages: messagesJson
+			});
+
+		}
 
 		$(function() {
+
+			checkForm("#loginform",{
+				username:{
+					required:true
+				},
+				password:{
+					required:true
+				}
+			},{
+				username:{
+					required:"请输入用户名"
+				},
+				password:{
+					required:"请输入密码"
+				}
+			}/*,function () {
+
+
+			}*/);
+
 			var username = getCookie('username');
 			var password = getCookie('password');
 			//alert('uesrname=' + username + ',password=' + password);
 			$('#username').val(username);
 			$('#password').val(password);
+		 $("#loginform").submit(function(event){
 
-			$('#loginform').submit(function(event){
+
 				//存储用户名
 				window.sessionStorage.userName = $('#username').val();
 				//var ischecked = document.getElementById('rememberpw').checked;
@@ -53,12 +102,14 @@
 <div id="loginContainer">
 	<div class="loginWelcom">欢迎来到斐讯开放平台</div>
 	<form action="/login" method="post" id='loginform' name='loginform'>
+
 		<div class="inputDiv">
 			<div class="loginIcon"><img  src="img/login_name.png" /></div>
-
 			<input id="username" class="loginInput" placeholder="账号" type="text" name="username"/>
+
 			<div class="small">请输入账号</div>
 		</div>
+
 		<div class="inputDiv">
 			<div class="loginIcon"><img  src="img/login_pwd.png" /></div>
 			<input id="password" class="loginInput" placeholder="密码"  type="password" name="password"/>

@@ -28,6 +28,7 @@ var deletePluginUrl = "/plugin/deletePlugin"; //post
 var deletePluginVersionUrl = "/plugin/deleteVersion";
 var publishVersionUrl = "/plugin/publishVersion";
 var addPluginVersionUrl = "/plugin/fileupload";
+var pluginVersionIsOk = "/plugin/pluginVersionIsOk"
 var allDeviceUrl = "/dev/allDev";
 var addDeviceUrl = "/dev/addDataModel";
 var addDataModelUrl = "/dev/fileupload";
@@ -39,7 +40,9 @@ var publishFirmwareVersionUrl = "/firmware/publishVersion";
 var deleteFirmwareVersionUrl = "/firmware/deleteVersion";
 var addFirmwareVersionUrl = "/firmware/fileupload";
 var addFirmwareUrl = "/firmware/addFirmware";
+var firmwareVersionIsOk = "/firmware/firmwareVersionIsOk";
 var getStatusUrl = "/dev/stat";
+
 /*1.接口url*/
 /*2.判断哪个*/
 (function getdata() {
@@ -446,14 +449,29 @@ function addPlugin() {
 /*------------------------------四:添加插件版本-----------------------------------*/
 
 function addPluginVersion() {
-
+    var json = getInputName("#addVersionForm");
+    var pluginId = $("#fileName", parent.document).attr("pluginId");
+    json["pluginId"] = pluginId;
     checkForm("#addVersionForm", ".inputSubmit", {
-        version: "required",
+        version: {
+            required:true,
+            remote:{
+                url:pluginVersionIsOk,
+                type:"Post",
+                data:{
+                    version:$(".inputname").val(),
+                    pluginId:pluginId
+                }
+            }
+        },
         md5: "required",
         versionDesc: "required",
         thumbnail: "required"
     }, {
-        version: "请输入版本号",
+        version:{
+           required: "请输入版本号",
+            remote:"插件版本已存在"
+        } ,
         md5: "请输入md5值",
         versionDesc: "请输入描述",
         thumbnail: "请选择插件"
@@ -463,9 +481,7 @@ function addPluginVersion() {
         submitPluginVersion();
     });
 
-    var json = getInputName("#addVersionForm");
-    var pluginId = $("#fileName", parent.document).attr("pluginId");
-    json["pluginId"] = pluginId;
+
     //ajaxSonsubmit会自动获取input内容
     function submitPluginVersion() {
         $("#addVersionForm").ajaxSubmit({
@@ -1089,16 +1105,29 @@ function addFirmwareVersion() {
     var deviceDataStr = window.sessionStorage.deviceDataStr;
     var dataJson = JSON.parse(deviceDataStr);
     var firmwareId = dataJson["firmwareId"];
-
+//alert(firmwareId);
 
     checkForm("#addVersionForm", ".inputSubmit", {
-        version: "required",
+        version: {
+            required:true,
+            remote:{
+            url:firmwareVersionIsOk,
+                type:"Post",
+                data:{
+                    version:$(".inputname").val(),
+                    firmwareId:firmwareId
+                }
+        }
+        },
         md5: "required",
         versionDesc:"required",
         thumbnail:{required:true
         }
     }, {
-        version: "请输入版本号",
+        version:{
+            required:"请输入版本号",
+            remote:"版本号已经存在"
+        } ,
         md5: "请输入md5值",
         versionDesc: "请填写描述",
         thumbnail:"请选择固件"

@@ -438,6 +438,32 @@ function queryPluginById(req, res, next) {
     });
 }
 
+/*pluginVersion Is exsixt*/
+function pluginVersionIsOk(req, res, next) {
+    console.log("Enter query Plugin version");
+    console.log(req.body);
+
+    var values = new Array();
+
+    var selectStr = "SELECT * FROM plugin_version WHERE \"pluginId\"='" + req.body.pluginId +
+        "' and \"version\"='" + req.body.version +"';";
+
+    console.log(selectStr);
+
+    myClient.query(selectStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+        else {
+            res.send(result.rows.length == 0 ? true : false);
+        }
+
+
+
+    });
+}
+
 module.exports.addPlugin = addPlugin;
 module.exports.addPluginVersion = addPluginVersion;
 module.exports.deletePlugin = deletePlugin;
@@ -447,3 +473,4 @@ module.exports.publishVersion = publishVersion;
 module.exports.queryAllPlugin = queryAllPlugin;
 module.exports.queryPluginVersion = queryPluginVersion;
 module.exports.queryPluginById = queryPluginById;
+module.exports.pluginVersionIsOk = pluginVersionIsOk;

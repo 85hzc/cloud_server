@@ -323,6 +323,35 @@ function publishVersion(req, res, next) {
         res.send(JSON.stringify(retStr));
     });
 }
+/*检测固件版本是否存在 参数firmwareId   firmwareVersion*/
+
+function firmwareVersionIsOk(req, res, next) {
+    console.log("Enter firmwareVersionIsOk");
+    console.log(req.body);
+
+
+
+
+    var selectStr = "SELECT * FROM firmware_version WHERE \"firmwareId\"='" + req.body.firmwareId
+        +"' and \"version\"='" + req.body.version + "';";
+
+    console.log(selectStr);
+    myClient.query(selectStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        if (result.rows.length == 0){
+            res.send(true);
+        }else {
+            res.send(false);
+        }
+
+
+    });
+}
+
 
 module.exports.queryAllFirmware = queryAllFirmware;
 module.exports.addFirmware = addFirmware;
@@ -332,3 +361,4 @@ module.exports.addFirmwareVersion = addFirmwareVersion;
 module.exports.queryFirmwareVersion = queryFirmwareVersion;
 module.exports.queryFirmware = queryFirmware;
 module.exports.publishVersion = publishVersion;
+module.exports.firmwareVersionIsOk = firmwareVersionIsOk;

@@ -5,10 +5,20 @@
 		<title>添加固件</title>
 	</head>
 	<body>
-		<form action="/firmware/addFirmware" method="post">
-			固件名称 <input type="text" name="firmwareName" /><br/>
-			固件描述 <input type="text" name="firmwareDesc" /><br/>
-			dataModelId<input type="text" name="dataModelId" /><br/>
+		<form action="/firmware/firmwareVersionIsOk" method="post">
+			固件id <input type="text" name="firmwareId" /><br/>
+			固件描述 <input type="text" name="version" /><br/>
+			<input type="submit" name="">
+		</form>
+
+		<form action="/plugin/pluginVersionIsOk" method="post">
+			插件id <input type="text" name="pluginId" /><br/>
+			插件版本 <input type="text" name="version" /><br/>
+			<input type="submit" name="">
+		</form>
+		<form action='/register_check/username' method="post">
+			用户名 <input type="text" name="username" /><br/>
+
 			<input type="submit" name="">
 		</form>
 	</body>

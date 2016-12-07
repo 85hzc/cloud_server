@@ -228,4 +228,17 @@ router.post('/fileupload', upload.single('thumbnail'), function(req, res, next) 
 
 });
 
+
+/*插件版本是否存在*/
+
+router.post('/pluginVersionIsOk', function(req, res, next) {
+    if (req.session.hasLogined) {
+
+        pluginDao.pluginVersionIsOk(req, res, next);
+    }
+    else {
+        res.render('login');
+    }
+});
+
 module.exports = router;

@@ -170,9 +170,7 @@ router.post('/queryFirmware', function(req, res, next) {
 router.post('/firmwareVersionIsOk', function(req, res, next) {
     if (req.session.hasLogined) {
 
-        firmwareDao.firmwareVersionIsOk(req, res, next);
-    }else {
-        res.render('login');
+        firmwareDao.queryFirmware(req, res, next);
     }
 });
 

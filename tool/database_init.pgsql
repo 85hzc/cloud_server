@@ -25,7 +25,7 @@ CREATE TABLE plugin_table
     "pluginDesc" varchar(256) default '',
     "pluginDir" varchar(256) default '',
     "publishVersion" varchar(32) default '',
-    "vendorId" bigint REFERENCES vendor("vendorId"),
+    "vendorId" bigint REFERENCES vendor("vendorId")
 );
 
 DROP TABLE IF EXISTS plugin_version;
@@ -88,6 +88,7 @@ CREATE TABLE iot_device
     "gatewayId" varchar(256),
     "online" boolean DEFAULT false,
     "devData" json,
+    "lircData" json,
     "firstOnlineTime" timestamptz,
     "lastOnlineTime" timestamptz,
     "userId" bigint
@@ -106,7 +107,27 @@ CREATE TABLE gateway_plugin
 (
     "deviceId" bigint REFERENCES iot_device ("deviceId"),
     "pluginId" bigint REFERENCES plugin_table ("pluginId"),
-    "version" varchar(32) default '',
+    "version" varchar(32) default ''
+);
+
+DROP TABLE IF EXISTS lirc_device;
+CREATE TABLE lirc_device
+(
+    "lircId" bigserial PRIMARY KEY,
+    "devType" varchar(32),
+    "manufacture" varchar(64),
+    "modelName" varchar(64),
+    "name" varchar(32),
+    "key" varchar(32) ARRAY
+);
+
+DROP TABLE IF EXISTS lirc_code;
+CREATE TABLE lirc_code
+(
+   "id" bigserial PRIMARY KEY,
+   "version" varchar(32),
+   "downloadUrl" varchar(256),
+   "vendorId" bigint REFERENCES vendor("vendorId")
 );
 
 

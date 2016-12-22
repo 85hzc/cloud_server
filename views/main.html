@@ -14,7 +14,7 @@
 <!--记录数据-->
 <!--头部-->
 <div id="header">
-	<div class="heading" >斐讯开放平台</div>
+	<div class="heading" onclick="window.location.reload()" style="cursor: default">斐讯开放平台</div>
 	<div class="userinfo" >
 		<img class="userHeader" src="img/2700940901264215.png" />
 		<span class="userName"></span>
@@ -27,7 +27,8 @@
 	<a href="status.html" target="iframe1"><div class="navCell toggleGray" style="letter-spacing: 8px;"><div class="leftBlcok blue"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />基本信息</div></a>
 	<a  href="device.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />设备类型管理</div></a>
 	<a href="plugin.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />插件管理</div></a>
-
+	<a href="lircCode.html" target="iframe1"><div class="navCell" style=""><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />红外码库管理</div></a>
+	<a href="lircDevice.html" target="iframe1"><div class="navCell" style=""><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />红外设备管理</div></a>
 </div>
 
 <!--中间iframe容器-->
@@ -116,7 +117,7 @@
 	/*改变返回按钮文字*/
 	$("#iframe1").on("load",function(){
 		var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
-		if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+		if(isRoot == "device" || isRoot == "plugin" || isRoot == "help" || isRoot == "lircCode" || isRoot == "lircDevice" || isRoot == "status"){
 			$(".bigBackBtn").text("首页");
 		}else{
 			$(".bigBackBtn").text("返回");

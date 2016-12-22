@@ -30,9 +30,12 @@ function setTitleHeader() {
 	var addDevice = '<a href="addDevice.html" class="selectTitle" target="iframe1">/ 添加设备</a>';
 	var deviceDetail = '<a href="deviceDetail.html" class="selectTitle" target="iframe1">/ 设备详情</a>';
 	var addFirmwareVersion = '<a href="deviceDetail.html" class="selectTitle" target="iframe1">/ 设备详情</a>'+
-                       '<a href="addFirmwareVersion.html" class="selectTitle" target="iframe1">/ 添加固件</a>';
+                       '<a href="addFirmwareVersion.html" class="selectTitle" target="iframe1">/ 添加固件版本</a>';
+	var addCode1 = '<a href="addCode.html" class="selectTitle" target="iframe1">/ 添加红外码库</a>';
+	var addLircDevice = '<a href="addLircDevice.html" class="selectTitle" target="iframe1">/ 添加红外设备</a>';
+	var lircDeviceDetail = '<a href="lircDeviceDetail.html" class="selectTitle" target="iframe1">/ 红外设备详情</a>';
      
-    var titleJson = {"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmwareVersion":addFirmwareVersion};
+    var titleJson = {lircDeviceDetail:lircDeviceDetail,addLircDevice:addLircDevice,"addCode1":addCode1,"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmwareVersion":addFirmwareVersion};
       //删除
      $(".titleContainer",parent.document).find(".selectTitle").not(":first").remove();
     var fileName = $("#fileName").attr("fileNam");

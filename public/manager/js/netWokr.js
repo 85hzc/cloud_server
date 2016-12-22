@@ -42,6 +42,12 @@ var addFirmwareVersionUrl = "/firmware/fileupload";
 var addFirmwareUrl = "/firmware/addFirmware";
 var firmwareVersionIsOk = "/firmware/firmwareVersionIsOk";
 var getStatusUrl = "/dev/stat";
+var allCodeUrl = "/lirc/allCode";
+var deleteCodeUrl = "/lirc/delete";
+var addCodeUrl = "/lirc/fileupload";
+var allDevUrl = "/lirc/allDev";
+var devDeleteUrl = "/lirc/devDelete";
+var devAddUrl = "/lirc/devAdd";
 
 /*1.接口url*/
 /*2.判断哪个*/
@@ -75,10 +81,37 @@ var getStatusUrl = "/dev/stat";
         case "status":
             status();
             break;
+        case "lircCode":
+            lircCode();
+            break;
+        case "addCode1":
+            addCode1();
+            break;
+        case "lircDevice":
+            lircDevice();
+            break;
+        case "lircDeviceDetail":
+            lircDeviceDetail();
+            break;
+        case "addLircDevice":
+            addLircDevice();
+            break;
         default:
             break;
     }
 })();
+/*-----------------------------------------获取url参赛---------------------------------------------------*/
+
+
+/*----------------------------------------存储-------------------------------------------------------*/
+function  storage(value,key) {
+
+    window.sessionStorage.value = key;
+}
+function  getStorage(value) {
+
+    return window.sessionStorage.value;
+}
 /*-------------------------------------------------判断是否是json-----------------------------------*/
 function strIsJson(str) {
     try {
@@ -89,8 +122,9 @@ function strIsJson(str) {
     }
     return true;
 }
-
 /*-------------------------------------------------读取本地文件-----------------------------------*/
+
+/*-------------------------------------------------读取input本地文件-----------------------------------*/
 function upload(input, callback) {
     if ($(input).val() == "") {
         callback(1);
@@ -139,6 +173,26 @@ function addCell(table, cell, arr, keyname) {
                 if (key == keyname) {
                     $(cell1).text(dic[key]).val(dic["pluginId"] ? dic["pluginId"] : dic[key]);
                 }//if2
+            }
+        }
+        $(cell1).show();
+        $(table).append(cell1);
+    } //for
+
+} //addCell2  cell有问题
+/*---------------------------------3.添加cell方法----------------------------*/
+function addCell4(table, cell, arr) {
+    for (var i = 0; i < arr.length; i++) {
+        var dic = arr[i];
+        var cell1 = $(cell).clone();
+        var table = $(table);
+       //alert(arr.length);
+        for (var key in dic) {
+
+
+            if ($(cell1).children().length ==  0  && $(cell1).attr("name") == key) { //判断cell本身是不是只有一个元素
+                $(cell1).text(dic[key]);
+
             }
         }
         $(cell1).show();
@@ -578,7 +632,8 @@ function device() {
 
             var data = getDataFromEle("#cell", this, "name");
             var dataStr = JSON.stringify(data);//alert(dataStr);
-            window.sessionStorage.deviceDataStr = dataStr;
+            storage("deviceDataStr",dataStr);
+           // window.sessionStorage.deviceDataStr = dataStr;
 
 
         });
@@ -848,7 +903,8 @@ function addDevice() {
 /*---------------------------------设备详情/固件----------------------------------------*/
 function deviceDetail() {
     //获取上页传值
-    var data = window.sessionStorage.deviceDataStr;
+    //var data = window.sessionStorage.deviceDataStr;
+    var  data = getStorage("deviceDataStr");
 //alert(data);
     var deviceData = JSON.parse(data);
     var firmwareId = deviceData['firmwareId'];
@@ -1102,7 +1158,9 @@ function deviceDetail() {
 
 function addFirmwareVersion() {
 
-    var deviceDataStr = window.sessionStorage.deviceDataStr;
+    //var deviceDataStr = window.sessionStorage.deviceDataStr;
+    var deviceDataStr = getStorage("deviceDataStr");
+
     var dataJson = JSON.parse(deviceDataStr);
     var firmwareId = dataJson["firmwareId"];
 //alert(firmwareId);
@@ -1196,3 +1254,303 @@ function status() {
 
 
 }
+
+/*----------------------------------------------------查询红外码库-------------------------------------------------------*/
+function lircCode() {
+    $.ajax({
+        type: "get",
+        url: allCodeUrl,
+        async: true,
+        cache: false,
+        success: allCodeCallBack,
+        error: function () {
+            alert("查询红外码库失败!");
+        },
+        timeout: 3000
+    });
+/*
+    var data = {
+     "ret":0,
+"values":[
+        {
+            "id":"1",
+"version": "V1.0.1",
+},
+    {
+    "id":"2",
+    "version": "V1.0.2",
+    }
+]
+};*/
+function allCodeCallBack(data) {
+    if(typeof data == "string"){
+        data = JSON.parse(data);
+    }
+
+
+    var  arr = data.values;
+    addCell("#table", "#cell", arr, null)
+
+    /*----------------------------------------------------删除红外码库-------------------------------------------------------*/
+    $(".pluginDelete").on("click",function() {
+        var version =  $(this).parents("#cell").find("[name = version]").text();
+        //alert(version);
+        $.ajax({
+            type: "post",
+            url: deleteCodeUrl,
+            async: true,
+            data: {
+                version:version
+            },
+            cache: false,
+            success: function () {
+                alert("删除成功");
+                window.location.reload();
+            },
+            error: function () {
+                alert("删除失败!");
+            }
+        });//ajax
+    });
+
+
+
+
+}
+
+
+
+}//lircCode
+
+/*----------------------------------------------------添加红外码库-------------------------------------------------------*/
+function  addCode1() {
+
+    checkForm("#addPluginForm", ".inputSubmit", {
+        version: {
+            required:true/*,
+            remote:{
+                url:firmwareVersionIsOk,
+                type:"Post",
+                data:{
+                    version:$(".inputname").val(),
+                    firmwareId:firmwareId
+                }
+            }*/
+        },
+        thumbnail:{required:true
+        }
+    }, {
+        version:{
+            required:"请输入版本号",
+            /*remote:"版本号已经存在"*/
+        } ,
+        thumbnail:"请选择红外吗库"
+    }, function (form) {
+        codeSubmit();
+    });
+
+function  codeSubmit() {
+
+    $("#addPluginForm").ajaxSubmit({
+        type: 'post',
+        url: addCodeUrl,
+        cache: false,
+        data: {
+        },
+        success: function (data) {
+            var sure = confirm("上传成功继续上传?");
+            if (!sure) {
+                history.back();
+            }
+            clearInput();
+        },
+        error: function () {
+            alert("失败");
+        },
+        timeout:3000
+    }); //ajax
+}
+
+}//addCode1
+
+/*----------------------------------------------------红外设备-------------------------------------------------------*/
+function lircDevice() {
+    var dev =  [{"devType":"空调"},{"devType":"电视机"},{"devType":"机顶盒/卫星"},{"devType":"插座"},{"devType":"投影仪"},
+        {"devType":"互联网盒子"},{"devType":"DVD"},{"devType":"功放"},{"devType":"相机"},{"devType":"风扇"},
+        {"devType":"红外开关"},{"devType":"热水器"},{"devType":"空气净化器"}];
+
+    addCell("#table", "#cell", dev, null);
+
+    //传递参数
+    $(".detailBtn").on("click",function () {
+       var devType = $(this).parents("#cell").find("[name=devType]").text();
+        window.sessionStorage.devType = devType;
+    });
+}
+
+/*----------------------------------------------------红外设备详情-------------------------------------------------------*/
+function  lircDeviceDetail() {
+   var data = {
+    'ret':0,
+    'devType' : 'TV',
+    'values':[
+        {
+            'lircId':'1',
+    'manufacture': 'CHANGHONG',
+    'modelName':['xxxx', 'xxxxx']
+    },
+        {
+        'lircId':'1',
+        'manufacture':'SAMSUNG',
+        'modelName':['xxxx', 'xxxxx']
+        }
+        ,
+        {
+            'lircId':'1',
+            'manufacture':'SAMSUNG',
+            'modelName':['xxxx', 'xxxxx']
+        }
+
+    ]
+    };
+var devType =  window.sessionStorage.devType;
+
+
+    $.ajax({
+        type: "post",
+        url: allDevUrl,
+        async: true,
+        data: {
+            devType:devType
+        },
+        cache: false,
+        success: detailCallBack,
+        error: function () {
+            alert("删除失败!");
+        }
+    });//ajax
+
+function detailCallBack(data) {
+   // alert(data);
+    if(typeof data == "string"){
+        data = JSON.parse(data);
+    }
+
+    var arr = data.values;
+    for(var i = 0; i < arr.length; i++){
+        var dic = arr[i];
+        var cell = $("#cell").clone().show();
+        for (var  key in dic){
+            $(cell).find("[name=" + key + "]").text(dic[key]);
+        }
+        $("#table").append(cell);
+        var cell2 = $("#cell2").clone().show();
+        var arr2 = dic.modelName;
+        for(var j = 0 ; j < arr2.length; j++){
+            var  cell3 = $("#secondCell").clone();
+            $(cell3).find(".model").text(arr2[j]);
+            cell3.show();
+            // alert(cell3.html());
+            $(cell2).find("#secondTable").append(cell3);
+            //alert($(cell2).find("#secondTable").text());
+        }
+        $("#table").append(cell2);
+    }//for i
+    /*--------------------------------------------------删除红外设备--------------------------------------------------------*/
+    $(".modelDel").on("click",function () {
+       var confirm1 = confirm("确定删除?");
+        if(confirm1){
+
+/*            $.ajax({
+                type: "post",
+                url: devDeleteUrl,
+                async: true,
+                data: {
+                    devType:devType
+                },
+                cache: false,
+                success: detailCallBack,
+                error: function () {
+                    alert("删除失败!");
+                }
+            });//ajax*/
+
+
+
+
+        }
+    });
+
+
+}//lircdeviceDetail
+
+
+}
+
+
+
+/*---------------------------------------------------添加红外设备--------------------------------------------------------*/
+function addLircDevice() {
+    var dev =  [{"devType":"空调"},{"devType":"电视机"},{"devType":"机顶盒/卫星"},{"devType":"插座"},{"devType":"投影仪"},
+        {"devType":"互联网盒子"},{"devType":"DVD"},{"devType":"功放"},{"devType":"相机"},{"devType":"风扇"},
+        {"devType":"红外开关"},{"devType":"热水器"},{"devType":"空气净化器"}];
+    //获取设备型号
+    addCell4("#tableDevType", "#cellDevType", dev);
+
+
+    checkForm("#addPluginForm", ".inputSubmit", {
+        devType: {
+            required:true/*,
+             remote:{
+             url:firmwareVersionIsOk,
+             type:"Post",
+             data:{
+             version:$(".inputname").val(),
+             firmwareId:firmwareId
+             }
+             }*/
+        },
+        manufacture:"required",
+        modelName:"required",
+        thumbnail:{required:true
+        }
+    }, {
+        devType:{
+            required:"请选择设备类型",
+            /*remote:"版本号已经存在"*/
+        } ,
+        modelName:{
+            required:"请输入设备型号",
+        },
+        manufacture:{
+          required:"请输入厂商"
+        },
+        thumbnail:"请选择红外吗库"
+    }, function (form) {
+        devAddSubmit();
+    });
+
+    function  devAddSubmit() {
+
+        $("#addPluginForm").ajaxSubmit({
+            type: 'post',
+            url: devAddUrl,
+            cache: false,
+            data: {
+            },
+            success: function (data) {
+                var sure = confirm("上传成功继续上传?");
+                if (!sure) {
+                    history.back();
+                }
+                clearInput();
+            },
+            error: function () {
+                alert("失败");
+            },
+            timeout:3000
+        }); //ajax
+    }
+}//addLircDevice
+
+

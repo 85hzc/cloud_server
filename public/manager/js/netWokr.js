@@ -1441,7 +1441,14 @@ function detailCallBack(data) {
         var dic = arr[i];
         var cell = $("#cell").clone().show();
         for (var  key in dic){
-            $(cell).find("[name=" + key + "]").text(dic[key]);
+
+            //添加index
+       /*     if(key == "manufacture"){
+                var index = i + 1;
+                $(cell).find("[name=" + key + "]").text(index+" : "+dic[key]);
+            }else{*/
+                $(cell).find("[name=" + key + "]").text(dic[key]);
+            /*}*/
         }
         $("#table").append(cell);
         var cell2 = $("#cell2").clone().show();
@@ -1461,19 +1468,30 @@ function detailCallBack(data) {
        var confirm1 = confirm("确定删除?");
         if(confirm1){
 
-/*            $.ajax({
+            var devType = window.sessionStorage.devType;
+            var manufacture = $(this).parents("#cell2").prev("#cell").find("[name = manufacture]").text();
+            var modelName = $(this).prev().text();
+
+            //alert(devType+manufacture+modelName);
+            var thisData = {
+                devType:devType,
+                manufacture:manufacture,
+                modelName:modelName
+            }
+            $.ajax({
                 type: "post",
                 url: devDeleteUrl,
                 async: true,
-                data: {
-                    devType:devType
-                },
+                data:thisData,
                 cache: false,
-                success: detailCallBack,
+                success: function (data) {
+                    alert("删除成功.");
+                    window.location.reload();
+                },
                 error: function () {
                     alert("删除失败!");
                 }
-            });//ajax*/
+            });//ajax
 
 
 
@@ -1496,6 +1514,7 @@ function addLircDevice() {
         {"devType":"红外开关"},{"devType":"热水器"},{"devType":"空气净化器"}];
     //获取设备型号
     addCell4("#tableDevType", "#cellDevType", dev);
+
 
 
     checkForm("#addPluginForm", ".inputSubmit", {

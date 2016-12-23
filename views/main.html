@@ -56,7 +56,7 @@
 		/*主页停止返回*/
 		$(".bigBackBtn").on("click",function(){
 			var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
-			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help" || isRoot == "lircCode" || isRoot == "lircDevice" || isRoot == "status"){
 				return;
 			}
 			history.back();

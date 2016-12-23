@@ -159,9 +159,10 @@ function deleteDev(req, res, next) {
 
     var ret;
 
-    var deleteStr = "DELETE FROM lirc_device WHERE \"lircId\"='"
-        + req.body.lircId
-        + "';";
+    var deleteStr = "DELETE FROM lirc_device WHERE \"devType\"='"
+        + req.body.devType + "' AND manufacture='"
+        + req.body.manufacture + "' AND \"modelName\"='"
+        + req.body.modelName + "';";
 
     console.log(deleteStr);
 

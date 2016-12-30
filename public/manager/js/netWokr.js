@@ -106,11 +106,11 @@ var devAddUrl = "/lirc/devAdd";
 /*----------------------------------------存储-------------------------------------------------------*/
 function  storage(value,key) {
 
-    window.sessionStorage.value = key;
+    window.sessionStorage[value] = key;
 }
 function  getStorage(value) {
 
-    return window.sessionStorage.value;
+    return window.sessionStorage[value];
 }
 /*-------------------------------------------------判断是否是json-----------------------------------*/
 function strIsJson(str) {
@@ -142,11 +142,20 @@ function upload(input, callback) {
     }
     //支持IE 7 8 9 10
     else if (typeof window.ActiveXObject != 'undefined') {
+
         var xmlDoc;
         xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
         xmlDoc.async = false;
-        xmlDoc.load(input.value);
-        callback(xmlDoc.xml);
+
+        try {
+            xmlDoc.load(input.value);
+            callback(xmlDoc.xml);
+        }catch (e){
+            callback(1);
+        }
+
+
+
     }
     //支持FF
     else if (document.implementation && document.implementation.createDocument) {
@@ -795,12 +804,14 @@ function addDevice() {
             },function () {
                 alert("上传固件失败")
             });
-            addDevPlugin(pluginData,function () {
+            addDevPlugin(pluginData,function (data) {
+
                 alert("上传插件成功")
             },function () {
                 alert("上传插件失败")
             });
             addDevDataModel(firmwareData,function () {
+
                 alert("上传dataModel成功")
             },function () {
                 alert("上传dataModel失败")
@@ -902,11 +913,16 @@ function addDevice() {
 }
 /*---------------------------------设备详情/固件----------------------------------------*/
 function deviceDetail() {
+
     //获取上页传值
-    //var data = window.sessionStorage.deviceDataStr;
-    var  data = getStorage("deviceDataStr");
+
+     var  data = getStorage("deviceDataStr");
+
+
+
 //alert(data);
     var deviceData = JSON.parse(data);
+
     var firmwareId = deviceData['firmwareId'];
     var dataModelId = deviceData['dataModelId'];
     //alert(dataModelId);
@@ -952,7 +968,14 @@ function deviceDetail() {
             continue;
         }//大if
 
-        $(".inputContainer").find("[name=" + key + "]").val(deviceData[key]).text(deviceData[key]);
+
+
+
+
+
+        $("#addDevice").find("[name=" + key + "]").val(deviceData[key]);
+
+
     }
 //表单验证
 
@@ -1027,6 +1050,7 @@ function deviceDetail() {
             return;
         }
         upload($(".file")[0], function (result) {
+
 
 
             if (!strIsJson(result)) {
@@ -1221,6 +1245,9 @@ function addFirmwareVersion() {
 /*-----------------------------------统计status-------------------------------------------------------*/
 
 function status() {
+
+    //alert(getStorage("userName"));
+
     $.ajax({
         type: "get",
         url: getStatusUrl,
@@ -1235,9 +1262,11 @@ function status() {
 
 
     function statusCallBack(data) {
+
+
         var json = JSON.parse(data);
         var arr = json.values;
-        console.log(arr);
+
         for (var i = 0; i < arr.length; i++) {
             var dic = arr[i];
             var cell1 = $("#cell1").clone(true);

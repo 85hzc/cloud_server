@@ -130,4 +130,14 @@ CREATE TABLE lirc_code
    "vendorId" bigint REFERENCES vendor("vendorId")
 );
 
+DROP TABLE IF EXISTS device_map;
+CREATE TABLE device_map
+(
+    "devId" bigserial PRIMARY KEY,
+    "devType" varchar(64) ,
+    "place" varchar(64) ,
+    "dev_online" boolean,
+    "nick_Name" varchar(64),
+    "connection" varchar(64)
+);
 

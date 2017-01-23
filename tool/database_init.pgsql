@@ -91,7 +91,9 @@ CREATE TABLE iot_device
     "lircData" json,
     "firstOnlineTime" timestamptz,
     "lastOnlineTime" timestamptz,
-    "userId" bigint
+    "userId" bigint,
+    "connection" varchar(32),
+    "place" varchar(32)
 );
 
 DROP TABLE IF EXISTS dev_user_mapping;

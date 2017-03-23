@@ -1,10 +1,12 @@
-var pg = require('pg');
-var db = require('db');
-var fs = require('fs');
-var pgString = db.consqlString;
-var myClient = new pg.Client(pgString);
 
+
+
+var mysql   = require('mysql');
+var db = require('db');
+var myClient = mysql.createConnection(db.mysql);
+ 
 myClient.connect();
+
 
 function send_stat(res, values) {
     var retStr = {
@@ -20,23 +22,22 @@ function addDataModel(req, res, next) {
     var ret = 1;
     var vendorID = req.session.vendorID;
 
-    var insertStr = "INSERT INTO iot_dev_datamodel(\"manufacture\",\"manufactureDataModelId\",\"devDesc\",\"name\",\"vendorId\")"
-                + " VALUES('"
-                + req.body.manufacture + "', '"
-                + req.body.manufactureDataModelId + "', '"
-                + req.body.devDesc + "', '"
-                + req.body.name + "', '"
-                + vendorID
-                + "') RETURNING \"dataModelId\";";
+    var insertStr = "INSERT INTO iot_dev_datamodel(manufacture,manufactureDataModelId,devDesc,name,vendorId)"
+    + " VALUES('"+req.body.manufacture +" ','"+ req.body.manufactureDataModelId + "', '"+ req.body.devDesc + "', '"+ req.body.name + "', '"+ vendorID+ "') ";
 
+    myClient.query(insertStr);
     console.log(insertStr);
 
-    myClient.query(insertStr, function(err, result) {
+    var selectStr='SELECT @@IDENTITY AS ID';
+
+    console.log(selectStr);
+    myClient.query(selectStr, function(err, result) {
         if (err) {
             console.error(err.stack);
         }
         else {
-            var dataModelId = result.rows[0].dataModelId;
+            var dataModelId = result[0].ID;
+            
             ret = 0;
         }
 
@@ -59,15 +60,15 @@ function changeDataModel(req, res, next) {
    
 
     var insertStr = "UPDATE iot_dev_datamodel SET "
-                +"\"manufacture\" = '"
+                +"manufacture = '"
                 +req.body.manufacture+"',"
- 		+"\"name\" = '"
+ 		+"name = '"
                 +req.body.name+"',"
-                +"\"manufactureDataModelId\" = '"
+                +"manufactureDataModelId = '"
                 +req.body.manufactureDataModelId+"',"
-                +" \"devDesc\" = '"
+                +" devDesc = '"
                 +req.body.devDesc+"'" 
-                +" WHERE \"dataModelId\" = "+req.body.dataModelId+";";
+                +" WHERE dataModelId = "+req.body.dataModelId+";";
 
 
     console.log(insertStr);
@@ -109,8 +110,8 @@ function updateDataModel(req, res) {
 
         var obj = JSON.parse(data);
 
-        var updateStr = "UPDATE iot_dev_datamodel SET \"devDataModel\"='"
-                    + JSON.stringify(obj) + "' WHERE \"dataModelId\"='"
+        var updateStr = "UPDATE iot_dev_datamodel SET devDataModel='"
+                    + JSON.stringify(obj) + "' WHERE dataModelId='"
                     + req.body.dataModelId + "';"; 
         
         console.log(updateStr);
@@ -139,7 +140,7 @@ function deleteDataModel(req, res, next) {
 
     var ret = 1;
 
-    var queryStr = "DELETE FROM iot_device WHERE \"deviceDataModelId\"='"
+    var queryStr = "DELETE FROM iot_device WHERE deviceDataModelId='"
                     + req.body.dataModelId
                     + "';";
 
@@ -152,9 +153,9 @@ function deleteDataModel(req, res, next) {
         }
         
         var deleteStr = "DELETE FROM iot_dev_datamodel"
-                    + " WHERE \"dataModelId\"='"
+                    + " WHERE dataModelId='"
                     + req.body.dataModelId 
-                    + "' AND \"vendorId\"='"
+                    + "' AND vendorId='"
                     + req.session.vendorID
                     + "';";
 
@@ -183,7 +184,7 @@ function stat(req, res, next) {
     var stat = 6;
 
     /*developer counts*/
-    var vendorStr = "SELECT count(*) FROM " +  db.vendor_table + ";";
+    var vendorStr = "SELECT count(*) as count FROM vendor";
     console.log(vendorStr);
 
     myClient.query(vendorStr, function(err, result) {
@@ -191,10 +192,10 @@ function stat(req, res, next) {
             console.error(err.stack);
             return;
         }
-
+        console.log(result[0].username);
         var value = {
             name: "开发者总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -206,7 +207,7 @@ function stat(req, res, next) {
     });
 
     /*device counts*/
-    var devStr = "SELECT count(*) FROM iot_device;";
+    var devStr = "SELECT COUNT(*) as count FROM iot_device;";
     console.log(devStr);
 
     myClient.query(devStr, function(err, result) {
@@ -217,7 +218,7 @@ function stat(req, res, next) {
 
         var value = {
             name: "设备总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -229,7 +230,7 @@ function stat(req, res, next) {
     });
 
     /*online device counts*/
-    var devOnlineStr = "SELECT count(*) FROM iot_device WHERE online=true;";
+    var devOnlineStr = "SELECT count(*) as count FROM iot_device WHERE online=1;";
     console.log(devOnlineStr);
 
     myClient.query(devOnlineStr, function(err, result) {
@@ -240,7 +241,7 @@ function stat(req, res, next) {
 
         var value = {
             name: "在线设备总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -252,7 +253,7 @@ function stat(req, res, next) {
     });
 
     /*plugin counts*/
-    var pluginStr = "SELECT count(*) FROM " + db.plugin_table + ";";
+    var pluginStr = "SELECT count(*) as count FROM plugin_table";
     console.log(pluginStr);
 
     myClient.query(pluginStr, function(err, result) {
@@ -263,7 +264,7 @@ function stat(req, res, next) {
 
         var value = {
             name: "插件总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -275,7 +276,7 @@ function stat(req, res, next) {
     });
 
     /*app users counts*/
-    var appStr = "SELECT count(*) FROM user_table;";
+    var appStr = "SELECT count(*) as count FROM user_table;";
     console.log(appStr);
 
     myClient.query(appStr, function(err, result) {
@@ -286,7 +287,7 @@ function stat(req, res, next) {
 
         var value = {
             name: "APP账号总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -298,7 +299,7 @@ function stat(req, res, next) {
     });
 
     /*datamodel counts*/
-    var datamodelStr = "SELECT count(*) FROM iot_dev_datamodel;";
+    var datamodelStr = "SELECT count(*) as count FROM iot_dev_datamodel;";
     console.log(datamodelStr);
 
     myClient.query(datamodelStr, function(err, result) {
@@ -309,7 +310,7 @@ function stat(req, res, next) {
 
         var value = {
             name: "设备类型总数",
-            count: result.rows[0].count
+            count: result[0].count
         };
 
         console.log(value);
@@ -329,9 +330,7 @@ function queryAllDev(req, res, next) {
     var vendorID = req.session.vendorID;
     var values = new Array();
 
-    var queryStr = "SELECT * FROM iot_dev_datamodel WHERE \"vendorId\"='"
-                + vendorID
-                + "';";
+    var queryStr = 'SELECT * FROM iot_dev_datamodel WHERE vendorId= "'+vendorID+'" ';
 
     console.log(queryStr);
 
@@ -342,8 +341,8 @@ function queryAllDev(req, res, next) {
         }
 
         var jsonIsExist;
-
-        result.rows.forEach(function(row) {
+        console.log(result);
+        result.forEach(function(row) {
             if (row.devDataModel != null) {
                 jsonIsExist = 1;
             }
@@ -381,8 +380,8 @@ function addPlugin(req, res, next) {
     var pluginId = req.body.pluginId;
     var dataModelId = req.body.dataModelId;
 
-    var updateStr = "UPDATE iot_dev_datamodel SET \"pluginId\"='"
-                + pluginId + "' WHERE \"dataModelId\"='"
+    var updateStr = "UPDATE iot_dev_datamodel SET pluginId='"
+                + pluginId + "' WHERE dataModelId='"
                 + dataModelId
                 + "';";
 

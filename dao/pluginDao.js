@@ -1,13 +1,14 @@
-var pg = require('pg');
+//var pg = require('pg');
 var $confconect = require('db');
 var $sql = require('./pluginSqlMapping');
 var multiparty = require('multiparty');
 var fs = require('fs');
-var db = require('db');
-var client = require('db_client');
 
-var pgString = db.consqlString;
-var myClient = new pg.Client(pgString);
+
+var mysql   = require('mysql');
+var db = require('db');
+var myClient = mysql.createConnection(db.mysql);
+ 
 myClient.connect();
 
 //向前台返回JSON的简单封装
@@ -95,10 +96,7 @@ function queryAllPlugin(req, res, next)
     var vendorID = req.session.vendorID;
     var values = new Array();
 
-    var queryStr = "SELECT * from " + db.plugin_table
-                   + " WHERE \"vendorId\" = '"
-                   + vendorID
-                   + "';";
+    var queryStr = "SELECT * from plugin_table WHERE vendorId = '"+ vendorID+ "';";
 
     console.log(queryStr);
 
@@ -108,7 +106,7 @@ function queryAllPlugin(req, res, next)
             return;
         }
 
-        result.rows.forEach(function(row) {
+        result.forEach(function(row) {
             var value = {
                 pluginId: row.pluginId,
                 pluginName: row.pluginName,
@@ -147,29 +145,34 @@ function addPlugin(req, res, next)
 
     var ret = 0;
     
-    var insertStr = "INSERT INTO " + db.plugin_table
-                      + "(\"vendorId\",\"pluginName\",\"pluginDesc\")" 
+    var insertStr = "INSERT INTO plugin_table (vendorId,pluginName,pluginDesc)" 
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
                       + req.body.pluginName + "', '"
                       + req.body.pluginDesc
-                      + "') RETURNING \"pluginId\";";
+                      + "') ";
 
     console.log(insertStr);
+    myClient.query(insertStr);
+
+
+    var selectStr='SELECT @@IDENTITY AS ID';
+    console.log(selectStr);
     
-    myClient.query(insertStr, function(err, result) {
+    myClient.query(selectStr, function(err, result) {
         if (err) {
             console.error(err.stack);
             return;
         }
 
-        var pluginId = result.rows[0].pluginId;
+        var pluginId = result[0].ID;
+        console.log(result[0].ID);
         var fileDir = db.file_server_url + "/" + req.session.vendorName + "/plugin/" + pluginId;
 
         console.log("pluginDir="+fileDir);
 
-        var updateStr = "UPDATE " + db.plugin_table + " SET \"pluginDir\"='" 
-                    + fileDir + "' WHERE \"pluginId\"='" + pluginId + "';";
+        var updateStr = "UPDATE plugin_table  SET pluginDir='" 
+                    + fileDir + "' WHERE pluginId='" + pluginId + "';";
 
         console.log(updateStr);
 
@@ -179,7 +182,7 @@ function addPlugin(req, res, next)
                 return;
             }
 
-            if (result.rowCount == 1) {
+            if (result.length == 1) {
                 console.log("update plugin table success.");
             }
             else {
@@ -208,7 +211,7 @@ function addPlugin(req, res, next)
 
 function addPluginVersion(req, res)
 {
-    var insertStr = "INSERT INTO plugin_version (\"pluginId\", \"version\", \"changeLog\", \"fileName\", md5) "
+    var insertStr = "INSERT INTO plugin_version (pluginId, version, changeLog, fileName, md5) "
             + "VALUES('" + req.body.pluginId + "', '"
             + req.body.version + "', '"
             + req.body.versionDesc + "', '"
@@ -223,7 +226,7 @@ function addPluginVersion(req, res)
             console.error(err.stack);
             return;
         }
-        if (result.rowCount == 1) {
+        if (result.length == 1) {
             console.log("add plugin_version success.");
 
             var retStr = { ret: 0 };
@@ -249,7 +252,7 @@ function deletePlugin(req, res, next)
     var vendorID = req.session.vendorID;
 
     var queryStr = "DELETE FROM plugin_version" 
-                  + " WHERE \"pluginId\"='"
+                  + " WHERE pluginId='"
                   + pluginId
                   + "';";
 
@@ -261,9 +264,8 @@ function deletePlugin(req, res, next)
             return;
         }
 
-        var deleteStr = "DELETE FROM " + db.plugin_table
-                + " WHERE \"pluginId\"='" + pluginId 
-                + "' AND \"vendorId\"='" + vendorID
+        var deleteStr = "DELETE FROM plugin_table WHERE pluginId='" + pluginId 
+                + "' AND vendorId='" + vendorID
                 + "';";
 
         console.log(deleteStr);
@@ -298,7 +300,7 @@ function deleteVersion(req, res, next)
     var version = req.body.version;
 
     var queryStr = "DELETE FROM plugin_version" 
-                  + " WHERE \"pluginId\"='"
+                  + " WHERE pluginId='"
                   + pluginId + "' AND version='"
                   + version
                   + "';";
@@ -320,11 +322,11 @@ function deleteVersion(req, res, next)
 
 function queryPluginVersion(req, res, next) {
     console.log("Enter query Plugin version");
-    console.log(req.body);
+    //console.log(req.body.pluginName);
 
     var values = new Array();
 
-    var selectStr = "SELECT * FROM plugin_version WHERE \"pluginId\"='" + req.body.pluginId + "';";
+    var selectStr ='SELECT * FROM plugin_version WHERE pluginId="'+req.body.pluginId+'"';
 
     myClient.query(selectStr, function(err, result) {
         if (err) {
@@ -332,7 +334,7 @@ function queryPluginVersion(req, res, next) {
             return;
         }
 
-        result.rows.forEach(function(row) {
+        result.forEach(function(row) {
             var value = {
                 version: row.version,
                 changeLog: row.changeLog,
@@ -343,8 +345,7 @@ function queryPluginVersion(req, res, next) {
             values.push(value);
         }); 
 
-        var queryStr = "SELECT \"publishVersion\" FROM " + db.plugin_table
-                        + " WHERE \"pluginId\"='" + req.body.pluginId + "';";
+        var queryStr = "SELECT publishVersion FROM plugin_table WHERE pluginId='" + req.body.pluginId + "';";
 
         console.log(queryStr);
 
@@ -354,7 +355,7 @@ function queryPluginVersion(req, res, next) {
                 return;
             }
 
-            var version = result1.rows[0].publishVersion;
+            var version = result1[0].publishVersion;
 
             var retStr = {
                 ret: 0,
@@ -376,9 +377,8 @@ function publishVersion(req, res, next) {
     var pluginId = req.body.pluginId;
     var version = req.body.version;
 
-    var updateStr = "UPDATE " + db.plugin_table
-                    + " SET \"publishVersion\"='"
-                    + version + "' WHERE \"pluginId\"='"
+    var updateStr = "UPDATE plugin_table SET publishVersion='"
+                    + version + "' WHERE pluginId='"
                     + pluginId
                     + "';";
 
@@ -404,10 +404,7 @@ function queryPluginById(req, res, next) {
     var ret = 0;
     var value;
 
-    var selectStr = "SELECT * FROM " + db.plugin_table
-                + " WHERE \"pluginId\"='"
-                + pluginId
-                + "';";
+    var selectStr = 'SELECT * FROM plugin_table WHERE pluginId="'+pluginId+'"';
 
     console.log(selectStr);
 
@@ -417,11 +414,11 @@ function queryPluginById(req, res, next) {
             return;
         }
 
-        if (result.rowCount == 1) {
+        if (result.length == 1) {
             value = {
                 pluginId: pluginId,
-                pluginName: result.rows[0].pluginName,
-                pluginDesc: result.rows[0].pluginDesc
+                pluginName: result[0].pluginName,
+                pluginDesc: result[0].pluginDesc
             };
         }
         else {
@@ -445,8 +442,8 @@ function pluginVersionIsOk(req, res, next) {
 
     var values = new Array();
 
-    var selectStr = "SELECT * FROM plugin_version WHERE \"pluginId\"='" + req.body.pluginId +
-        "' and \"version\"='" + req.body.version +"';";
+    var selectStr = "SELECT * FROM plugin_version WHERE pluginId='" + req.body.pluginId +
+        "' and version='" + req.body.version +"';";
 
     console.log(selectStr);
 
@@ -456,7 +453,7 @@ function pluginVersionIsOk(req, res, next) {
             return;
         }
         else {
-            res.send(result.rows.length == 0 ? true : false);
+            res.send(result.length == 0 ? true : false);
         }
 
 

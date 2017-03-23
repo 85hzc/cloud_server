@@ -1,4 +1,3 @@
-var pg = require('pg');
 var $confconect = require('db');
 
 var EventEmitter = require('events').EventEmitter;
@@ -17,8 +16,7 @@ var jsonWrite = function(res, ret) {
     }
 };
 
-var client = new pg.Client($confconect.consqlString);
-client.connect();
+var client = null;
 
 module.exports = {
     

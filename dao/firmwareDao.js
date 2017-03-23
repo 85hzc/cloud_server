@@ -1,9 +1,8 @@
-var pg = require('pg');
+
+var mysql   = require('mysql');
 var db = require('db');
-
-var pgString = db.consqlString;
-var myClient = new pg.Client(pgString);
-
+var myClient = mysql.createConnection(db.mysql);
+ 
 myClient.connect();
 
 
@@ -13,9 +12,7 @@ function queryAllFirmware(req, res, next) {
 
     var vendorID = req.session.vendorID;
 
-    var queryStr = "SELECT * FROM firmware_table WHERE \"vendorId\"='"
-                + vendorID
-                + "';";
+    var queryStr = 'SELECT * FROM firmware_table WHERE vendorId="'+vendorID+'" ';
 
     console.log(queryStr);
 
@@ -34,33 +31,42 @@ function addFirmware(req, res, next)
 {
     console.log("Enter addFirmware");
     console.log("vendorID=" + req.session.vendorID + ",vendorName=" + req.session.vendorName);
-    console.log(req.body);
+    console.log(req.body.firmwareName);
+    console.log(req.body.firmwareDes);
+    
+
+
 
     var ret = 0;
     
     var insertStr = "INSERT INTO firmware_table"
-                      + "(\"vendorId\",\"firmwareName\",\"firmwareDesc\")" 
+                      + "(vendorId,firmwareName,firmwareDesc)" 
                       + " VALUES('" 
                       + req.session.vendorID + "', '"
                       + req.body.firmwareName + "', '"
                       + req.body.firmwareDes
-                      + "') RETURNING \"firmwareId\";";
+                      + "') ";
+
 
     console.log(insertStr);
-    
-    myClient.query(insertStr, function(err, result) {
+    myClient.query(insertStr);
+     
+    var selectStr='SELECT @@IDENTITY AS ID';
+    console.log(selectStr);
+    myClient.query(selectStr, function(err, result) {
         if (err) {
             console.error(err.stack);
             return;
         }
 
-        var firmwareId = result.rows[0].firmwareId;
+        var firmwareId = result[0].ID;
+        console.log(result[0].ID);
         var fileDir = db.file_server_url + "/" + req.session.vendorName + "/firmware/" + firmwareId;
 
         console.log("firmwareDir="+fileDir);
 
-        var updateStr = "UPDATE firmware_table SET \"firmwareDir\"='" 
-                    + fileDir + "' WHERE \"firmwareId\"='" + firmwareId + "';";
+        var updateStr = "UPDATE firmware_table SET firmwareDir='" 
+                    + fileDir + "' WHERE firmwareId='" + firmwareId + "';";
 
         console.log(updateStr);
 
@@ -70,7 +76,7 @@ function addFirmware(req, res, next)
                 return;
             }
 
-            if (result.rowCount == 1) {
+            if (result.length == 1) {
                 console.log("update firmware table success.");
             }
             else {
@@ -86,9 +92,9 @@ function addFirmware(req, res, next)
 
         });
 
-        var upStr = "UPDATE iot_dev_datamodel SET \"firmwareId\"='"
+        var upStr = "UPDATE iot_dev_datamodel SET firmwareId='"
             + firmwareId
-            + "' WHERE \"dataModelId\"='"
+            + "' WHERE dataModelId='"
             + req.body.dataModelId
             + "';";
 
@@ -105,7 +111,7 @@ function addFirmware(req, res, next)
 
 function addFirmwareVersion(req, res)
 {
-    var insertStr = "INSERT INTO firmware_version (\"firmwareId\", \"version\", \"changeLog\", \"fileName\", md5) "
+    var insertStr = "INSERT INTO firmware_version (firmwareId, version, changeLog, fileName, md5) "
             + "VALUES('" + req.body.firmwareId + "', '"
             + req.body.version + "', '"
             + req.body.versionDesc + "', '"
@@ -120,7 +126,7 @@ function addFirmwareVersion(req, res)
             console.error(err.stack);
             return;
         }
-        if (result.rowCount == 1) {
+        if (result.length == 1) {
             console.log("add firmware_version success.");
 
             var retStr = { ret: 0 };
@@ -141,7 +147,7 @@ function deleteFirmware(req, res, next)
     var vendorID = req.session.vendorID;
 
     var queryStr = "DELETE FROM firmware_version" 
-                  + " WHERE \"firmwareId\"='"
+                  + " WHERE firmwareId='"
                   + firmwareId
                   + "';";
 
@@ -154,8 +160,8 @@ function deleteFirmware(req, res, next)
         }
 
         var deleteStr = "DELETE FROM firmware_table"
-                + " WHERE \"firmwareId\"='" + firmwareId 
-                + "' AND \"vendorId\"='" + vendorID
+                + " WHERE firmwareId='" + firmwareId 
+                + "' AND vendorId='" + vendorID
                 + "';";
 
         console.log(deleteStr);
@@ -183,7 +189,7 @@ function deleteVersion(req, res, next)
     var version = req.body.version;
 
     var queryStr = "DELETE FROM firmware_version" 
-                  + " WHERE \"firmwareId\"='"
+                  + " WHERE firmwareId='"
                   + firmwareId + "' AND version='"
                   + version
                   + "';";
@@ -209,7 +215,7 @@ function queryFirmwareVersion(req, res, next) {
 
     var values = new Array();
 
-    var selectStr = "SELECT * FROM firmware_version WHERE \"firmwareId\"='" + req.body.firmwareId + "';";
+    var selectStr = "SELECT * FROM firmware_version WHERE firmwareId='" + req.body.firmwareId + "';";
 
     myClient.query(selectStr, function(err, result) {
         if (err) {
@@ -217,7 +223,7 @@ function queryFirmwareVersion(req, res, next) {
             return;
         }
 
-        result.rows.forEach(function(row) {
+        result.forEach(function(row) {
             var value = {
                 version: row.version,
                 changeLog: row.changeLog,
@@ -228,18 +234,18 @@ function queryFirmwareVersion(req, res, next) {
             values.push(value);
         }); 
 
-        var queryStr = "SELECT \"publishVersion\" FROM firmware_table"
-                        + " WHERE \"firmwareId\"='" + req.body.firmwareId + "';";
+        var queryStr = "SELECT publishVersion FROM firmware_table"
+                        + " WHERE firmwareId='" + req.body.firmwareId + "';";
 
         console.log(queryStr);
 
-        myClient.query(queryStr, function(err, result1) {
+        myClient.query(queryStr, function(err, result) {
             if (err) {
                 console.error(err.stack);
                 return;
             }
 
-            var version = result1.rows[0].publishVersion;
+            var version = result[0].publishVersion;
 
             var retStr = {
                 ret: 0,
@@ -261,11 +267,11 @@ function queryFirmware(req, res, next) {
     var dataModelId = req.body.dataModelId;
 
     var selectStr = "SELECT "
-                + "firmware_table.\"firmwareId\",firmware_table.\"firmwareName\",firmware_table.\"firmwareDesc\" "
+                + "firmware_table.firmwareId,firmware_table.firmwareName,firmware_table.firmwareDesc "
                 + "FROM (firmware_table JOIN iot_dev_datamodel ON "
-                + "firmware_table.\"firmwareId\"=iot_dev_datamodel.\"firmwareId\") "
+                + "firmware_table.firmwareId=iot_dev_datamodel.firmwareId) "
                 + "WHERE "
-                + "iot_dev_datamodel.\"dataModelId\"='" + dataModelId + "';";
+                + "iot_dev_datamodel.dataModelId='" + dataModelId + "';";
 
     console.log(selectStr);
 
@@ -278,11 +284,11 @@ function queryFirmware(req, res, next) {
         var value;
         var ret = 0;
 
-        if (result.rowCount == 1) {
+        if (result.length == 1) {
             value = {
-                firmwareId: result.rows[0].firmwareId,
-                firmwareName: result.rows[0].firmwareName,
-                firmwareDesc: result.rows[0].firmwareDesc
+                firmwareId: result[0].firmwareId,
+                firmwareName: result[0].firmwareName,
+                firmwareDesc: result[0].firmwareDesc
             };
         }
         else {
@@ -306,8 +312,8 @@ function publishVersion(req, res, next) {
     var version = req.body.version;
 
     var updateStr = "UPDATE firmware_table"
-                    + " SET \"publishVersion\"='"
-                    + version + "' WHERE \"firmwareId\"='"
+                    + " SET publishVersion='"
+                    + version + "' WHERE firmwareId='"
                     + firmwareId
                     + "';";
 
@@ -332,8 +338,8 @@ function firmwareVersionIsOk(req, res, next) {
 
 
 
-    var selectStr = "SELECT * FROM firmware_version WHERE \"firmwareId\"='" + req.body.firmwareId
-        +"' and \"version\"='" + req.body.version + "';";
+    var selectStr = "SELECT * FROM firmware_version WHERE firmwareId='" + req.body.firmwareId
+        +"' and version='" + req.body.version + "';";
 
     console.log(selectStr);
     myClient.query(selectStr, function(err, result) {

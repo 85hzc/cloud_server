@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
-var pg = require('pg');
+//var pg = require('pg');
 
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
@@ -28,7 +28,7 @@ router.post('/list', function(req, res, next) {
 					</xml>";
 
 
-	pg.connect(pgString, function(err, client, done) {
+	//pg.connect(pgString, function(err, client, done) {
         client.query("select equipname from tbluserdevice where username=$1", [fromusername], function(err, result) {
             
             var content = "";

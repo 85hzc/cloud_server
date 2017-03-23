@@ -1,13 +1,14 @@
-var pg = require('pg');
+//var pg = require('pg');
 var $confconect = require('db');
 var client_intf = require('client_intf');
 var EventEmitter = require('events').EventEmitter;
 var evt = new EventEmitter();
 
-var db = require('db');
-var pgString = db.consqlString;
 
-var client = new pg.Client(pgString);
+var mysql   = require('mysql');
+var db = require('db');
+var client = mysql.createConnection(db.mysql);
+ 
 client.connect();
 
 module.exports.addEquipment = addEquipment;

@@ -1,9 +1,7 @@
-var pg = require('pg');
+var mysql   = require('mysql');
 var db = require('db');
-var fs = require('fs');
-var pgString = db.consqlString;
-var myClient = new pg.Client(pgString);
-
+var myClient = mysql.createConnection(db.mysql);
+ 
 myClient.connect();
 
 function updateCode(req, res) {
@@ -18,11 +16,11 @@ function updateCode(req, res) {
 
     console.log("download url:" +  url);
 
-    var insertStr = "INSERT INTO lirc_code(version, \"downloadUrl\", \"vendorId\") VALUES('"
+    var insertStr = "INSERT INTO lirc_code(version, downloadUrl, vendorId) VALUES('"
         + req.body.version + "', '"
         + url + "', '"
         + vendorID
-        + "') RETURNING id;";
+        + "') ";
 
     console.log(insertStr);
 
@@ -80,7 +78,7 @@ function queryAllCode(req, res, next) {
     var vendorID = req.session.vendorID;
     var values = new Array();
 
-    var queryStr = "SELECT * FROM lirc_code WHERE \"vendorId\"='"
+    var queryStr = "SELECT * FROM lirc_code WHERE vendorId='"
         + vendorID
         + "';";
 
@@ -92,7 +90,7 @@ function queryAllCode(req, res, next) {
             var retStr = {ret: 1};
         }
         else {
-            result.rows.forEach(function(row) {
+            result.forEach(function(row) {
                 var value = {
                     id: row.id,
                     version:row.version
@@ -120,7 +118,7 @@ function queryAllDev(req, res, next) {
     var values = new Array();
     var devType = req.body.devType;
 
-    var queryStr = "SELECT manufacture,array_agg(\"modelName\") FROM lirc_device WHERE \"devType\"='"
+    var queryStr = "SELECT manufacture,array_agg(modelName) FROM lirc_device WHERE devType='"
         + devType + "' GROUP BY manufacture;";
 
     console.log(queryStr);
@@ -132,7 +130,7 @@ function queryAllDev(req, res, next) {
         }
         else {
             ret = 0;
-            result.rows.forEach(function(row) {
+            result.forEach(function(row) {
                 var value = {
                     manufacture: row.manufacture,
                     modelName: row.array_agg
@@ -159,9 +157,9 @@ function deleteDev(req, res, next) {
 
     var ret;
 
-    var deleteStr = "DELETE FROM lirc_device WHERE \"devType\"='"
+    var deleteStr = "DELETE FROM lirc_device WHERE devType='"
         + req.body.devType + "' AND manufacture='"
-        + req.body.manufacture + "' AND \"modelName\"='"
+        + req.body.manufacture + "' AND modelName='"
         + req.body.modelName + "';";
 
     console.log(deleteStr);
@@ -187,9 +185,9 @@ function addDev(req, res, next) {
     var ret;
     var retStr;
 
-    var selectStr = "SELECT * FROM lirc_device WHERE \"devType\"='"
+    var selectStr = "SELECT * FROM lirc_device WHERE devType='"
         + req.body.devType + "' AND manufacture='"
-        + req.body.manufacture + "' AND \"modelName\"='"
+        + req.body.manufacture + "' AND modelName='"
         + req.body.modelName + "';";
 
     console.log(selectStr);
@@ -199,18 +197,23 @@ function addDev(req, res, next) {
             console.error(err.stack);
         }
         else {
-            if (result.rowCount != 0) {
+            if (result.length= 0) {
                 console.log("lirc device is already existed");
             }
             else {
-                var insertStr = "INSERT INTO lirc_device(\"devType\",manufacture,\"modelName\") VALUES('"
+                var insertStr = "INSERT INTO lirc_device(devType,manufacture,modelName) VALUES('"
                         + req.body.devType + "', '"
                         + req.body.manufacture + "', '"
-                        + req.body.modelName + "') RETURNING \"lircId\";";
+                        + req.body.modelName + "') ";
 
                 console.log(insertStr);
+                myClient.query(insertStr);
 
-                myClient.query(insertStr, function(err, result1) {
+                var selectStr='SELECT * from lirc_device where devType="'
+                + req.body.devType +' " and manufacture= "'+ req.body.manufacture + '" and  modelName="'+req.body.modelName +'" ';
+                console.log(selectStr);
+
+                myClient.query(selectStr, function(err, result1) {
                     if (err) {
                         console.error(err.stack);
                         ret = 1;
@@ -221,7 +224,7 @@ function addDev(req, res, next) {
 
                     retStr = {
                         ret: ret,
-                        lircId: result1.rows[0].lircId
+                        lircId: result1[0].lircId
                     };
 
                     res.send(JSON.stringify(retStr));

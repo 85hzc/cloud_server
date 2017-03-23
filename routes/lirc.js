@@ -109,14 +109,14 @@ router.post('/devDelete', function(req, res, next) {
 });
 
 router.post('/devAdd', function(req, res, next) {
-     if (req.session.hasLogined) {
+     if (req.session.hasLogined){
         lircDao.addDev(req, res, next);
     }
 });
 
-router.get('/lircCtl', function(req, res, next) {
+router.get('/test', function(req, res, next) {
     if (req.session.hasLogined) {
-        res.render('lircCtl');
+        res.render('test');
     }
     else {
         res.render('login');

@@ -15,6 +15,7 @@ var app = require('app');
 var user = require('user');
 var check        = require('check');
 var session_priv = require('session_priv');
+var datacollect = require('data_collect')
 
 var weixin_socket_arr    = new Array();
 var gateway_socket_arr = new Array(); 
@@ -195,6 +196,12 @@ router.post('/login', function(req, res, next) {
     var password = req.body.password;
 
     check.check_login("vendor_login", username, password, req, res);    
+});
+
+router.post('/data_collect', function(req, res, next) 
+{
+    console.log(req.body);
+    datacollect.message_handle(req, res);
 });
 
 module.exports = router;

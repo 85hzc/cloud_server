@@ -132,5 +132,11 @@ CREATE TABLE lirc_code
    "vendorId" bigint REFERENCES vendor("vendorId")
 );
 
-
-
+DROP TABLE IF EXISTS upstream_flow_raw;
+CREATE TABLE upstream_flow_raw
+(
+   "deviceId" bigserial,
+   "sip" varchar(32),
+   "dip" varchar(32),
+   "bw"  int ARRAY
+);

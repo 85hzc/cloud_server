@@ -192,7 +192,7 @@ function stat(req, res, next) {
             console.error(err.stack);
             return;
         }
-        console.log(result[0].username);
+        
         var value = {
             name: "开发者总数",
             count: result[0].count

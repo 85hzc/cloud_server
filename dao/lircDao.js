@@ -118,8 +118,7 @@ function queryAllDev(req, res, next) {
     var values = new Array();
     var devType = req.body.devType;
 
-    var queryStr = "SELECT manufacture,array_agg(modelName) FROM lirc_device WHERE devType='"
-        + devType + "' GROUP BY manufacture;";
+    var queryStr = "SELECT manufacture,modelName FROM lirc_device WHERE devType='" + devType + "' ;";
 
     console.log(queryStr);
 
@@ -197,7 +196,7 @@ function addDev(req, res, next) {
             console.error(err.stack);
         }
         else {
-            if (result.length= 0) {
+            if (result.length != 0) {
                 console.log("lirc device is already existed");
             }
             else {

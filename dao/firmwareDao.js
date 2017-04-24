@@ -211,7 +211,7 @@ function deleteVersion(req, res, next)
 
 function queryFirmwareVersion(req, res, next) {
     console.log("Enter query firmware version");
-    console.log(req.body);
+    console.log(req.body.firmwareId);
 
     var values = new Array();
 

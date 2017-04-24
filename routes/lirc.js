@@ -115,12 +115,12 @@ router.post('/devAdd', function(req, res, next) {
 });
 
 router.get('/test', function(req, res, next) {
-    if (req.session.hasLogined) {
+    //if (req.session.hasLogined) {
         res.render('test');
-    }
+   /* }
     else {
         res.render('login');
-    }
+    }*/
 });
 
 module.exports = router;

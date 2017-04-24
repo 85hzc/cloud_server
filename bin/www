@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('weixin:server');
 var http = require('http');
 var devConn = require('dev_conn');
+var wsSrv = require('ws-server');
+
+
 
 /**
  * Get port from environment and store in Express.
@@ -153,3 +156,21 @@ tcpServer.on('connection', function(socket) {
 tcpServer.listen(PORT);
 
 //console.log("TCP Server Listening on " + PORT);
+
+
+var ws=require("nodejs-websocket");
+var wsServer = ws.createServer(function(conn) {
+    conn.on("text", function(msg) {
+      console.log("websocket is start");
+        wsSrv.message_handle(msg, conn);
+    });
+    conn.on("close", function(code, reason) {
+        console.log("ws conn close: code="+code+", reason="+reason);
+    });
+    conn.on("error", function(code, reason) {
+        console.log("ws conn error: code="+code+", reason="+reason);
+    });
+}).listen(3009);
+
+
+

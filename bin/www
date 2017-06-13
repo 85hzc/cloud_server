@@ -161,8 +161,9 @@ tcpServer.listen(PORT);
 var ws=require("nodejs-websocket");
 var wsServer = ws.createServer(function(conn) {
     conn.on("text", function(msg) {
-      console.log("websocket is start");
+
         wsSrv.message_handle(msg, conn);
+   
     });
     conn.on("close", function(code, reason) {
         console.log("ws conn close: code="+code+", reason="+reason);

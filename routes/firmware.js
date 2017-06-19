@@ -10,24 +10,90 @@ var multer = require('multer');
 var upload = multer({dest:"./public"});
 
 var firmwareDao = require('../dao/firmwareDao');
+var lircDao = require('../dao/lircDao');
+var pluginDao = require('../dao/pluginDao');
+var devDao = require('../dao/devDao');
 var check = require('check');
 
-router.get('/allFirmware', function(req, res, next) {
-    if (req.session.hasLogined) {
-        firmwareDao.queryAllFirmware(req, res, next);
-    }
-    else {
-        res.rendor('login');
-    }
+
+//查询所有路由器
+router.get('/queryAllroute', function(req, res, next) {
+
+    console.log("queryAllroute");
+    
+        firmwareDao.queryAllroute(req, res, next);
+
+    
+   
 });
 
-router.post('/addFirmware', function(req, res, next) {
-    if (req.session.hasLogined) {
-        firmwareDao.addFirmware(req, res, next);
-    } else {
-        res.render('login');
-    }
+
+//查询当前
+router.post('/querynowmsg', function(req, res, next) {
+    
+        firmwareDao.querynowmsg(req, res, next);
+    
 });
+
+//查询历史
+router.post('/queryhismsg', function(req, res, next) {
+    
+        firmwareDao.queryhismsg(req, res, next);
+    
+});
+
+
+//当前直播资源
+router.get('/queryAllnow', function(req, res, next) {
+    
+        lircDao.queryAllnow(req, res, next);
+    
+});
+
+//当前直播资源详细
+router.post('/queryById', function(req, res, next) {
+    
+        lircDao.queryById(req, res, next);
+    
+});
+
+
+
+
+
+
+//历史直播资源详细 ok
+router.get('/queryAllhistory', function(req, res, next) {
+    
+        pluginDao.queryAllhistory(req, res, next);
+    
+});
+
+
+
+//总详情页面
+
+router.get('/status', function(req, res, next) {
+   
+        devDao.stat(req, res, next);
+    
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*delete local file*/
 router.post('/deleteFirmware', function(req, res, next) {

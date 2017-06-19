@@ -24,6 +24,25 @@
 /*底部返回按钮结束*/
 
 
+/*返回按钮*/
+.backBtn{
+	line-height: 13px;
+	padding: 4px 6px;
+	border: 1px solid rgb(204, 204, 204);
+	cursor: pointer;
+	border-radius: 2px;
+	display: block;
+	position: absolute;
+	right: 10px;
+	top: 7px;
+	color:black;
+	
+}
+.backBtn:hover{
+	background: gainsboro;
+}
+/*返回按钮*/
+
 /*禁止文字选中*/
 .fobidSelect{
     -moz-user-select:none;/*火狐*/
@@ -42,4 +61,8 @@ label.error{
     color: red;
     display: inline;
 
+}
+
+ul li{
+    list-style: none;
 }

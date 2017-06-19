@@ -49,3 +49,22 @@ if(titleEle){
    
 }
 
+
+//ajax请求
+var urlArr = ["","/firmware/status","/firmware/queryAllnow","/firmware/queryById","/firmware/queryAllhistory","/firmware/queryAllroute","/firmware/querynowmsg","/firmware/queryhismsg"];
+
+function myajax(urli,type,data,succallback){
+	// alert(urlArr[urli])
+
+	$.ajax({
+        type: type,
+        url: urlArr[urli],
+        async: true,
+        data:data,
+        cache: false,
+        success: succallback,
+        error: function () {
+         alert("加载失败!");
+        }
+    });//ajax
+}

@@ -12,7 +12,7 @@ function send_stat(res, values) {
     var retStr = {
         values: values
     };
-    res.send(JSON.stringify(retStr));
+    res.send(retStr);
 }
 
 function addDataModel(req, res, next) {
@@ -181,10 +181,10 @@ function stat(req, res, next) {
     console.log("Enter device statistics.");
 
     var values = new Array();
-    var stat = 6;
+    var stat = 5;
 
-    /*developer counts*/
-    var vendorStr = "SELECT count(*) as count FROM vendor";
+    /* 路由器总台数*/
+    var vendorStr = "SELECT count(*) as count FROM iot_device";
     console.log(vendorStr);
 
     myClient.query(vendorStr, function(err, result) {
@@ -194,7 +194,7 @@ function stat(req, res, next) {
         }
         
         var value = {
-            name: "开发者总数",
+            name: "路由器总台数",
             count: result[0].count
         };
 
@@ -206,8 +206,8 @@ function stat(req, res, next) {
         if (stat == 0) send_stat(res, values);
     });
 
-    /*device counts*/
-    var devStr = "SELECT COUNT(*) as count FROM iot_device;";
+    /*在线台数*/
+    var devStr = "SELECT COUNT(*) as count FROM iot_device WHERE online='1';";
     console.log(devStr);
 
     myClient.query(devStr, function(err, result) {
@@ -217,7 +217,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "设备总数",
+            name: "在线台数",
             count: result[0].count
         };
 
@@ -229,8 +229,8 @@ function stat(req, res, next) {
         if (stat == 0) send_stat(res, values);
     });
 
-    /*online device counts*/
-    var devOnlineStr = "SELECT count(*) as count FROM iot_device WHERE online=1;";
+    /*正在观看的直播资源数*/
+    var devOnlineStr = "SELECT count(*) as count FROM dev_live_resource WHERE online=1;";
     console.log(devOnlineStr);
 
     myClient.query(devOnlineStr, function(err, result) {
@@ -240,7 +240,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "在线设备总数",
+            name: "正在观看的直播资源数",
             count: result[0].count
         };
 
@@ -252,8 +252,8 @@ function stat(req, res, next) {
         if (stat == 0) send_stat(res, values);
     });
 
-    /*plugin counts*/
-    var pluginStr = "SELECT count(*) as count FROM plugin_table";
+    /*从直播网站获取的流*/
+    var pluginStr = "SELECT count(*) as count FROM transfer_resource WHERE src='origin' AND online='1' ;";
     console.log(pluginStr);
 
     myClient.query(pluginStr, function(err, result) {
@@ -263,7 +263,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "插件总数",
+            name: "从直播网站获取的流",
             count: result[0].count
         };
 
@@ -275,8 +275,8 @@ function stat(req, res, next) {
         if (stat == 0) send_stat(res, values);
     });
 
-    /*app users counts*/
-    var appStr = "SELECT count(*) as count FROM user_table;";
+    /*P2P转发的总数*/
+    var appStr = "select count(*) as count from transfer_resource where src!='origin';";
     console.log(appStr);
 
     myClient.query(appStr, function(err, result) {
@@ -286,7 +286,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "APP账号总数",
+            name: "P2P转发的总数",
             count: result[0].count
         };
 
@@ -299,7 +299,7 @@ function stat(req, res, next) {
     });
 
     /*datamodel counts*/
-    var datamodelStr = "SELECT count(*) as count FROM iot_dev_datamodel;";
+   /* var datamodelStr = "SELECT count(*) as count FROM iot_dev_datamodel;";
     console.log(datamodelStr);
 
     myClient.query(datamodelStr, function(err, result) {
@@ -320,7 +320,7 @@ function stat(req, res, next) {
 
         if (stat == 0) send_stat(res, values);
     });
-
+*/
 }
 
 function queryAllDev(req, res, next) {

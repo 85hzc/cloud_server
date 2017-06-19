@@ -22,7 +22,7 @@ function moveFile(srcFile, dstFile, req, res) {
         console.log("copy file end");
         fs.unlinkSync(srcFile);
 
-        devDao.updateDataModel(req, res);
+        devDao.updateDataModel;(req, res);
         
     });
     sf.on('error', function() {

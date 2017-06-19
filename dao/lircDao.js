@@ -4,96 +4,34 @@ var myClient = mysql.createConnection(db.mysql);
  
 myClient.connect();
 
-function updateCode(req, res) {
-    console.log("update lirc code");
-
-    var vendorID = req.session.vendorID;
-    var ret;
-
-    var url = db.file_server_url + '/' + req.session.vendorName
-                + '/lirc/' + req.body.version
-                + '/' + req.file.originalname;
-
-    console.log("download url:" +  url);
-
-    var insertStr = "INSERT INTO lirc_code(version, downloadUrl, vendorId) VALUES('"
-        + req.body.version + "', '"
-        + url + "', '"
-        + vendorID
-        + "') ";
-
-    console.log(insertStr);
-
-    myClient.query(insertStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-            ret = 1;
-        }
-        else {
-            var id = result.rows[0].id;
-            ret = 0;
-        }
-
-        var retStr = {
-            ret: ret,
-            id: id
-        };
-
-        res.send(JSON.stringify(retStr));
-    });
-
-}
 
 
-function deleteCode(req, res, next) {
-    console.log("delete lirc code");
 
-    var ret;
+//查询当前直播资源详细页面
+function queryById(req, res, next) {
+    
+    console.log(req.body);
 
-    var deleteStr = "DELETE FROM lirc_code WHERE version='"
-        + req.body.version
-        + "';";
-
-    console.log(deleteStr);
-
-    myClient.query(deleteStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-            ret = 1;
-        }
-        else {
-            ret = 0;
-        }
-
-        var retStr = {ret: ret};
-        res.send(JSON.stringify(retStr));
-    });
-}
-
-
-function queryAllCode(req, res, next) {
-    console.log("query all lirc code");
-
-    var ret;
-    var vendorID = req.session.vendorID;
+    var resourceId = req.body.resourceId;
+    var ret = 0;
     var values = new Array();
 
-    var queryStr = "SELECT * FROM lirc_code WHERE vendorId='"
-        + vendorID
-        + "';";
+    //var selectStr = "select * from dev_live_resource  Left JOIN transfer_resource ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='1' and transfer_resource.online='1' and resourceId='"+resourceId+"' ";
+    var selectStr="select * from dev_live_resource  Left JOIN transfer_resource ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='1' and transfer_resource.resourceId='"+resourceId+"';";
+    console.log(selectStr);
 
-    console.log(queryStr);
-
-    myClient.query(queryStr, function(err, result) {
+    myClient.query(selectStr, function(err, result) {
         if (err) {
             console.error(err.stack);
-            var retStr = {ret: 1};
+            return;
         }
-        else {
-            result.forEach(function(row) {
+
+
+         result.forEach(function(row) {
                 var value = {
-                    id: row.id,
-                    version:row.version
+                    resourceId : row.resourceId,
+                    src : row.src ,
+                    deviceId: row.deviceId
                 };
 
                 values.push(value);
@@ -103,138 +41,55 @@ function queryAllCode(req, res, next) {
                 ret: 0,
                 values: values
             };
-        }
+        
 
-        res.send(JSON.stringify(retStr));
+        res.send(retStr);
 
     });
 }
 
-function queryAllDev(req, res, next) {
-    console.log("query all lirc device");
-    console.log(req.body);
+
+
+
+
+
+
+//查询当前直播资源
+function queryAllnow(req, res, next) {
+   
 
     var ret;
+    
     var values = new Array();
-    var devType = req.body.devType;
 
-    var queryStr = "SELECT manufacture,modelName FROM lirc_device WHERE devType='" + devType + "' ;";
-
+   // var queryStr = "select * from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='1' and transfer_resource.online='1'";
+       var queryStr="select * from live_info  Left JOIN dev_live_resource  ON live_info.resourceId=dev_live_resource.resourceId where dev_live_resource.online='1';";
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-            ret = 1;
-        }
-        else {
-            ret = 0;
+       
             result.forEach(function(row) {
                 var value = {
-                    manufacture: row.manufacture,
-                    modelName: row.array_agg
+                    resourceId : row.resourceId,
+                    文件名 : row.path ,
+                    直播平台: row.host
                 };
 
-                console.log(JSON.stringify(value));
                 values.push(value);
             });
-        }
+            
+            var retStr = {
+                ret: 0,
+                values: values
+            };
+        
 
-        var retStr = {
-            ret: ret,
-            devType: devType,
-            values: values 
-        };
+        res.send(retStr);
 
-        res.send(JSON.stringify(retStr));
     });
 }
 
-function deleteDev(req, res, next) {
-    console.log("Delete lirc device");
-    console.log(req.body);
 
-    var ret;
+module.exports.queryById = queryById;
+module.exports.queryAllnow = queryAllnow;
 
-    var deleteStr = "DELETE FROM lirc_device WHERE devType='"
-        + req.body.devType + "' AND manufacture='"
-        + req.body.manufacture + "' AND modelName='"
-        + req.body.modelName + "';";
-
-    console.log(deleteStr);
-
-    myClient.query(deleteStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-            ret = 1;
-        }
-        else {
-            ret = 0;
-        }
-
-        var retStr = {ret: ret};
-        res.send(JSON.stringify(retStr));
-    });
-}
-
-function addDev(req, res, next) {
-    console.log("Add lirc device");
-    console.log(req.body);
-
-    var ret;
-    var retStr;
-
-    var selectStr = "SELECT * FROM lirc_device WHERE devType='"
-        + req.body.devType + "' AND manufacture='"
-        + req.body.manufacture + "' AND modelName='"
-        + req.body.modelName + "';";
-
-    console.log(selectStr);
-
-    myClient.query(selectStr, function(err, result) {
-        if (err) {
-            console.error(err.stack);
-        }
-        else {
-            if (result.length != 0) {
-                console.log("lirc device is already existed");
-            }
-            else {
-                var insertStr = "INSERT INTO lirc_device(devType,manufacture,modelName) VALUES('"
-                        + req.body.devType + "', '"
-                        + req.body.manufacture + "', '"
-                        + req.body.modelName + "') ";
-
-                console.log(insertStr);
-                myClient.query(insertStr);
-
-                var selectStr='SELECT * from lirc_device where devType="'
-                + req.body.devType +' " and manufacture= "'+ req.body.manufacture + '" and  modelName="'+req.body.modelName +'" ';
-                console.log(selectStr);
-
-                myClient.query(selectStr, function(err, result1) {
-                    if (err) {
-                        console.error(err.stack);
-                        ret = 1;
-                    }
-                    else {
-                        ret = 0;
-                    }
-
-                    retStr = {
-                        ret: ret,
-                        lircId: result1[0].lircId
-                    };
-
-                    res.send(JSON.stringify(retStr));
-                });
-            }
-        }
-    });
-}
-module.exports.updateCode = updateCode;
-module.exports.deleteCode = deleteCode;
-module.exports.queryAllCode = queryAllCode;
-module.exports.queryAllDev = queryAllDev;
-module.exports.deleteDev = deleteDev;
-module.exports.addDev = addDev;

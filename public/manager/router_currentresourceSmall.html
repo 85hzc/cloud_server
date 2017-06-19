@@ -62,7 +62,13 @@ var vm = new Vue({
   				if(value[i] == deviceId || value[i] == deviceId.toString()){
   					continue;
   				}
-  				str = str +","+value[i];
+  				if(str == "") {
+  					
+  					str = value[i];
+  					}else{
+  						str = str +","+value[i]
+  					}
+  				;
   			}
 
   			return str;

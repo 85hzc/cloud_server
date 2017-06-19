@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<!--记录数据-->
-		<div id="fileName" fileNam="router_historyresourceSmall"></div>
+		<div id="fileName" fileNam="router_historyresourceSmal"></div>
 		<!--记录数据-->
 		<div id="pluginContainer" fileNam="plugin">
 			<div class="pluginTitle"><a class="backBtn" >返回</a>路由器历史直播资源</div>
@@ -26,10 +26,13 @@
 					<th>直接获取的字节数</th>
 					<th>p2p转发的字节数</th>
 					<th>转发情况</th>-->
-					<th v-for="value in headArr">{{value}}</th>
+					<th>ResourceId</th>
+					<th>直播来源</th>
+					<th>转发给</th>
 				</tr>
-				<tr id="cell" class="cell" v-for="dic in message.values">
-					<td v-for="value in dic">{{value}}</td>
+				<tr id="cell" class="cell" v-for="dic in message">
+					<td v-for="value in dic">
+					{{ value | make}}</td>
 					<!--<td ><a class="pluginVersion blueBut" href="router_retransmission.html">详情</a></td>-->
 				</tr>
 			</table>
@@ -41,31 +44,104 @@
 <script type="text/javascript" src="js/public.js" ></script>
 <!--<script type="text/javascript" src="js/netWokr.js" ></script>-->
 <script>
+
+var deviceId = window.localStorage.deviceId;
 var vm = new Vue({
   el: '#vueApp',
   data: {
-    message: {values:[{"Deviceid":"1","Deviceid2":"1"},{"Deviceid":"1","Deviceid2":"1"},{"Deviceid":"1","Deviceid2":"1"}]},
+    message:{values:[{"deviceId":"2","resourceId":"6","src":"origin2"},{"deviceId":"1","resourceId":"6","src":"origin"},{"deviceId":"6","resourceId":"5","src":"origin"}]},
     headArr:[],
+  },
+  filters:{
+  	make:function(value){
+  		var str = "";
+  		if (value instanceof Array) {
+
+  			for(var i = 0 ; i < value.length; i++){
+  				//判断是否是当前路由器 是当前路由器就不显示
+  				if(value[i] == deviceId || value[i] == deviceId.toString()){
+  					continue;
+  				}
+  				if(str == "") {
+  					
+  					str = value[i];
+  					}else{
+  						str = str +","+value[i];
+  					}
+  			}
+  			
+  			if(str = ""){
+  				str = "N/A";
+  			}
+
+  			return str;
+  		}else{
+  			return value;
+  		}
+  		
+  	}
   }
   
 });
 
-//获取标题
- for(var key in vm.message.values[0]){
- 	vm.headArr.push(key);
- }
-// vm.headArr.push("直播资源");
 
-var deviceId = window.localStorage.deviceId;
-myajax(7,"post",{"deviceId":deviceId},callback);
-function callback(data){
-	vm.message = data;
-	//获取标题
-	vm.headArr = [];
- for(var key in vm.message.values[0]){
- 	vm.headArr.push(key);
- }
-}
 
+myajax(7,"post",{"deviceId":deviceId},detaiCallBack);
+
+function detaiCallBack(data1){
+
+	 vm.message = data1;
+	 var resourceIdArr = [];
+     var data = {};
+
+ for(var i= 0; i< vm.message.values.length; i++){
+
+ 	var thisId = vm.message.values[i].resourceId;
+ 	
+ 	var has =  $.inArray(thisId, resourceIdArr);
+
+ 	if(has == -1){
+ 		resourceIdArr.push(thisId);
+ 		
+ 	   data[thisId] = {"resourceId":thisId,src:[vm.message.values[i].src],deviceId:[vm.message.values[i].deviceId]};
+ 	 
+ 	}else{
+ 	  
+ 	  var arr1 = data[thisId].deviceId;
+ 	  var arr2 = data[thisId].src;
+ 	  var a1 = vm.message.values[i].deviceId;
+ 	  var a2 = vm.message.values[i].src;
+ 		var hasDeviceID = $.inArray(a1,arr1);
+ 		var hasSrc = $.inArray(a2,arr2);
+ 		
+ 		
+ 	
+ 		
+ 		if(hasDeviceID == -1){
+ 		
+ 			data[thisId].deviceId.push(vm.message.values[i].deviceId);
+ 			
+ 		}
+ 		if(hasSrc == -1){
+ 			
+ 			data[thisId].src.push(vm.message.values[i].src);
+ 		}
+ 	}
+ }
+ 
+
+
+ vm.message = data;
+}//callback
+
+
+
+ 
+
+
+
+ 
+ 
+ 
  </script>
 </html>

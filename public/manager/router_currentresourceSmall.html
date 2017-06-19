@@ -27,8 +27,8 @@
 					<th>p2p转发的字节数</th>
 					<th>转发情况</th>-->
 					<th>ResourceId</th>
-					<th>source</th>
-					<th>forverd</th>
+					<th>直播来源</th>
+					<th>转发给</th>
 				</tr>
 				<tr id="cell" class="cell" v-for="dic in message">
 					<td v-for="value in dic">
@@ -66,9 +66,12 @@ var vm = new Vue({
   					
   					str = value[i];
   					}else{
-  						str = str +","+value[i]
+  						str = str +","+value[i];
   					}
-  				;
+  			}
+  			
+  			if(str = ""){
+  				str = "N/A";
   			}
 
   			return str;

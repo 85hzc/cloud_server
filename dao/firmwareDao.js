@@ -32,7 +32,7 @@ function queryAllroute(req, res, next) {
             var uname = row.online == 1 ? "在线" : "不在线";
             var value = {
                 deviceId  : row.deviceId ,
-                唯一序列号  : row.manufactureSN  ,
+                序列号  : row.manufactureSN  ,
                 是否可提供服务 : name,
                 IP地址 :row.ipAddr ,
                 是否在线: uname

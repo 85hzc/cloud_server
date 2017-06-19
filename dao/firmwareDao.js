@@ -27,12 +27,15 @@ function queryAllroute(req, res, next) {
 
 
         result.forEach(function(row) {
+
+            var name = row.beMaster == 1 ? "可用" : "不可用";
+            var uname = row.online == 1 ? "在线" : "不在线";
             var value = {
                 deviceId  : row.deviceId ,
                 唯一序列号  : row.manufactureSN  ,
-                是否可用 : row.beMaster ,
+                是否可提供服务 : name,
                 IP地址 :row.ipAddr ,
-                是否在线: row.online
+                是否在线: uname
             };
 
             values.push(value);

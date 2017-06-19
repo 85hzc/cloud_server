@@ -61,6 +61,7 @@ myajax(7,"post",{"deviceId":deviceId},callback);
 function callback(data){
 	vm.message = data;
 	//获取标题
+	vm.headArr = [];
  for(var key in vm.message.values[0]){
  	vm.headArr.push(key);
  }

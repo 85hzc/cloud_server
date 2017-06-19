@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<!--记录数据-->
-		<div id="fileName" fileNam="plugin"></div>
+		<div id="fileName" fileNam="router_status" isroot="root"></div>
 		<!--记录数据-->
 		<div id="pluginContainer" fileNam="plugin">
 			<div class="pluginTitle">总状态</div>
@@ -85,7 +85,9 @@ var vm = new Vue({
 
 
 //网路请求
-
+setTimeout(function(){
+	myajax(1,"get","",detailCallBack);
+},5000);
 	myajax(1,"get","",detailCallBack);
 
     function detailCallBack(data){

@@ -16,23 +16,22 @@
 <div id="header">
 	<div class="heading" >IOT平台</div>
 	<div class="userinfo" >
-		<img class="userHeader" src="img/2700940901264215.png" />
+		<img class="userHeader" src="img/icon10.jpg" />
 		<span class="userName">用户</span>
 		<span class="logout">注销</span>
 	</div>
 </div>
 <!--左边导航-->
 <div id="leftnav">
-	<a  href="help.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />开发指南</div></a>
-	<a href="status.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />基本信息</div></a>
-	<a  href="device.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />设备类型管理</div></a>
-	<a href="plugin.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />插件管理</div></a>
-	<a href="router_status.html" target="iframe1"><div class="navCell" style="letter-spacing: 18px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />总状态</div></a>
-	<a href="router_currentresource.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />当前直播资源</div></a>
-	<a href="router_historyresource.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />历史直播资源</div></a>
-	
-	<a href="router_info.html" target="iframe1"><div class="navCell" style="letter-spacing: 3px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />路由器信息</div></a>
-	<a href="router_distribution.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/u=3814063868,288521591&fm=21&gp=0.png" />区域分布</div></a>
+	<a  href="help.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon4.jpg" />开发指南</div></a>
+	<a href="status.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon3.jpg" />基本信息</div></a>
+	<a  href="device.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon9.jpg" />设备类型管理</div></a>
+	<a href="plugin.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon5.jpg" />插件管理</div></a>
+	<a href="router_status.html" target="iframe1"><div class="navCell" style="letter-spacing: 18px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon1.jpg" />总状态</div></a>
+	<a href="router_currentresource.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon6.jpg" />当前直播资源</div></a>
+	<a href="router_historyresource.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon2.jpg" />历史直播资源</div></a>
+	<a href="router_info.html" target="iframe1"><div class="navCell" style="letter-spacing: 3px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon11.jpg" />路由器信息</div></a>
+	<a href="router_distribution.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon7.jpg" />区域分布</div></a>
 	
 </div>
 
@@ -62,8 +61,8 @@
 		/*主页停止返回*/
 		$(".bigBackBtn").on("click",function(){
 
-			var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
-			if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+			
+			if($(this).text() == "首页"){
 				return;
 			}
 
@@ -129,7 +128,8 @@
 	/*改变返回按钮文字*/
 	$("#iframe1").on("load",function(){
 		var isRoot = $("#iframe1").contents().find("#fileName").attr("fileNam");
-		if(isRoot == "device" || isRoot == "plugin" || isRoot == "help"){
+		var isRoot2 = $("#iframe1").contents().find("#fileName").attr("isroot");
+		if(isRoot == "device" || isRoot == "plugin" || isRoot == "help" || isRoot2 == "root"){
 			$(".bigBackBtn").text("首页");
 		}else{
 			$(".bigBackBtn").text("返回");

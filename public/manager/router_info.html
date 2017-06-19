@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<!--记录数据-->
-		<div id="fileName" fileNam="plugin"></div>
+		<div id="fileName" fileNam="router_info" isroot="root"></div>
 		<!--记录数据-->
 		<div id="pluginContainer" fileNam="plugin">
 			<div class="pluginTitle">路由器信息</div>
@@ -62,6 +62,7 @@ var vm = new Vue({
  for(var key in vm.message.values[0]){
  	vm.headArr.push(key);
  }
+ vm.headArr[0] = "DeviceId";
  vm.headArr.push("直播资源");
 
 

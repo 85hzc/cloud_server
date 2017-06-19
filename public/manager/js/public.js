@@ -35,7 +35,15 @@ function setTitleHeader() {
 	var addLircDevice = '<a href="addLircDevice.html" class="selectTitle" target="iframe1">/ 添加红外设备</a>';
 	var lircDeviceDetail = '<a href="lircDeviceDetail.html" class="selectTitle" target="iframe1">/ 红外设备详情</a>';
      
-    var titleJson = {lircDeviceDetail:lircDeviceDetail,addLircDevice:addLircDevice,"addCode1":addCode1,"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmwareVersion":addFirmwareVersion};
+     var  router_retransmission = '<a href="router_retransmission.html" class="selectTitle" target="iframe1">/ 直播资源转发情况</a>';
+     
+     var  router_currentresourceSmall = '<a href="router_currentresourceSmall.html" class="selectTitle" target="iframe1">/ 路由器当前直播资源</a>';
+     
+     var  router_historyresourceSmall = '<a href="router_historyresourceSmall.html" class="selectTitle" target="iframe1">/ 路由器历史直播资源</a>';
+     
+     
+     
+    var titleJson = {lircDeviceDetail:lircDeviceDetail,addLircDevice:addLircDevice,"addCode1":addCode1,"addPlugin":addPlugin,"pluginVersion":pluginVersion,"addPluginVersion":addPluginVersion,"addDevice":addDevice,"deviceDetail":deviceDetail,"addFirmwareVersion":addFirmwareVersion,"router_retransmission":router_retransmission,"router_currentresourceSmall":router_currentresourceSmall,"router_historyresourceSmall":router_historyresourceSmall};
       //删除
      $(".titleContainer",parent.document).find(".selectTitle").not(":first").remove();
     var fileName = $("#fileName").attr("fileNam");
@@ -64,7 +72,7 @@ function myajax(urli,type,data,succallback){
         cache: false,
         success: succallback,
         error: function () {
-         alert("加载失败!");
+//       alert("加载失败!");
         }
     });//ajax
 }

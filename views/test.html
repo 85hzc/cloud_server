@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>测试页面</title>
+	</head>
+	<body>
+			<form action="/firmware/queryhismsg" method="post">
+			
+			 resourceId :<input type="text" name="resourceId" />
+			<input type="submit" name="">
+		</form>
+
+<!-- '6', '2017061240128204', 'http://10.6.61.146:9999/6', NULL, NULL, '0', '0' -->
+
+<form action="/firmware/querynowmsg" method="post">
+			
+			 resourceId :<input type="text" name="deviceId" />
+			<input type="submit" name="">
+		</form>
+
+
+
+		<form action="/app" method="post">
+			msgType :<input type="text" name="msgType" />
+			<!-- userId :<input type="text" name="userId" /> -->
+			<input type="submit" name="">
+		</form>
+
+		 <form action="/app" method="post">
+			测试2：插件id <input type="text" name="msgType" />
+			userId: <input type="text" name="userId" />
+			devType:<input type="text" name="devType" />
+			<input type="submit" name=""><br/>
+		</form>
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			userId:<input type="text" name="userId" />
+			lircId:<input type="text" name="lircId" />
+
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			userId:<input type="text" name="userId" />
+			devId:<input type="text" name="devId" />
+
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			userId:<input type="text" name="userId" />
+			devId:<input type="text" name="devId" />
+			controls:<input type="text" name="controls" />
+			action:<input type="text" name="action" />
+
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			userId:<input type="text" name="userId" />
+			devId:<input type="text" name="devId" />
+			settings:<input type="text" name="settings" />
+			
+
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+		<form action='/app' method="post">
+			用户名 <input type="text" name="msgType" />
+			devId:<input type="text" name="devId"> 
+			place:<input type="text" name="place"> 
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+		<form action='/app' method="post">
+			lirc_get_lircId <input type="text" name="msgType" />
+			manufacture:<input type="text" name="manufacture"> 
+			modelName:<input type="text" name="modelName"> 
+			devType:<input type="text" name="devType">
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+
+		<form action='/app' method="post">
+			lirc_get_lircId <input type="text" name="msgType" />
+			firmwareId:<input type="text" name="firmwareId"> 
+			version:<input type="text" name="version"> 
+			
+			<input type="submit" name=""> <br/><br/>
+		</form>
+
+
+		<form action='/app' method="post">
+			dev_bind <input type="text" name="msgType" />
+			manufacture:<input type="text" name="manufacture"> 
+			serialNumber:<input type="text" name="serialNumber"> 
+			userId:<input type="text" name="userId" />
+			
+			<input type="submit" name=""> <br/><br/>
+		</form>
+		
+	</body>
+</html>

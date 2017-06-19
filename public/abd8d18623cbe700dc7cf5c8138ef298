@@ -1,0 +1,321 @@
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git branch
+  master
+* server1.0
+lzl@lzl:~/node/cloud_server$ git pull origin server1.0 
+remote: Counting objects: 4, done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 4 (delta 2), reused 4 (delta 2), pack-reused 0
+展开对象中: 100% (4/4), 完成.
+来自 https://github.com/gjz22cn/cloud_server
+ * branch            server1.0  -> FETCH_HEAD
+   029faf1..28c2daf  server1.0  -> origin/server1.0
+更新 029faf1..28c2daf
+error: Your local changes to the following files would be overwritten by merge:
+	tool/database_init.pgsql
+Please, commit your changes or stash them before you can merge.
+Aborting
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git diff tool/database_init.pgsql
+diff --git a/tool/database_init.pgsql b/tool/database_init.pgsql
+index bdf3f3a..28304eb 100644
+--- a/tool/database_init.pgsql
++++ b/tool/database_init.pgsql
+@@ -25,7 +25,7 @@ CREATE TABLE plugin_table
+     "pluginDesc" varchar(256) default '',
+     "pluginDir" varchar(256) default '',
+     "publishVersion" varchar(32) default '',
+-    "vendorId" bigint REFERENCES vendor("vendorId"),
++    "vendorId" bigint REFERENCES vendor("vendorId")
+ );
+ 
+ DROP TABLE IF EXISTS plugin_version;
+@@ -106,7 +106,18 @@ CREATE TABLE gateway_plugin
+ (
+     "deviceId" bigint REFERENCES iot_device ("deviceId"),
+     "pluginId" bigint REFERENCES plugin_table ("pluginId"),
+-    "version" varchar(32) default '',
++    "version" varchar(32) default ''
+ );
+ 
++DROP TABLE IF EXISTS lirc_device;
++CREATE TABLE lirc_device
++(
++    "lircId" bigserial primary key,
++    "devType" varchar(32),
++    "manufacture" varchar(64),
++    "modelName" varchar(64),
++    "name" varchar(32),
++    "key" text[] );
++
++); 
+ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ ls
+app.js  bin  dao  doc  ecosystem.config.js  ecosystem.json  node_modules  npm-debug.log  package.json  public  README.md  routes  tool  views
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git status
+位于分支 server1.0
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     node_modules/app/lib/app.js
+	修改：     routes/lirc.js
+	修改：     tool/database_init.pgsql
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	.app.js.swp
+	node_modules/user/.user.js.swp
+	npm-debug.log
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+lzl@lzl:~/node/cloud_server$ git checkout -- tool/database_init.pgsql
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git pull origin server1.0 
+来自 https://github.com/gjz22cn/cloud_server
+ * branch            server1.0  -> FETCH_HEAD
+更新 029faf1..28c2daf
+Fast-forward
+ tool/database_init.pgsql | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ gitk
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ npm start
+
+> weixin@0.0.0 start /home/lzl/node/cloud_server
+> node ./bin/www
+
+Port 3001 is already in use
+
+npm ERR! Linux 4.4.0-57-generic
+npm ERR! argv "/usr/bin/nodejs" "/usr/bin/npm" "start"
+npm ERR! node v4.2.6
+npm ERR! npm  v3.5.2
+npm ERR! code ELIFECYCLE
+npm ERR! weixin@0.0.0 start: `node ./bin/www`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the weixin@0.0.0 start script 'node ./bin/www'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the weixin package,
+npm ERR! not with npm itself.
+npm ERR! Tell the author that this fails on your system:
+npm ERR!     node ./bin/www
+npm ERR! You can get information on how to open an issue for this project with:
+npm ERR!     npm bugs weixin
+npm ERR! Or if that isn't available, you can get their info via:
+npm ERR!     npm owner ls weixin
+npm ERR! There is likely additional logging output above.
+
+npm ERR! Please include the following file with any support request:
+npm ERR!     /home/lzl/node/cloud_server/npm-debug.log
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ gvim node_modules/app/lib/app.js 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git status
+位于分支 server1.0
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     node_modules/app/lib/app.js
+	修改：     routes/lirc.js
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	.app.js.swp
+	node_modules/user/.user.js.swp
+	npm-debug.log
+	views/test.html
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+lzl@lzl:~/node/cloud_server$ git add node_modules/app/lib/app.js 
+lzl@lzl:~/node/cloud_server$ git commit -m "Develop | [lirc] add lirc interface"
+[server1.0 6341154] Develop | [lirc] add lirc interface
+ 1 file changed, 100 insertions(+), 2 deletions(-)
+lzl@lzl:~/node/cloud_server$ git push origin server1.0 
+Username for 'https://github.com': lynn1982
+Password for 'https://lynn1982@github.com': 
+对象计数中: 6, 完成.
+压缩对象中: 100% (5/5), 完成.
+写入对象中: 100% (6/6), 1.26 KiB | 0 bytes/s, 完成.
+Total 6 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/gjz22cn/cloud_server
+   28c2daf..6341154  server1.0 -> server1.0
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ gitk
+^C
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ sudo mount -t vboxsf share /mnt/share
+[sudo] lzl 的密码： 
+/sbin/mount.vboxsf: mounting failed with the error: No such file or directory
+lzl@lzl:~/node/cloud_server$ cd /mnt/
+lzl@lzl:/mnt$ ls
+lzl@lzl:/mnt$ sudo mkdir share
+lzl@lzl:/mnt$ ls
+share
+lzl@lzl:/mnt$ sudo mount -t vboxsf share /mnt/share
+lzl@lzl:/mnt$ ls
+share
+lzl@lzl:/mnt$ ls
+share
+lzl@lzl:/mnt$ cd share/
+lzl@lzl:/mnt/share$ ls
+vim.tar.gz
+lzl@lzl:/mnt/share$ 
+lzl@lzl:/mnt/share$ cd
+lzl@lzl:~$ cp /mnt/share/ .
+cp: 略过目录'/mnt/share/'
+lzl@lzl:~$ cp /mnt/share/vim.tar.gz .
+lzl@lzl:~$ ls
+dump.rdb          node             sublime-text-imfix  workspace  模板  图片  下载  桌面
+examples.desktop  sublime-imfix.c  vim.tar.gz          公共的     视频  文档  音乐
+lzl@lzl:~$ tar zxf vim.tar.gz 
+lzl@lzl:~$ ls
+dump.rdb          node             sublime-text-imfix  vim.tar.gz  公共的  视频  文档  音乐
+examples.desktop  sublime-imfix.c  vim_bak             workspace   模板    图片  下载  桌面
+lzl@lzl:~$ 
+lzl@lzl:~$ 
+lzl@lzl:~$ cd vim_bak/
+lzl@lzl:~/vim_bak$ ls
+tool
+lzl@lzl:~/vim_bak$ ll
+总用量 24
+drwxrwxr-x  4 lzl lzl 4096 12月 22 16:17 ./
+drwxr-xr-x 30 lzl lzl 4096 12月 22 16:28 ../
+-rw-r--r--  1 lzl lzl 3811 12月 22 16:17 .bashrc
+drwxrwxr-x  7 lzl lzl 4096 12月 22 16:17 tool/
+drwxrwxr-x  3 lzl lzl 4096 12月 22 16:17 .vim/
+-rwxr--r--  1 lzl lzl 2572 12月 22 16:17 .vimrc*
+lzl@lzl:~/vim_bak$ 
+lzl@lzl:~/vim_bak$ 
+lzl@lzl:~/vim_bak$ cp .bashrc ../
+lzl@lzl:~/vim_bak$ cp -fr tool/ ../
+lzl@lzl:~/vim_bak$ cp -fr .vim/ ../
+lzl@lzl:~/vim_bak$ cp .vimrc ../
+lzl@lzl:~/vim_bak$ cd ..
+lzl@lzl:~$ ls
+dump.rdb          node             sublime-text-imfix  vim_bak     workspace  模板  图片  下载  桌面
+examples.desktop  sublime-imfix.c  tool                vim.tar.gz  公共的     视频  文档  音乐
+lzl@lzl:~$ ll
+总用量 22128
+drwxr-xr-x  32 lzl  lzl      4096 12月 22 16:28 ./
+drwxr-xr-x   3 root root     4096 12月  7 08:56 ../
+-rw-------   1 lzl  lzl      6271 12月 22 14:39 .bash_history
+-rw-r--r--   1 lzl  lzl       220 12月  7 08:56 .bash_logout
+-rw-r--r--   1 lzl  lzl      3811 12月 22 16:28 .bashrc
+drwx------  18 lzl  lzl      4096 12月  7 16:58 .cache/
+drwx------  31 lzl  lzl      4096 12月 22 13:27 .config/
+drwx------   3 lzl  lzl      4096 12月  7 09:10 .dbus/
+-rw-r--r--   1 lzl  lzl        25 12月  7 09:09 .dmrc
+-rw-rw-r--   1 lzl  lzl        18 12月  9 09:06 dump.rdb
+drwxrwxr-x   3 lzl  lzl      4096 12月  7 09:51 .eclipse/
+-rw-r--r--   1 lzl  lzl      8980 12月  7 08:56 examples.desktop
+drwx------   2 lzl  lzl      4096 12月 22 08:32 .gconf/
+-rw-rw-r--   1 lzl  lzl        53 12月 22 13:34 .gitconfig
+drwx------   3 lzl  lzl      4096 12月  7 10:48 .gnome2/
+drwx------   2 lzl  lzl      4096 12月  7 10:48 .gnome2_private/
+drwx------   3 lzl  lzl      4096 12月 22 08:31 .gnupg/
+-rw-------   1 lzl  lzl      7650 12月 22 08:32 .ICEauthority
+drwx------   3 lzl  lzl      4096 12月  7 09:10 .local/
+drwx------   4 lzl  lzl      4096 12月  7 09:16 .mozilla/
+drwxrwxr-x   3 lzl  lzl      4096 12月 21 16:33 node/
+-rw-rw-r--   1 lzl  lzl        20 12月  7 16:02 .node_repl_history
+drwxr-xr-x 253 lzl  lzl     12288 12月  9 16:34 .npm/
+-rw-r--r--   1 lzl  lzl       226 12月  7 10:34 .pam_environment
+drwxrwxr-x   4 lzl  lzl      4096 12月  9 16:41 .pm2/
+drwx------   2 lzl  lzl      4096 12月  7 09:10 .presage/
+-rw-r--r--   1 lzl  lzl       675 12月  7 08:56 .profile
+-rw-------   1 lzl  lzl       102 12月 21 16:47 .psql_history
+-rw-rw-r--   1 lzl  lzl         5 12月  9 09:06 .rediscli_history
+drwxrwxr-x   2 lzl  lzl      4096 12月 22 09:32 .sogouinput/
+-rw-rw-r--   1 lzl  lzl       592 12月 16 11:20 sublime-imfix.c
+drwxrwxr-x   6 lzl  lzl      4096 12月 16 11:10 sublime-text-imfix/
+-rw-r--r--   1 lzl  lzl         0 12月  7 10:11 .sudo_as_admin_successful
+drwx------   2 lzl  lzl      4096 12月  7 10:42 .sunpinyin/
+-rw-------   1 lzl  lzl     12288 12月  8 10:38 .swn
+-rw-------   1 lzl  lzl     12288 12月  8 10:36 .swo
+-rw-------   1 lzl  lzl     12288 12月  8 10:08 .swp
+drwxrwxr-x   3 lzl  lzl      4096 12月  7 09:52 .swt/
+drwxrwxr-x   7 lzl  lzl      4096 12月 22 16:28 tool/
+-rw-r-----   1 lzl  lzl         5 12月 22 08:31 .vboxclient-clipboard.pid
+-rw-r-----   1 lzl  lzl         5 12月 22 08:31 .vboxclient-display.pid
+-rw-r-----   1 lzl  lzl         5 12月 22 08:31 .vboxclient-draganddrop.pid
+-rw-r-----   1 lzl  lzl         5 12月 22 08:31 .vboxclient-seamless.pid
+drwxrwxr-x   3 lzl  lzl      4096 12月 22 16:28 .vim/
+drwxrwxr-x   4 lzl  lzl      4096 12月 22 16:17 vim_bak/
+-rw-rw-r--   1 lzl  lzl     11269 12月 22 16:14 .viminfo
+-rwxr--r--   1 lzl  lzl      2572 12月 22 16:28 .vimrc*
+-rwxrwxr-x   1 lzl  lzl  22359490 12月 22 16:28 vim.tar.gz*
+drwxrwxr-x   6 lzl  lzl      4096 12月 22 14:00 workspace/
+-rw-------   1 lzl  lzl        48 12月 22 08:31 .Xauthority
+-rw-rw-r--   1 lzl  lzl       132 12月  7 14:57 .xinputrc
+-rw-------   1 lzl  lzl        84 12月 22 08:31 .xsession-errors
+-rw-------   1 lzl  lzl      1404 12月 21 20:31 .xsession-errors.old
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 公共的/
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 模板/
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 视频/
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 图片/
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 文档/
+drwxr-xr-x   2 lzl  lzl      4096 12月 12 10:39 下载/
+drwxr-xr-x   2 lzl  lzl      4096 12月  7 09:09 音乐/
+drwxr-xr-x   2 lzl  lzl      4096 12月 22 15:31 桌面/
+lzl@lzl:~$ source .bashrc
+lzl@lzl:~$ 
+lzl@lzl:~$ 
+lzl@lzl:~$ ls
+dump.rdb          node             sublime-text-imfix  vim_bak     workspace  模板  图片  下载  桌面
+examples.desktop  sublime-imfix.c  tool                vim.tar.gz  公共的     视频  文档  音乐
+lzl@lzl:~$ cd node/
+lzl@lzl:~/node$ ls
+cloud_server  npm-debug.log
+lzl@lzl:~/node$ cd cloud_server/
+lzl@lzl:~/node/cloud_server$ ls
+app.js  bin  dao  doc  ecosystem.config.js  ecosystem.json  node_modules  npm-debug.log  package.json  public  README.md  routes  tool  views
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ gvim routes/lirc.js 
+Taglist: Exuberant ctags (http://ctags.sf.net) not found in PATH. Plugin is not loaded.
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ cd..
+cd..：未找到命令
+lzl@lzl:~/node/cloud_server$ cd ..
+lzl@lzl:~/node$ cd ..
+lzl@lzl:~$ apt-get install ctags
+E: 无法打开锁文件 /var/lib/dpkg/lock - open (13: 权限不够)
+E: 无法对状态列表目录加锁(/var/lib/dpkg/)，请查看您是否正以 root 用户运行？
+lzl@lzl:~$ sudo install ctags
+install: 在'ctags' 后缺少了要操作的目标文件
+Try 'install --help' for more information.
+lzl@lzl:~$ 
+

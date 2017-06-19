@@ -1,0 +1,208 @@
+lzl@lzl:~$ 
+lzl@lzl:~$ 
+lzl@lzl:~$ ls
+dump.rdb          node             sublime-text-imfix  vim_bak     workspace  模板  图片  下载  桌面
+examples.desktop  sublime-imfix.c  tool                vim.tar.gz  公共的     视频  文档  音乐
+lzl@lzl:~$ cd node/
+lzl@lzl:~/node$ ls
+cloud_server  npm-debug.log
+lzl@lzl:~/node$ cd cloud_server/
+lzl@lzl:~/node/cloud_server$ ls
+app.js  bin  dao  doc  ecosystem.config.js  ecosystem.json  node_modules  npm-debug.log  package.json  public  README.md  routes  tool  views
+lzl@lzl:~/node/cloud_server$ git branch
+  master
+* server1.0
+lzl@lzl:~/node/cloud_server$ git status
+位于分支 server1.0
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     node_modules/app/lib/app.js
+	修改：     routes/lirc.js
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	.app.js.swp
+	node_modules/app/lib/app.js~
+	node_modules/user/.user.js.swp
+	npm-debug.log
+	views/test.html
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ mv node_modules/app/lib/app.js node_modules/app/lib/app_bak.js
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git pull origin server1.0 
+remote: Counting objects: 6, done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 3), reused 6 (delta 3), pack-reused 0
+展开对象中: 100% (6/6), 完成.
+来自 https://github.com/gjz22cn/cloud_server
+ * branch            server1.0  -> FETCH_HEAD
+   0e42c48..948d08d  server1.0  -> origin/server1.0
+更新 0e42c48..948d08d
+Fast-forward
+ node_modules/app/lib/app.js | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 68 insertions(+), 2 deletions(-)
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ cd node_modules/app/lib/
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ ls
+app_bak.js  app.js  app.js~
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ gvim app_bak.js 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ gvim app.js
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ 
+lzl@lzl:~/node/cloud_server/node_modules/app/lib$ cd ../..
+lzl@lzl:~/node/cloud_server/node_modules$ 
+lzl@lzl:~/node/cloud_server/node_modules$ cd ..
+lzl@lzl:~/node/cloud_server$ git status
+位于分支 server1.0
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     node_modules/app/lib/app.js
+	修改：     routes/lirc.js
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	.app.js.swp
+	node_modules/app/lib/.app_bak.js.swp
+	node_modules/app/lib/app.js~
+	node_modules/app/lib/app_bak.js
+	node_modules/user/.user.js.swp
+	npm-debug.log
+	views/test.html
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+lzl@lzl:~/node/cloud_server$ git diff node_modules/app/lib/app
+fatal: ambiguous argument 'node_modules/app/lib/app': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+lzl@lzl:~/node/cloud_server$ git diff node_modules/app/lib/app.js
+diff --git a/node_modules/app/lib/app.js b/node_modules/app/lib/app.js
+index 821f54b..387613b 100644
+--- a/node_modules/app/lib/app.js
++++ b/node_modules/app/lib/app.js
+@@ -827,16 +827,13 @@ function message_handle(req, res){
+             res.send(JSON.stringify(lircGetKey));
+         });
+     }
+-   /* else if("lirc_set"== msgType){
+-
+-        var lircId = message.settings.lircId;
+-
+-        console.log(lircId);
+-
+-        var selectStr="UPDATA \"lircId\" "
+-            + "FROM lirc_device WHERE \"manufacture\"='" + manufacture + "' AND \"modelName\"='" + modelName + "' AND \"devType\"='" + devType + "' ;";
++    else if("lirc_set" == msgType){
++        var userId = message.userId;
++        var devId = message.devId;
++        var settings = message.settings;
+ 
+-        var selectStr1 = "UPDATA lirc_device  SET nickName   WHERE \"lircId\" = "+lircId+";";
++        var selectStr = "SELECT \"lircData\" FROM iot_device WHERE \"deviceId\"='"
++                        + devId + "';";
+         console.log(selectStr);
+         client.query(selectStr,function(err,result){
+             if(err){
+@@ -845,18 +842,31 @@ function message_handle(req, res){
+                 return;
+             }
+ 
+-            console.log(result);
+-
++            var lircData = result.rows[0].lircData;
++            var devList = lircData.devList;    
++            for (var i in devList) {
++                if (devList[i].lircId == settings.lircId) {
++                    devList[i].nickName = settings.nickName;
++                }
++            }
+ 
+-            var lircGetKey={
+-                ret:0,
+-                lircId:result.rows[0].lircId,
+-            };
++            var updateStr = "UPDATE iot_device SET \"lircData\"='"
++                            + JSON.stringify(result.rows[0].lircData) + "' WHERE \"deviceId\"='"
++                            + devId + "';";
++            console.log(updateStr);
+ 
+-            console.log(JSON.stringify(lircGetKey));
+-            res.send(JSON.stringify(lircGetKey));
++            client.query(updateStr,function(err,result1){
++                if(err){
++                    console.error(err.stack);
++                    send_result(res,1,"数据库操作失败！");
++                }
++                else{
++                    var reter={ret:0};
++                    res.send(JSON.stringify(reter));
++                }
++            });
+         });
+-    }*/
++    }
+ }
+ 
+ module.exports.message_handle = message_handle;
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ rm node_modules/app/lib/app_bak.js 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ git status
+位于分支 server1.0
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     node_modules/app/lib/app.js
+	修改：     routes/lirc.js
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	.app.js.swp
+	node_modules/app/lib/.app_bak.js.swp
+	node_modules/app/lib/app.js~
+	node_modules/user/.user.js.swp
+	npm-debug.log
+	views/test.html
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+lzl@lzl:~/node/cloud_server$ git add node_modules/app/lib/app.js
+lzl@lzl:~/node/cloud_server$ git commit -m "Develop | [lirc] add lirc_set message handler"
+[server1.0 78336f5] Develop | [lirc] add lirc_set message handler
+ 1 file changed, 28 insertions(+), 18 deletions(-)
+lzl@lzl:~/node/cloud_server$ git push origin server1.0 
+Username for 'https://github.com': lynn1982
+Password for 'https://lynn1982@github.com': 
+对象计数中: 6, 完成.
+压缩对象中: 100% (5/5), 完成.
+写入对象中: 100% (6/6), 771 bytes | 0 bytes/s, 完成.
+Total 6 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/gjz22cn/cloud_server
+   948d08d..78336f5  server1.0 -> server1.0
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ 
+lzl@lzl:~/node/cloud_server$ gitk
+lzl@lzl:~/node/cloud_server$ gitk
+

@@ -1,0 +1,510 @@
+ if ("dev_get" == msgType) {
+        var userId = message.userId;
+        var deviceType = message.devType;
+
+        if (typeof(userId) == "undefined" || typeof(deviceType) == "undefined") {
+            send_result(res, 80001, "参数错误！");
+            return;
+        }
+
+        var selectStr =  "SELECT "
+            + "iot_device.\"deviceId\",iot_device.online,iot_device.\"devData\","
+            + "iot_dev_datamodel.\"dataModelId\",iot_dev_datamodel.\"devDataModel\" "
+            + "FROM iot_device INNER JOIN iot_dev_datamodel "
+            + "ON iot_device.\"deviceDataModelId\"=iot_dev_datamodel.\"dataModelId\" "
+            + "WHERE iot_device.\"deviceId\" IN "
+            + "(SELECT \"deviceId\" FROM dev_user_mapping WHERE \"userId\"='"
+            + userId + "');";
+
+        console.log(selectStr);
+
+        client.query(selectStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                send_result(res, 90001, "数据库查询错误！");
+                return;
+            }
+
+            var deviceData = {
+                deviceType : deviceType,
+                deviceCount: result.rowCount,
+                deviceDataModel : [],
+                deviceList : []
+            };
+
+            for(var i=0; i<result.rowCount; i++) {
+                var dataModelItem = result.rows[i].devDataModel;
+                var deviceItem = {
+                    deviceId: result.rows[i].deviceId,
+                    deviceDataModelId: result.rows[i].dataModelId,
+                    online: "1",
+                    devData: result.rows[i].devData,
+                    userDevData : {
+                        "nickname" : "led2",
+                        "group" : "地点",
+                    }
+                };
+                dataModelItem["deviceDataModelId"] = result.rows[i].dataModelId;
+                deviceData.deviceDataModel.push(dataModelItem);
+                deviceData.deviceList.push(deviceItem);
+            }
+            console.log(JSON.stringify(deviceData));
+            res.send(JSON.stringify(deviceData));
+        });
+    }
+
+
+else if ( ("dev_set_dev" == msgType) || ("dev_ctl" == msgType) ) {
+        var userId = message.userId;
+        var devId = message.devId;
+
+        if (typeof(userId) == "undefined" || typeof(devId) == "undefined") {
+            send_result(res, 80001, "参数错误！");
+            return;
+        }
+
+        var selectStr =  "SELECT "
+            + "iot_dev_datamodel.\"devDataModel\",dev_user_mapping.\"deviceId\",iot_device.online,iot_device.\"devData\",iot_device.\"gatewayId\" "
+            + "FROM (dev_user_mapping JOIN iot_device ON "
+            + "dev_user_mapping.\"deviceId\"=iot_device.\"deviceId\") "
+            + "LEFT JOIN iot_dev_datamodel ON "
+            + "iot_device.\"deviceDataModelId\"=iot_dev_datamodel.\"dataModelId\" "
+            + "WHERE "
+            + "dev_user_mapping.\"deviceId\"='" + devId + "' AND "
+            + "dev_user_mapping.\"userId\"='" + userId + "';";
+
+        console.log(selectStr);
+
+        client.query(selectStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                send_result(res, 90001, "数据库查询错误！");
+                return;
+            }
+
+            if(result.rowCount < 1) {
+                send_result(res, 90009, "设备不存在！");
+                return;
+            }
+
+            if(result.rowCount > 1) {
+                send_result(res, 90002, "后台数据库错误！");
+                return;
+            }
+
+            if(result.rows[0].online == false) {
+                send_result(res, 90003, "设备离线！");
+                return;
+            }
+
+            /* TODO: datamodel check */
+            
+            var socket=devConn.getSocketByDevId(result.rows[0].deviceId);
+            if (-1 == socket) {
+                send_result(res, 90004, "后台与设备连接错误！");
+                return;
+            }
+
+            var commandId = cmdkey.create();
+            var cmdStr= {
+                type: "set",
+                commandId: commandId,
+                userId: userId,
+                deviceId: devId,
+                devData: {}
+            };
+            if ("dev_set_dev" == msgType) {
+                cmdStr.devData = message.settings;
+            } else {
+                cmdStr.devData = message.controls;
+            }
+            console.log(JSON.stringify(cmdStr));
+            //socket.write(JSON.stringify(cmdStr)+"\r\n");
+            send_gw_result(socket, JSON.stringify(cmdStr)+"\r\n");
+
+            send_result(res, 0, "Success!", commandId);
+        });
+    }
+
+
+else if ("plugin_available" == msgType) {
+        var userId = message.userId;
+        var devId = message.devId;
+
+        var selectStr =  "SELECT \"pluginId\",\"pluginName\", \"pluginDesc\", \"publishVersion\" "
+            + "FROM plugin_table;"
+
+        console.log(selectStr);
+
+        client.query(selectStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                send_result(res, 90001, "数据库查询错误！");
+                return;
+            }
+
+            var pluginAvailable = {
+                ret: 0,
+                devId: devId,
+                count: result.rowCount,
+                pluginList: []
+            };
+
+            for(var i=0; i<result.rowCount; i++) {
+                var pluginItem = {
+                    pluginId: result.rows[i].pluginId,
+                    pluginName: result.rows[i].pluginName,
+                    pluginDesc: result.rows[i].pluginDesc,
+                    publishVersion: result.rows[i].publishVersion
+                };
+                pluginAvailable.pluginList.push(pluginItem);
+            }
+            console.log(JSON.stringify(pluginAvailable));
+            res.send(JSON.stringify(pluginAvailable));
+        });
+
+    }
+
+
+
+else if ( ("dev_set_dev" == msgType) || ("dev_ctl" == msgType) ) {
+        var userId = message.userId;
+        var devId = message.devId;
+
+        if (typeof(userId) == "undefined" || typeof(devId) == "undefined") {
+            send_result(res, 80001, "参数错误！");
+            return;
+        }
+
+        var selectStr =  "SELECT "
+            + "iot_dev_datamodel.\"devDataModel\",dev_user_mapping.\"deviceId\",iot_device.online,iot_device.\"devData\",iot_device.\"gatewayId\" "
+            + "FROM (dev_user_mapping JOIN iot_device ON "
+            + "dev_user_mapping.\"deviceId\"=iot_device.\"deviceId\") "
+            + "LEFT JOIN iot_dev_datamodel ON "
+            + "iot_device.\"deviceDataModelId\"=iot_dev_datamodel.\"dataModelId\" "
+            + "WHERE "
+            + "dev_user_mapping.\"deviceId\"='" + devId + "' AND "
+            + "dev_user_mapping.\"userId\"='" + userId + "';";
+
+        console.log(selectStr);
+
+        client.query(selectStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                send_result(res, 90001, "数据库查询错误！");
+                return;
+            }
+
+            if(result.rowCount < 1) {
+                send_result(res, 90009, "设备不存在！");
+                return;
+            }
+
+            if(result.rowCount > 1) {
+                send_result(res, 90002, "后台数据库错误！");
+                return;
+            }
+
+            if(result.rows[0].online == false) {
+                send_result(res, 90003, "设备离线！");
+                return;
+            }
+
+            /* TODO: datamodel check */
+            
+            var socket=devConn.getSocketByDevId(result.rows[0].deviceId);
+            if (-1 == socket) {
+                send_result(res, 90004, "后台与设备连接错误！");
+                return;
+            }
+
+            var commandId = cmdkey.create();
+            var cmdStr= {
+                type: "set",
+                commandId: commandId,
+                userId: userId,
+                deviceId: devId,
+                devData: {}
+            };
+            if ("dev_set_dev" == msgType) {
+                cmdStr.devData = message.settings;
+            } else {
+                cmdStr.devData = message.controls;
+            }
+            console.log(JSON.stringify(cmdStr));
+            //socket.write(JSON.stringify(cmdStr)+"\r\n");
+            send_gw_result(socket, JSON.stringify(cmdStr)+"\r\n");
+
+            send_result(res, 0, "Success!", commandId);
+        });
+    }
+
+
+
+
+else if ("plugin_action" == msgType) {
+        var devId = message.devId;
+        var action = message.action;
+        var pluginIdList = message.pluginList;
+        var selectStr = "SELECT * FROM plugin_table WHERE \"pluginId\" IN (" + pluginIdList + ");";
+
+        console.log(selectStr);
+
+        client.query(selectStr, function(err, result) {
+            if (err) {
+                console.error(err.stack);
+                send_result(res, 90001, "数据库查询错误！");
+                return;
+            }
+
+            if(result.rowCount < 1) {
+                send_result(res, 90008, "插件不存在！");
+                return;
+            }
+
+            var fileDownloadList = new Array();
+            var fileDeleteList = new Array();
+            var count = result.rowCount;
+
+            result.rows.forEach(function(row) {
+                var pluginDir = row.pluginDir;
+                var version = row.publishVersion;
+                var pluginId = row.pluginId;
+
+                var selectNameStr = "SELECT * FROM plugin_version "
+                    + "WHERE \"pluginId\"='" + pluginId + "' AND version='" + version + "';";
+
+                console.log(selectNameStr);
+                
+                client.query(selectNameStr, function(err, result) {
+                    if (err) {
+                        console.error(err.stack);
+                        send_result(res, 90001, "数据库查询错误！");
+                        return;
+                    }
+
+                    if(result.rowCount < 1) {
+                        send_result(res, 90008, "插件不存在！");
+                        return;
+                    }
+
+                    var fileName = result.rows[0].fileName;
+
+                    var fileLoc = pluginDir + '/' + result.rows[0].version + '/' + fileName;
+
+                    var fileDownloadStr = {
+                        url: fileLoc,
+                        pluginId: result.rows[0].pluginId,
+                        version: result.rows[0].version 
+                    };
+
+                    var fileDeleteStr = {
+                        name: fileName,
+                        pluginId: result.rows[0].pluginId
+                    };
+
+                    fileDownloadList.push(fileDownloadStr);
+                    fileDeleteList.push(fileDeleteStr);
+
+                    count--;
+
+                    if (count == 0) {
+                        var socket=devConn.getSocketByDevId(devId);
+                        if (-1 == socket) {
+                            send_result(res, 90004, "后台与设备连接错误！");
+                            return;
+                        }
+
+                        var commandId = cmdkey.create();
+
+                        if ("remove" == action) {
+                            var cmdStr= {
+                                type: "plugin_action",
+                                commandId: commandId,
+                                action: 'delete',
+                                deviceId: devId,
+                                pluginDeleteList: fileDeleteList
+                            };
+                        }
+                        else {
+                            var cmdStr= {
+                                type: "plugin_action",
+                                commandId: commandId,
+                                action: action,
+                                deviceId: devId,
+                                pluginDownloadList: fileDownloadList,
+                            };
+                        }
+
+                        console.log(JSON.stringify(cmdStr));
+                        //socket.write(JSON.stringify(cmdStr));
+                        send_gw_result(socket, JSON.stringify(cmdStr)+"\r\n");
+                        send_result(res, 0, "Success!", commandId);
+
+                    }
+
+                });
+            });
+
+        });
+    }
+
+
+
+
+INSERT INTO iot_device("deviceId","deviceDataModelId","manufacture","manufactureSN",online,"devData","firstOnlineTime","lastOnlineTime","userId" ,"lircdata") VALUES ('1', '1', 'haha', 'HAHA00000001', 'true', '{
+            "name" : "卧室",
+            "power" : "1",
+            "manufacture" : "feixun",
+            "softwareVersion": "V1.0.0"
+   }', '2003-04-12 04:05:06 America/New_York','2003-04-12 04:05:06 America/New_York""name"nickName":""devType":"TV"manufacture":"Sharp","modelName":"xxxxxx'}');
+
+INSERT INTO iot_device("deviceId","userId",'lircdata')VALUES('2','1','{"lircId":"1","name":"电视机","nickName":"客厅电视机","devType":"TV","manufacture":"Sharp","modelName":"xxxxxx"}')
+
+
+INSERT INTO iot_dev_datamodel("dataModelId",devDataModel","manufacture","manufactureDataModelId","createTime") VALUES (
+'1',
+'{"controls": [{"param": "power","type": "switch","displayType": "static","display":"电源","default": "1"}], "settings": [{
+                "param": "name",
+                "type": "text",
+                "display":"设备名称",
+                "default": "请输入设备别名"}]}', 'feixun', '13', '2003-04-12 04:05:06 America/New_York');
+
+
+
+
+
+
+/*for(var i=0; i<result.rowCount; i++){
+                var devListItem={
+                    lircId: result.rows[i].lircId,
+                    name: result.rows[i].name,
+                    nickName: result.rows[i].nickName,
+                    devType: result.rows[i].devType,
+                    manufacture: result.rows[i].manufacture,
+                    modelName: result.rows[i].modelName
+
+                };
+                //devList.push(getLircItem);
+
+            }*/
+
+
+
+            /*result.rows.forEach(function(row){
+
+                var value={
+                    lircId: row.lircId,
+                    name: row.name,
+                    nickName: row.nickName,
+                    devType: row.devType,
+                    manufacture: row.manufacture,
+                    modelName: row.modelName
+
+
+
+
+                }
+                devList.push(value);*/
+
+
+
+
+
+
+
+
+//设置红外设备
+    else if("lirc_set"==msgType) {
+        var userId = message.userId;
+        var devId = message.devId;
+        var ret;
+
+        var selectStr="SELECT \"lircdata\"  FROM iot_device " 
+                     +" WHERE   \" userId\"=' "+ userId+" ' AND  \"deviceId\"= ' "+ devId +" ';";  
+        console.log(selectStr);
+
+        client.query(selectStr,function(err,result){
+        if(err){
+            console.error(err.stack);
+            send_result(res,9001, "数据库查询错误！");
+            return;
+        }
+        else{
+
+            ret:0
+
+        }
+
+        var retStr={ret: ret};
+        res.send(JSON.stringify(retStr));
+                
+        });
+
+    }
+
+
+
+
+ //获取已支持红外设备列表
+    else if("dev_get_lirc"== msgType){
+        var userId = message.userId;
+        var devId = message.devId;
+        var devList=new Array();
+    
+        var selectStr="SELECT \"lircdata\" FROM iot_device "
+                    + " WHERE \"deviceId\"=' " + devId+ "' ;";
+                    //AND  \"userId\"=' " + userId+ "'
+        console.log(selectStr);
+
+        client.query(selectStr,function(err,result){
+        if(err){
+            console.error(err.stack);
+            send_result(res,9001,"数据库查询错误！");
+            return;
+
+        }
+            var list=result.rows[0].lircdata;
+            console.log(list); 
+            //devList.push(list);
+
+            var devGetlirc={
+                ret:0,
+                deviceId:devId,               
+                lircData:list
+                
+                    
+        };
+            console.log(JSON.stringify(devGetlirc));
+            res.send(JSON.stringify(devGetlirc));
+        });
+
+    }
+
+
+
+
+
+
+    if ("set" == action) {
+            var socket=devConn.getSocketByDevId(devId);
+            if (-1 == socket) {
+                send_result(res, 90004, "后台与设备连接错误！");
+                return;
+            }
+
+            var commandId = cmdkey.create();
+
+            var cmdStr = {
+                type: 'lirc_emit',
+                commandId: commandId,
+                deviceId: devId,
+                devData: controls
+            };
+
+            console.log(JSON.stringify(cmdStr));
+            send_gw_result(socket, JSON.stringify(cmdStr)+"\r\n");
+            send_result(res, 0, "Success!", commandId);
+
+            return;
+        }

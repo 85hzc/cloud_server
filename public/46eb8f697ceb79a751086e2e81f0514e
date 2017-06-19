@@ -1,0 +1,1 @@
+create table lirc_device ("lircId" bigserial primary key,"devType" varchar(32),"manufacture" varchar(64),"modelName" varchar(64),"name" varchar(32),"key" String[] );

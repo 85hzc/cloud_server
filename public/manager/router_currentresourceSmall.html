@@ -45,7 +45,7 @@
 <!--<script type="text/javascript" src="js/netWokr.js" ></script>-->
 <script>
 
-	
+var deviceId = window.localStorage.deviceId;
 var vm = new Vue({
   el: '#vueApp',
   data: {
@@ -58,7 +58,11 @@ var vm = new Vue({
   		if (value instanceof Array) {
 
   			for(var i = 0 ; i < value.length; i++){
-  				str+= value[i];
+  				//判断是否是当前路由器 是当前路由器就不显示
+  				if(value[i] == deviceId || value[i] == deviceId.toString()){
+  					continue;
+  				}
+  				str = str +","+value[i];
   			}
 
   			return str;
@@ -71,7 +75,7 @@ var vm = new Vue({
   
 });
 
-var deviceId = window.localStorage.deviceId;
+
 
 myajax(6,"post",{"deviceId":deviceId},detaiCallBack);
 

@@ -72,7 +72,7 @@ function myajax(urli,type,data,succallback){
         cache: false,
         success: succallback,
         error: function () {
-//       alert("加载失败!");
+         alert("加载失败!");
         }
     });//ajax
 }

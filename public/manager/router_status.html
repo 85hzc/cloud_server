@@ -83,17 +83,22 @@ var vm = new Vue({
   
 });
 
-
+myajax(1,"get","",detailCallBack);
 //网路请求
-setTimeout(function(){
+function refresh(){
+	setTimeout(function(){
 	myajax(1,"get","",detailCallBack);
 },5000);
-	myajax(1,"get","",detailCallBack);
+
+}
+
+	
 
     function detailCallBack(data){
     	
-    	
     	vm.message = data;
+    	refresh();
+    	
     	
     }
  </script>

@@ -63,7 +63,7 @@ function queryAllnow(req, res, next) {
     var values = new Array();
 
    // var queryStr = "select * from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='1' and transfer_resource.online='1'";
-       var queryStr="select * from live_info  Left JOIN dev_live_resource  ON live_info.resourceId=dev_live_resource.resourceId where dev_live_resource.online='1';";
+       var queryStr="select distinct live_info.path,live_info.host,live_info.resourceId from live_info  Left JOIN dev_live_resource  ON live_info.resourceId=dev_live_resource.resourceId where dev_live_resource.online='1';";
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {

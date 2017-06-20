@@ -181,7 +181,7 @@ function stat(req, res, next) {
     console.log("Enter device statistics.");
 
     var values = new Array();
-    var stat = 5;
+    var stat = 7;
 
     /* 路由器总台数*/
     var vendorStr = "SELECT count(*) as count FROM iot_device";
@@ -299,7 +299,7 @@ function stat(req, res, next) {
     });
 
     /*datamodel counts*/
-   /* var datamodelStr = "SELECT count(*) as count FROM iot_dev_datamodel;";
+   var datamodelStr = "SELECT sum(totalBytes) as count FROM transfer_resource WHERE src='origin'";
     console.log(datamodelStr);
 
     myClient.query(datamodelStr, function(err, result) {
@@ -309,7 +309,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "设备类型总数",
+            name: "从直播平台获取流的总数",
             count: result[0].count
         };
 
@@ -320,7 +320,30 @@ function stat(req, res, next) {
 
         if (stat == 0) send_stat(res, values);
     });
-*/
+
+
+    var datamodelStr = "SELECT sum(totalBytes) as count FROM transfer_resource WHERE src!='origin'";
+    console.log(datamodelStr);
+
+    myClient.query(datamodelStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        var value = {
+            name: "P2P转发流的总数",
+            count: result[0].count
+        };
+
+        console.log(value);
+
+        values.push(value);
+        stat--;
+
+        if (stat == 0) send_stat(res, values);
+    });
+
 }
 
 function queryAllDev(req, res, next) {

@@ -111,7 +111,9 @@ function queryhismsg(req, res, next) {
 
     //var queryStr = "select  distinct transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='0'  and dev_live_resource.deviceId='"+deviceId+"' ; ";
     //var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' and online!='1'";
-     var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1'";
+    // var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1'";
+    var queryStr=" select  distinct transfer_resource.totalBytes, transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src ,dev_live_resource.firstTime,dev_live_resource.lastTime from transfer_resource left join dev_live_resource on transfer_resource.deviceId= dev_live_resource.deviceId where (transfer_resource.deviceId='"+deviceId+"' or transfer_resource.src='"+deviceId+"') and transfer_resource.online!='1';";
+
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {
@@ -121,10 +123,15 @@ function queryhismsg(req, res, next) {
         }
 
         result.forEach(function(row) {
+
+            
             var value = {
                 resourceId: row.resourceId,
                 deviceId:row.deviceId,
                 src: row.src ,
+                firstTime:row.firstTime,
+                lastTime:row.lastTime,
+                totalBytes:row.totalBytes
             };
 
             values.push(value);
@@ -134,7 +141,7 @@ function queryhismsg(req, res, next) {
             ret:0,
             values:values
         };
-
+        console.log(results);
         res.send(results);
             
     });

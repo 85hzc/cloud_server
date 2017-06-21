@@ -23,8 +23,10 @@ function queryAllhistory(req, res, next)
     //var vendorID = req.session.vendorID;
     var values = new Array();
 
+    
+
     //var queryStr = "select * from dev_live_resource  Left JOIN live_info  ON live_info.deviceId=dev_live_resource.deviceId where dev_live_resource.online='0'";
-    var queryStr="select distinct live_info.path,live_info.host,live_info.resourceId from live_info  Left JOIN dev_live_resource  ON live_info.resourceId=dev_live_resource.resourceId where dev_live_resource.online='0';";
+    var queryStr="select distinct live_info.path,live_info.host,live_info.resourceId,dev_live_resource.firstTime,dev_live_resource.lastTime from live_info  Left JOIN dev_live_resource  ON live_info.resourceId=dev_live_resource.resourceId where dev_live_resource.online='0';";
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {
@@ -33,22 +35,67 @@ function queryAllhistory(req, res, next)
             return;
         }
 
+// var queryStr2 = " select count(*) as counts from transfer_resource where  resourceId='"+row.resourceId+"' and online='0' ";
+//            // // console.log(queryStr2);
+//            //  myClient.query(queryStr2,function(err,result2){
+
+
+        
+
         result.forEach(function(row) {
-            var value = {
+
+            //var wathnum = new Array();
+           //  var queryStr2 = " select count(*) as counts from transfer_resource where  resourceId='"+row.resourceId+"' and online='0' ";
+           // // console.log(queryStr2);
+           //  myClient.query(queryStr2,function(err,result2){
+
+            
+
+    
+
+           value = {
                 资源序号 : row.resourceId,
                 文件名 : row.path ,
-                直播平台: row.host
+                直播平台: row.host,
+                开始时间:row.firstTime,
+                结束时间:row.lastTime,
+                //观众数:result2[0].counts
+               // 观众数:rows.counts
             };
+           
+            //console.log(value);
+             values.push(value);
+             // console.log(values);
 
-            values.push(value);
+            
+             
+
+              //res.send(values);
+
+             
+
+         
+
+
+          //  });
+
+           
         });
 
-        var retStr = {
-            ret: 0,
-            values: values
-        };
+      //  console.log("values:::::"+values);
 
-        res.send(retStr);
+             var retStr = {
+                ret: 0,
+                values: values
+            };
+       res.send(retStr);
+
+        
+
+
+        
+
+     
     });
 
 }

@@ -109,7 +109,7 @@ function onNewConnection(socket) {
             console.log("socket.id is undefined!");
             return;
         }
-        devConn.releaseConnection(socket.id);
+        devConn.releaseConnections(socket.id);
     });
     /*socket.on('timeout', function(){
             console.log("onNewConnection"+Date.now());
@@ -136,11 +136,6 @@ tcpServer.on('connection', function(socket) {
 
     sockets.push(socket);
 
-    //dsockets.push(socket.id);
-
-
-
-
     socket.on('data', function(data) {
 
       //console.log("data is id :"+socket.id);
@@ -155,30 +150,6 @@ tcpServer.on('connection', function(socket) {
         console.log("close:" + socket.name);
         console.log("close socket id is:" + socket.id);
 
- /*       var devIdListStr = "";
-
-        for(var i=0; i<dsockets.length; i++) {
-
-        devIdListStr = devIdListStr + dsockets[i];
-        if(i<dsockets.length-1) {
-            devIdListStr = devIdListStr + ",";
-        }
-          
-    }
-    console.log(devIdListStr);
-    var updateStr="UPDATE iot_device SET online='0' WHERE deviceId IN (" + devIdListStr + ")";
-    console.log("setDevOffline updateStr="+updateStr);
-    client.query(updateStr, function(err, result) { 
-        if (err) {
-            console.error(err.stack);
-        }
-    });*/
-
-
-     /*   if(typeof(socket.id) == 'undefined') {
-            console.log("socket.id is undefined!");
-            return;
-        }*/
         devConn.releaseConnection(socket.id);
     });
 

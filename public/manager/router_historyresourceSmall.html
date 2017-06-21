@@ -31,10 +31,13 @@
 					<th>ResourceId</th>
 					<th>直播来源</th>
 					<th>转发给</th>
+					<th>开始时间</th>
+					<th>结束时间</th>
+					<th>字节数</th>
 				</tr>
-				<tr id="cell" class="cell" v-for="dic in message">
+				<tr id="cell" class="cell" v-for="dic in message.values">
 					<td v-for="value in dic">
-					{{ value | make}}</td>
+					<!-- {{ value | make}} -->{{value}}</td>
 					<!--<td ><a class="pluginVersion blueBut" href="router_retransmission.html">详情</a></td>-->
 				</tr>
 			</table>
@@ -92,48 +95,49 @@ myajax(7,"post",{"deviceId":deviceId},detaiCallBack);
 
 function detaiCallBack(data1){
 
-	 vm.message = data1;
-	 var resourceIdArr = [];
-     var data = {};
+	//  vm.message = data1;
+	//  var resourceIdArr = [];
+ //     var data = {};
 
- for(var i= 0; i< vm.message.values.length; i++){
+ // for(var i= 0; i< vm.message.values.length; i++){
 
- 	var thisId = vm.message.values[i].resourceId;
+ // 	var thisId = vm.message.values[i].resourceId;
  	
- 	var has =  $.inArray(thisId, resourceIdArr);
+ // 	var has =  $.inArray(thisId, resourceIdArr);
 
- 	if(has == -1){
- 		resourceIdArr.push(thisId);
+ // 	if(has == -1){
+ // 		resourceIdArr.push(thisId);
  		
- 	   data[thisId] = {"resourceId":thisId,src:[vm.message.values[i].src],deviceId:[vm.message.values[i].deviceId]};
+ // 	   data[thisId] = {"resourceId":thisId,src:[vm.message.values[i].src],deviceId:[vm.message.values[i].deviceId]};
+ // 	   // data[thisId] = {"resourceId":thisId,src:[vm.message.values[i].src],deviceId:[vm.message.values[i].deviceId],firsttime:vm.message.values[i].firstTime,lastTime:vm.message.values[i].lastTime,totalBytes:vm.message.values[i].totalBytes};
  	 
- 	}else{
+ // 	}else{
  	  
- 	  var arr1 = data[thisId].deviceId;
- 	  var arr2 = data[thisId].src;
- 	  var a1 = vm.message.values[i].deviceId;
- 	  var a2 = vm.message.values[i].src;
- 		var hasDeviceID = $.inArray(a1,arr1);
- 		var hasSrc = $.inArray(a2,arr2);
+ // 	  var arr1 = data[thisId].deviceId;
+ // 	  var arr2 = data[thisId].src;
+ // 	  var a1 = vm.message.values[i].deviceId;
+ // 	  var a2 = vm.message.values[i].src;
+ // 		var hasDeviceID = $.inArray(a1,arr1);
+ // 		var hasSrc = $.inArray(a2,arr2);
  		
  		
  	
  		
- 		if(hasDeviceID == -1){
+ // 		if(hasDeviceID == -1){
  		
- 			data[thisId].deviceId.push(vm.message.values[i].deviceId);
+ // 			data[thisId].deviceId.push(vm.message.values[i].deviceId);
  			
- 		}
- 		if(hasSrc == -1){
+ // 		}
+ // 		if(hasSrc == -1){
  			
- 			data[thisId].src.push(vm.message.values[i].src);
- 		}
- 	}
- }
+ // 			data[thisId].src.push(vm.message.values[i].src);
+ // 		}
+ // 	}
+ // }
  
 
 
- vm.message = data;
+ vm.message = data1;
 }//callback
 
 

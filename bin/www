@@ -11,6 +11,14 @@ var devConn = require('dev_conn');
 var wsSrv = require('ws-server');
 
 
+var mysql   = require('mysql');
+var db = require('db');
+var client = mysql.createConnection(db.mysql);
+ 
+client.connect();
+
+
+
 
 /**
  * Get port from environment and store in Express.
@@ -117,15 +125,25 @@ var PORT = 4001;
 var tcpServer = net.createServer();
 var sockets= [];
 
+var dsockets=[];
+
 tcpServer.on('connection', function(socket) {
     socket.name = socket.remoteAddress + ':' + socket.remotePort;
 
     socket.setKeepAlive(true);
     socket.id = devConn.newConnection(socket);
+    //console.log("is socket is"+socket.id);
 
     sockets.push(socket);
 
+    //dsockets.push(socket.id);
+
+
+
+
     socket.on('data', function(data) {
+
+      //console.log("data is id :"+socket.id);
         gateway_tcp.message_handle(data, socket);
     });
 
@@ -135,11 +153,32 @@ tcpServer.on('connection', function(socket) {
 
     socket.on('close', function() {
         console.log("close:" + socket.name);
+        console.log("close socket id is:" + socket.id);
 
-        if(typeof(socket.id) == 'undefined') {
+ /*       var devIdListStr = "";
+
+        for(var i=0; i<dsockets.length; i++) {
+
+        devIdListStr = devIdListStr + dsockets[i];
+        if(i<dsockets.length-1) {
+            devIdListStr = devIdListStr + ",";
+        }
+          
+    }
+    console.log(devIdListStr);
+    var updateStr="UPDATE iot_device SET online='0' WHERE deviceId IN (" + devIdListStr + ")";
+    console.log("setDevOffline updateStr="+updateStr);
+    client.query(updateStr, function(err, result) { 
+        if (err) {
+            console.error(err.stack);
+        }
+    });*/
+
+
+     /*   if(typeof(socket.id) == 'undefined') {
             console.log("socket.id is undefined!");
             return;
-        }
+        }*/
         devConn.releaseConnection(socket.id);
     });
 

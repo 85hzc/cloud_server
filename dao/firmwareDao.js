@@ -64,7 +64,8 @@ function querynowmsg(req, res, next) {
     //var vendorID = req.session.vendorID;
 
     //var queryStr = "select  from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='1'  and dev_live_resource.deviceId='"+deviceId+"'  ; ";
-        var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' or src='"+deviceId+"' and online!='0'";
+        var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='0'";
+    //select distinct resourceId,deviceId,src,online from transfer_resource where  (deviceId='1' or src='1') and online!='1' ;
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {
@@ -75,6 +76,8 @@ function querynowmsg(req, res, next) {
 
 
         result.forEach(function(row) {
+
+
             var value = {
 
                  resourceId: row.resourceId,
@@ -108,7 +111,7 @@ function queryhismsg(req, res, next) {
 
     //var queryStr = "select  distinct transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='0'  and dev_live_resource.deviceId='"+deviceId+"' ; ";
     //var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' and online!='1'";
-     var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' or src='"+deviceId+"' and online!='1'";
+     var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1'";
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {

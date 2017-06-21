@@ -95,12 +95,24 @@ function refresh(){
 	
 
     function detailCallBack(data){
+    	 	var arr = data.values;
+    	
+    	//增加观众数
+    	var nump2p = data.values[3].count;
+    	var numporigin = data.values[4].count;
+    	var numwatch = nump2p + numporigin;
+   
     	//增加p2p转发率
-    	var arr = data.values;
+   
     	var p2p = parseInt(data.values[arr.length - 1].count);
-    	var all = Math.round(data.values[arr.length - 3].count); 
-    	var  percent  = parseInt(p2p / all * 100) + "%";
+    	var all = parseInt(data.values[arr.length - 3].count); 
+    	var  percent  = (p2p / all * 100).toFixed(2) + "%";
+    	
+    	
+    	
     	data.values.push({"name":"p2p转发率","count":percent});
+    	data.values.insert({5,"name":"观众数","count":percent});
+    	
     	vm.message = data;
     	refresh();
     	

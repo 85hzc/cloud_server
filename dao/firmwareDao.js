@@ -127,8 +127,8 @@ function queryhismsg(req, res, next) {
             
             var value = {
                 resourceId: row.resourceId,
-                deviceId:row.deviceId,
                 src: row.src ,
+                deviceId:row.deviceId,
                 firstTime:row.firstTime,
                 lastTime:row.lastTime,
                 totalBytes:row.totalBytes

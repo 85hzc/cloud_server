@@ -17,6 +17,8 @@ myClient.connect();
 //查询历史直播资源
 function queryAllhistory(req, res, next)
 {
+
+       var flag = 0;
     console.log("Enter queryAllPlugin");
     //console.log(req.session.vendorID);
 
@@ -40,55 +42,63 @@ function queryAllhistory(req, res, next)
 //            //  myClient.query(queryStr2,function(err,result2){
 
 
-        
 
+            var resultlength = result.length;
+         
         result.forEach(function(row) {
-
-            //var wathnum = new Array();
-           //  var queryStr2 = " select count(*) as counts from transfer_resource where  resourceId='"+row.resourceId+"' and online='0' ";
-           // // console.log(queryStr2);
-           //  myClient.query(queryStr2,function(err,result2){
 
             
 
+            var wathnum = new Array();
+            var queryStr2 = " select count(*) as counts from transfer_resource where  resourceId='"+row.resourceId+"' and online='0' ";
+           // console.log(queryStr2);
+            myClient.query(queryStr2,function(err,result2){
+
+        
+           flag++;
     
 
-           value = {
+           var value = {
                 资源序号 : row.resourceId,
                 文件名 : row.path ,
                 直播平台: row.host,
                 开始时间:row.firstTime,
                 结束时间:row.lastTime,
-                //观众数:result2[0].counts
+                观众数:result2[0].counts
                // 观众数:rows.counts
             };
            
             //console.log(value);
              values.push(value);
-             // console.log(values);
+         
+             if (flag == resultlength) {
+                
 
-            
-             
+            var retStr = {
+                ret: 0,
+                values: values
+            };
+            flag = 0;
+            console.log(retStr);
+            res.send(retStr);
 
-              //res.send(values);
 
-             
+             }
+
 
          
+              //res.send(values);
 
 
-          //  });
+           });
 
            
         });
 
       //  console.log("values:::::"+values);
 
-             var retStr = {
-                ret: 0,
-                values: values
-            };
-       res.send(retStr);
+   
+   
 
         
 

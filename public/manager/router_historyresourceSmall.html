@@ -13,7 +13,7 @@
 		<!--记录数据-->
 		<div id="fileName" fileNam="router_historyresourceSmal"></div>
 		<!--记录数据-->
-		<div id="pluginContainer" fileNam="plugin">
+		<div class="pluginContainer" fileNam="plugin">
 			<div class="pluginTitle"><a class="backBtn" >返回</a>路由器历史直播资源</div>
 
 			<div style="padding:10px 10px 0 10px;font-size: 13px;color: #2dc3e8;">origin表示直接从直播平台获取。</div>
@@ -45,8 +45,13 @@
 			<div style="height: 15px;"></div>
 			
 		</div>
+		
+		<div class="pluginContainer">
+			<div class="table" style="height: 400px;margin-top: 30px;"></div>
+         </div>
 	</body>
 <script type="text/javascript" src="js/public.js" ></script>
+<script type="text/javascript" src="js/echarts.js" ></script>
 <!--<script type="text/javascript" src="js/netWokr.js" ></script>-->
 <script>
 
@@ -144,10 +149,159 @@ function detaiCallBack(data1){
 
  
 
+//处理数据
+function formateData(data1,bytes) {
+	var arr = data1.values;
+	var timeArr = [];
+	var bytesArr = [];
+
+	for(var i = 0; i < arr.length; i++) {
+		if(bytes == 1){
+			bytesArr.push(arr[i].totalBytes);
+			timeArr.push(arr[i].time.slice(0, 7));
+		}
+	
+		
+	}
+	
+	return {
+		timeArr: timeArr,
+		bytesArr: bytesArr
+	};
+}
+/*----------------------------------------------------------------*/
+var isconnected = false;//是否联网状态
+if(isconnected) {
+	myajax(10, "post", {deviceId:deviceId}, allBytesCallback);
+	
+} else {
+
+	var data = {
+		values: [{
+			totalBytes: 100100000,
+			time: "2016-05-21 20:31:00"
+		}, {
+			totalBytes:2000000000,
+			time: "2016-06-21 20:31:00"
+		}, {
+			totalBytes:1000000000,
+			time: "2016-07-21 20:31:00"
+		}, {
+			totalBytes:1000000000,
+			time: "2016-08-21 20:31:00"
+		}]
+	};
+	
+	
+	allBytesCallback(data);
+
+}
 
 
- 
- 
+
+function allBytesCallback(data1) {
+	
+var data1 = formateData(data1,1);//处理数据
+
+
+	require.config({
+		paths: {
+			echarts: 'echarts/build/dist'
+		}
+	});
+
+	// 使用
+	require(
+		[
+			'echarts',
+			'echarts/chart/line', // 使用柱状图就加载bar模块，按需加载
+			'echarts/chart/bar'
+		],
+		function(ec) {
+			// 基于准备好的dom，初始化echarts图表
+			var myChart = ec.init(document.getElementsByClassName('table')[0]);
+
+			var option = {
+				grid:{
+					x:150
+				},
+				title: {
+					text: '每月转发流量',
+					subtext: ''
+				},
+				tooltip: {
+					trigger: 'axis'
+				},
+				legend: {
+					data: ['转发字节']
+				},
+				toolbox: {
+					show: true,
+					feature: {
+						mark: {
+							show: true
+						},
+						dataView: {
+							show: true,
+							readOnly: false
+						},
+						magicType: {
+							show: true,
+							type: ['line', 'bar']
+						},
+						restore: {
+							show: true
+						},
+						saveAsImage: {
+							show: true
+						}
+					}
+				},
+				calculable: true,
+				xAxis: [{
+					type: 'category',
+					boundaryGap: false,
+					data: data1.timeArr
+				}],
+				yAxis: [{
+					type: 'value',
+					axisLabel: {
+						formatter: '{value} Byte'
+					}
+				}],
+				series: [{
+					name: '转发字节',
+					type: 'line',
+					data: data1.bytesArr,
+//					markPoint: {
+//						data: [{
+//								type: 'max',
+//								name: '最大值'
+//							},
+//							{
+//								type: 'min',
+//								name: '最小值'
+//							}
+//						]
+//					},
+//					markLine: {
+//						data: [{
+//							type: 'average',
+//							name: '平均值'
+//						}]
+//					}
+				}]
+			};
+
+			// 为echarts对象加载数据 
+			myChart.setOption(option);
+		}
+	);
+
+} //allBytesCallback
+
+
+
  
  </script>
 </html>

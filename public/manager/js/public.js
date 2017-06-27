@@ -59,7 +59,7 @@ if(titleEle){
 
 
 //ajax请求
-var urlArr = ["", "/firmware/status", "/firmware/queryAllnow", "/firmware/queryById", "/firmware/queryAllhistory", "/firmware/queryAllroute", "/firmware/querynowmsg", "/firmware/queryhismsg", "/firmware/totalBytesBytime", "/firmware/totalsumByweek"];
+var urlArr = ["", "/firmware/status", "/firmware/queryAllnow", "/firmware/queryById", "/firmware/queryAllhistory", "/firmware/queryAllroute", "/firmware/querynowmsg", "/firmware/queryhismsg", "/firmware/totalBytesBytime", "/firmware/totalsumByweek","/firmware/totalBytesBydeviceId"];
 
 function myajax(urli,type,data,succallback){
 	// alert(urlArr[urli])

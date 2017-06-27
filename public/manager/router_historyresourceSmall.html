@@ -13,8 +13,15 @@
 		<!--记录数据-->
 		<div id="fileName" fileNam="router_historyresourceSmal"></div>
 		<!--记录数据-->
-		<div class="pluginContainer" fileNam="plugin">
+		
+		<div class="pluginContainer">
 			<div class="pluginTitle"><a class="backBtn" >返回</a>路由器历史直播资源</div>
+			
+			<div class="table" style="height: 400px;margin-top: 30px;"></div>
+         </div>
+		
+		<div class="pluginContainer" fileNam="plugin">
+
 
 			<div style="padding:10px 10px 0 10px;font-size: 13px;color: #2dc3e8;">origin表示直接从直播平台获取。</div>
 
@@ -46,9 +53,7 @@
 			
 		</div>
 		
-		<div class="pluginContainer">
-			<div class="table" style="height: 400px;margin-top: 30px;"></div>
-         </div>
+
 	</body>
 <script type="text/javascript" src="js/public.js" ></script>
 <script type="text/javascript" src="js/echarts.js" ></script>
@@ -170,7 +175,7 @@ function formateData(data1,bytes) {
 	};
 }
 /*----------------------------------------------------------------*/
-var isconnected = true;//是否联网状态
+var isconnected = 0;//是否联网状态
 if(isconnected) {
 	myajax(10, "post", {deviceId:deviceId}, allBytesCallback);
 	
@@ -226,7 +231,7 @@ var data1 = formateData(data1,1);//处理数据
 					x:150
 				},
 				title: {
-					text: '每月转发流量',
+					text: '路由器每月转发流量',
 					subtext: ''
 				},
 				tooltip: {

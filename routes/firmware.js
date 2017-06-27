@@ -16,6 +16,51 @@ var devDao = require('../dao/devDao');
 var check = require('check');
 
 
+//根据天数统计直播资源观看数
+router.get('/queryresourcebyday', function(req, res, next) {
+    console.log("/queryresourcebyday");
+
+        firmwareDao.queryresourcebyday(req, res, next);
+
+
+
+});
+
+//total live num 
+router.get('/totalsumByweek', function(req, res, next) {
+    console.log("/totalsumByweek");
+
+        firmwareDao.totalsumByweek(req, res, next);
+
+
+
+});
+
+
+
+
+
+//each month
+router.get('/totalBytesBytime', function(req, res, next) {
+    console.log("/totalBytesBytime");
+
+        firmwareDao.totalBytesBytime(req, res, next);
+
+
+
+});
+
+//ench month by deviceId
+router.post('/totalBytesBydeviceId', function(req, res, next) {
+         console.log("/totalBytesBydeviceId");
+        firmwareDao.totalBytesBydeviceId(req, res, next);
+    
+});
+
+
+
+
+
 //查询所有路由器
 router.get('/queryAllroute', function(req, res, next) {
 

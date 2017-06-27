@@ -13,6 +13,29 @@ myClient.connect();
 
 
 
+function timeformat1(atime){
+
+       if (!(atime instanceof Date)) {
+        return 0;
+    }
+
+     var y = atime.getFullYear();
+     var m = atime.getMonth() + 1;
+     m = m < 10 ? ('0'+m) : m;
+     var d = atime.getDate();
+     d = d < 10 ? ("0" + d) : d;
+     var h = atime.getHours();
+     var minute = atime.getMinutes();
+     minute = minute < 10 ? ("0"+minute) : minute;
+    var second= atime.getSeconds();
+     second = second < 10 ? ("0"+second) : second;
+
+
+     return y + '-' + m + '-' + d + ' '+h+':'+minute+':'+ second;
+}
+
+
+
 
 //查询历史直播资源
 function queryAllhistory(req, res, next)
@@ -56,14 +79,16 @@ function queryAllhistory(req, res, next)
 
         
            flag++;
+         //  console.log("-----------------------------------------------------");
     
+         //  console.log(row.firstTime.getFullYear());
 
            var value = {
                 资源序号 : row.resourceId,
                 文件名 : row.path ,
                 直播平台: row.host,
-                开始时间:row.firstTime,
-                结束时间:row.lastTime,
+                开始时间:timeformat1(row.firstTime),
+                结束时间:timeformat1(row.lastTime),
                 观众数:result2[0].counts
                // 观众数:rows.counts
             };

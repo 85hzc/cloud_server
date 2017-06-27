@@ -99,7 +99,26 @@ function querynowmsg(req, res, next) {
     });
 
 }
+//timeformat
+function timeformat1(atime){
 
+        if (!(atime instanceof Date)) {
+        return "N/A";
+    }
+     var y = atime.getFullYear();
+     var m = atime.getMonth() + 1;
+     m = m < 10 ? ('0'+m) : m;
+     var d = atime.getDate();
+     d = d < 10 ? ("0" + d) : d;
+     var h = atime.getHours();
+     var minute = atime.getMinutes();
+     minute = minute < 10 ? ("0"+minute) : minute;
+    var second= atime.getSeconds();
+     second = second < 10 ? ("0"+second) : second;
+
+
+     return y + '-' + m + '-' + d + ' '+h+':'+minute+':'+ second;
+}
 
 //路由器历史资源信息
 function queryhismsg(req, res, next) {
@@ -112,8 +131,8 @@ function queryhismsg(req, res, next) {
     //var queryStr = "select  distinct transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='0'  and dev_live_resource.deviceId='"+deviceId+"' ; ";
     //var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' and online!='1'";
     // var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1'";
-    var queryStr=" select  distinct transfer_resource.totalBytes, transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src ,dev_live_resource.firstTime,dev_live_resource.lastTime from transfer_resource left join dev_live_resource on transfer_resource.deviceId= dev_live_resource.deviceId where (transfer_resource.deviceId='"+deviceId+"' or transfer_resource.src='"+deviceId+"') and transfer_resource.online!='1';";
-
+    //var queryStr=" select  distinct transfer_resource.totalBytes, transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src ,dev_live_resource.firstTime,dev_live_resource.lastTime from transfer_resource left join dev_live_resource on transfer_resource.deviceId= dev_live_resource.deviceId where (transfer_resource.deviceId='"+deviceId+"' or transfer_resource.src='"+deviceId+"') and transfer_resource.online!='1';";
+    var queryStr="select distinct resourceId,src,deviceId,startTime,endTime,totalBytes from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1';";
     console.log(queryStr);
 
     myClient.query(queryStr, function(err, result) {
@@ -129,8 +148,8 @@ function queryhismsg(req, res, next) {
                 resourceId: row.resourceId,
                 src: row.src ,
                 deviceId:row.deviceId,
-                firstTime:row.firstTime,
-                lastTime:row.lastTime,
+                firstTime:timeformat1(row.startTime),
+                lastTime:timeformat1(row.endTime),
                 totalBytes:row.totalBytes
             };
 
@@ -150,7 +169,199 @@ function queryhismsg(req, res, next) {
 }
 
 
+
+
+
+function queryresourcebyday(req, res, next) {
+    var values = new Array();
+
+   // var deviceId = req.body.deviceId;
+
+    //var vendorID = req.session.vendorID;
+
+    //var queryStr = "select  distinct transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src from dev_live_resource  Left JOIN transfer_resource  ON transfer_resource.deviceId=dev_live_resource.deviceId where dev_live_resource.online='0'  and dev_live_resource.deviceId='"+deviceId+"' ; ";
+    //var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where deviceId='"+deviceId+"' and online!='1'";
+    // var queryStr="select distinct resourceId,deviceId,src  from transfer_resource where (deviceId='"+deviceId+"' or src='"+deviceId+"') and online!='1'";
+    //var queryStr=" select  distinct transfer_resource.totalBytes, transfer_resource.resourceId,transfer_resource.deviceId,transfer_resource.src ,dev_live_resource.firstTime,dev_live_resource.lastTime from transfer_resource left join dev_live_resource on transfer_resource.deviceId= dev_live_resource.deviceId where (transfer_resource.deviceId='"+deviceId+"' or transfer_resource.src='"+deviceId+"') and transfer_resource.online!='1';";
+    var queryStr=" SELECT  count(*) as res , sum(totalBytes) as totalBytes, DATE_FORMAT(doc.firstTime, '%Y-%m-%d') AS time  FROM  dev_live_resource doc ,transfer_resource tran WHERE doc.resourceId=tran.resourceId and DATE_FORMAT(doc.lastTime, '%Y') = '2017'  GROUP BY  time  ORDER BY NULL";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+        result.forEach(function(row) {
+
+            
+            var value = {
+                resourceCount: row.res,
+                totalBytes: row.totalBytes ,
+                time:row.time
+            };
+
+            values.push(value);
+        });
+
+        var results = {
+            ret:0,
+            values:values
+        };
+        console.log(results);
+        res.send(results);
+            
+    });
+
+
+}
+
+
+
+
+// each month
+function totalBytesBytime(req, res, next) {
+    var values = new Array();
+
+  
+    //var queryStr=" SELECT  count(*) as res , sum(totalBytes) as totalBytes, DATE_FORMAT(doc.firstTime, '%Y-%m-%d') AS time  FROM  dev_live_resource doc ,transfer_resource tran WHERE doc.resourceId=tran.resourceId and DATE_FORMAT(doc.lastTime, '%Y') = '2017'  GROUP BY  time  ORDER BY NULL";
+    //var queryStr="select sum(deviceId) as totalBytes from  dev_live_resource where date_format(firstTime,'%Y-%m')=date_format(now(),'%Y-%m')  ;";
+    var queryStr="select sum(totalBytes) as totalBytes,startTime from transfer_resource group by date_format(startTime, '%Y-%m');";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+
+         result.forEach(function(row) {
+            
+            var value = {
+               totalBytes:row.totalBytes,
+                time:timeformat1(row.startTime)
+            };
+
+            values.push(value);
+        });
+
+
+        var results = {
+            ret:0,
+            values:values
+        };
+        console.log(results);
+        res.send(results);
+            
+    });
+
+
+}
+
+
+
+//each month by deviceid
+function totalBytesBydeviceId(req, res, next) {
+    var values = new Array();
+
+    var deviceId = req.body.deviceId;
+
+  
+    //var queryStr=" SELECT  count(*) as res , sum(totalBytes) as totalBytes, DATE_FORMAT(doc.firstTime, '%Y-%m-%d') AS time  FROM  dev_live_resource doc ,transfer_resource tran WHERE doc.resourceId=tran.resourceId and DATE_FORMAT(doc.lastTime, '%Y') = '2017'  GROUP BY  time  ORDER BY NULL";
+    //var queryStr="select sum(deviceId) as totalBytes from  dev_live_resource where date_format(firstTime,'%Y-%m')=date_format(now(),'%Y-%m')  ;";
+    //var queryStr="select sum(totalBytes) as totalBytes,startTime from transfer_resource group by date_format(startTime, '%Y-%m');";
+
+    var queryStr="select sum(totalBytes) as totalBytes,startTime from transfer_resource where src='"+deviceId+"' or deviceId='"+deviceId+"' group by date_format(startTime, '%Y-%m');";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+
+         result.forEach(function(row) {
+            
+            var value = {
+               totalBytes:row.totalBytes,
+                time:timeformat1(row.startTime)
+            };
+
+            values.push(value);
+        });
+
+
+        var results = {
+            ret:0,
+            values:values
+        };
+        console.log(results);
+        res.send(results);
+            
+    });
+
+
+}
+
+
+
+
+//each week
+function totalsumByweek(req, res, next) {
+    var values = new Array();
+
+    var deviceId = req.body.deviceId;
+
+  
+   
+    var queryStr="select count(*) as num,  startTime, week(startTime) as week from transfer_resource group by week(startTime)";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+
+         result.forEach(function(row) {
+            
+            var value = {
+                num:row.num,
+                startTime:timeformat1(row.startTime),
+                week:row.week
+            };
+
+            values.push(value);
+        });
+
+
+        var results = {
+            ret:0,
+            values:values
+        };
+        console.log(results);
+        res.send(results);
+            
+    });
+
+
+}
+
+
+
+
+
 module.exports.queryAllroute = queryAllroute;
 module.exports.querynowmsg = querynowmsg;
 module.exports.queryhismsg = queryhismsg;
+module.exports.queryresourcebyday = queryresourcebyday;
+
+module.exports.totalBytesBytime = totalBytesBytime;
+
+module.exports.totalBytesBydeviceId = totalBytesBydeviceId;
+module.exports.totalsumByweek = totalsumByweek;
+
 

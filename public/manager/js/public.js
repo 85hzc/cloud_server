@@ -59,7 +59,7 @@ if(titleEle){
 
 
 //ajax请求
-var urlArr = ["","/firmware/status","/firmware/queryAllnow","/firmware/queryById","/firmware/queryAllhistory","/firmware/queryAllroute","/firmware/querynowmsg","/firmware/queryhismsg"];
+var urlArr = ["","/firmware/status","/firmware/queryAllnow","/firmware/queryById","/firmware/queryAllhistory","/firmware/queryAllroute","/firmware/querynowmsg","/firmware/queryhismsg","/firmware/totalBytesBytime"];
 
 function myajax(urli,type,data,succallback){
 	// alert(urlArr[urli])
@@ -72,7 +72,7 @@ function myajax(urli,type,data,succallback){
         cache: false,
         success: succallback,
         error: function () {
-         alert("加载失败!");
+//       alert("加载失败!");
         }
     });//ajax
 }

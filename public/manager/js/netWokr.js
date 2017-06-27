@@ -46,7 +46,7 @@ var allCodeUrl = "/lirc/allCode";
 var deleteCodeUrl = "/lirc/delete";
 var addCodeUrl = "/lirc/fileupload";
 var allDevUrl = "/lirc/allDev";
-var devDeleteUrl = "/lirc/devDelete";
+var devDeleteUrl = "/lirc/devDelete"; 
 var devAddUrl = "/lirc/devAdd";
 
 /*1.接口url*/

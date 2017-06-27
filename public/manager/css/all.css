@@ -66,3 +66,25 @@ label.error{
 ul li{
     list-style: none;
 }
+
+
+/*table样式*/
+.table{
+	width: 100%;
+    margin: 0 auto;
+	border: 1px solid #ddd;
+	font-size: 13px;
+	/*border-collapse: collapse;*/
+	text-align: left;
+
+}
+
+
+/*一块*/
+.pluginContainer{
+	background: white;
+	box-shadow: 0 0 10px rgba(0,0,0,.3);
+	position: relative;
+	margin: 20px 20px 0px 20px;
+	font-size: 13px;
+}

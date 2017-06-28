@@ -57,6 +57,13 @@ router.post('/totalBytesBydeviceId', function(req, res, next) {
     
 });
 
+//count TOP 10 live
+router.get('/countLiveByweek', function(req, res, next) {
+         console.log("/countLiveByweek");
+        firmwareDao.countLiveByweek(req, res, next);
+    
+});
+
 
 
 

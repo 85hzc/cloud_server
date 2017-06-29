@@ -22,7 +22,7 @@ function formateData(data1, bytes) {
 	};
 }
 /*----------------------------------------------------------------*/
-var isconnected = false; //是否联网状态
+var isconnected = true; //是否联网状态
 if(isconnected) {
 	myajax(8, "get", {}, allBytesCallback);
 	myajax(9, "get", {}, allsumCallback);

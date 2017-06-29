@@ -42,7 +42,7 @@
 		<div class="titleContainer">
 			<a href="" class="selectTitle" target="iframe1">开发指南</a>
 		</div>
-		<div class="jiantou"><div class="jtBlock"></div></div>
+		<div class="jiantou">展开<div class="jtBlock"></div></div>
 	</div>
 	<div class="iframeContainer">
 		<iframe id="iframe1" name="iframe1" src="help.html" frameborder="no" border="0"></iframe>
@@ -116,6 +116,11 @@
 
 		$(".jiantou").on("click",function(){
 			$("#middleContainer").toggleClass("fullScreen");
+			if($(this).text() == "展开"){
+				$(this).text("收起");
+			}else{
+				$(this).text("展开");
+			}
 		});
 		//标题导航点击
 

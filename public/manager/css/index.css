@@ -96,7 +96,7 @@ a{
 	top: 45px;
 	bottom: 0;
 	left: 5px;
-	width: 220px;
+	width: 150px;
 	/*border: 1px solid gainsboro;*/
 	background: white;
 	border-top: none;
@@ -167,6 +167,12 @@ a{
 	width: 37px;
 	/*border: 1px solid red;*/
 	z-index: 20;
+	font-size: 12px;
+	line-height: 37px;
+	text-align: center;
+	color: deepskyblue;
+	background: white;
+
 }
 .jiantou:hover{
 	background:rgba(255,255,255,0.5);
@@ -185,7 +191,7 @@ a{
 /*中间iframe容器开始*/
 #middleContainer{
 	position: absolute;
-	left: 229px;
+	left: 158px;
 	top: 45px;
 	right: 0;
 	bottom: 20px;

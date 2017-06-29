@@ -128,13 +128,13 @@
 						<div id="wan_link_div" class="hide" style="display: block;">
 							<div class="speedtext_div">
 								<!--<img class="speedtext_img" src="./img/icon_up.png">-->
-								<span class="speedtext_span1" id="upspeed" style="font-size: 14px; top: 22px; left: 5px;">从网站获取的流</span>
+								<span class="speedtext_span1" id="upspeed" style="font-size: 14px; top: 22px; left: 5px;">从直播网站获取的流</span>
 								<!--<span class="speedtext_span2" id="upspeed2">KB/S</span>-->
 							</div>
 							<hr class="speedtext_hr">
 							<div class="speedtext_div">
 								<img class="speedtext_img" src="./img/icon_down.png">
-								<span class="speedtext_span1" id="downspeed" style="left: -15px;">{{message.values.从网站获取的流}}</span>
+								<span class="speedtext_span1" id="downspeed" style="left: -15px;">{{message.values[2].count}}</span>
 								<!--<span class="speedtext_span2" id="downspeed2">KB/S</span>-->
 							</div>
 						</div>
@@ -163,7 +163,7 @@
 						</div>
 						<div class="wifitext_div" style="visibility: visible; overflow: hidden;">
 							<hr class="wifitext_hr1">
-							<span id="wifitext_span5">{{message.values.P2P转发总数}}</span>
+							<span id="wifitext_span5">{{message.values[4].count}}</span>
 							<hr class="wifitext_hr1" id="right_hr_5">
 						</div>
 					</div>
@@ -187,11 +187,11 @@
 				<img src="img/k22.png" class="rounterimg" />
 				<div class="routerall">
 					<div class="div1">路由器总台数</div>
-					<div class="div2">{{message.values.路由器总台数}}</div>
+					<div class="div2">{{message.values[0].count}}</div>
 				</div>
 				<div class="routeronline">
 					<div class="div3">在线台数</div>
-					<div class="div4">{{message.values.在线台数}}</div>
+					<div class="div4">{{message.values[1].count}}</div>
 				</div>
 			</div>
 			
@@ -200,7 +200,7 @@
 				<img src="img/zb.jpg"  class="tvimg"/>
 				<div class="personNum" style="height: 100%;background: whitesmoke;">
 					<div class="div1" style="padding-top: 70px; color: black;">正在观看的直播资源数</div>
-					<div class="div2">{{message.values.正在观看的直播资源数}}</div>
+					<div class="div2">{{message.values[2].count}}</div>
 				</div>
 			</div>
 			
@@ -209,7 +209,7 @@
 				<img src="img/gz.jpg"  class="tvimg"/>
 				<div class="personNum" style="height: 100%;background: whitesmoke;">
 					<div class="div1" style="padding-top: 70px; color: black;">观众数</div>
-					<div class="div2" >{{message.values.观众数}}</div>
+					<div class="div2" >{{message.values[5].count}}</div>
 				</div>
 
 			</div>
@@ -287,8 +287,10 @@
 		}
 
 		function detailCallBack(data) {
+
 			
-			refreshPie(data);
+			
+		
 	
 			var arr = data.values;
 
@@ -313,6 +315,7 @@
 			});
 
 			vm.message = data;
+			pie(data);
 			refresh();
 
 		}

@@ -16,6 +16,9 @@ var devDao = require('../dao/devDao');
 var check = require('check');
 
 
+
+
+
 //根据天数统计直播资源观看数
 router.get('/queryresourcebyday', function(req, res, next) {
     console.log("/queryresourcebyday");
@@ -63,6 +66,26 @@ router.get('/countLiveByweek', function(req, res, next) {
         firmwareDao.countLiveByweek(req, res, next);
     
 });
+
+
+router.get('/countOnLine', function(req, res, next) {
+         console.log("/countOnLine");
+        firmwareDao.countOnLine(req, res, next);
+    
+});
+
+
+router.get('/countOffLine', function(req, res, next) {
+         console.log("/countOffLine");
+        firmwareDao.countOffLine(req, res, next);
+    
+});
+
+
+
+
+
+
 
 
 

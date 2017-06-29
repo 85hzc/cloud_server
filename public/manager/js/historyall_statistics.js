@@ -69,26 +69,15 @@ if(isconnected) {
 
 
 
-var option1;
-var myChart1;
-function refreshPie(data){
-			option1.title.subtext
-		    option1.series.data = [{
-						value: data.values.从直播平台获取流的总字节数,
-						name: '从直播平台获取流的总字节数'
-					},
-					{
-						value: data.values.P2P转发流的总字节数,
-						name: 'P2P转发流的总字节数'
-					},
-				];
-			myChart1.setOption(option);
-}
+
        
 
 		
 
-	
+function pie(piedata){
+
+		var value1 = piedata.values[7].count ? piedata.values[7].count : 0;
+			var value2 = piedata.values[8].count ? piedata.values[8].count : 0;
 	
 require(
 	[
@@ -98,9 +87,9 @@ require(
 	function(ec) {
 			
 		// 基于准备好的dom，初始化echarts图表
-		var myChart1 = ec.init(document.getElementsByClassName('ptwop')[0]);
+	var myChart1 = ec.init(document.getElementsByClassName('ptwop')[0]);
 		var idx = 1;
- var  option1 = {
+ var option1 = {
 		
 			title: {
 				text: '直播流情况',
@@ -139,11 +128,11 @@ require(
 				radius: '55%',
 				center: ['50%', '60%'],
 				data: [{
-						value: 335,
+						value: value1,
 						name: '从直播平台获取流的总字节数'
 					},
 					{
-						value: 310,
+						value: value2,
 						name: 'P2P转发流的总字节数'
 					},
 
@@ -152,6 +141,21 @@ require(
 			}]
 		};
 
+			option1.title.subtext = '直播流的总字节数 : '+piedata.values[6].count+'Byte';
+	
+
+
+		  //   option1.series.data = [{
+				// 		value: value1,
+				// 		name: '从直播平台获取流的总字节数'
+				// 	},
+				// 	{
+				// 		value: value2,
+				// 		name: 'P2P转发流的总字节数'
+				// 	}
+				// ];
+			myChart1.setOption(option1);
+
 		// 为echarts对象加载数据 
 		myChart1.setOption(option1);
 		
@@ -159,6 +163,8 @@ require(
 	
 	}
 );
+
+}//pie
 
 /*----------------------------------流的情况结束---------------------------------*/
 
@@ -790,3 +796,6 @@ function allsumCallback(data1) {
 	);
 
 } //allsumCallback
+
+
+

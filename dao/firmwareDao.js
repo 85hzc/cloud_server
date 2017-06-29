@@ -426,6 +426,159 @@ function countLiveByweek(req, res, next) {
 }
 
 
+
+//
+function countOffLine(req, res, next) {
+
+ var flag = 0;
+
+    var values = new Array();
+
+    //var deviceId = req.body.deviceId;
+
+    //var queryStr="select count(*) as num,  startTime, week(startTime) as week from transfer_resource group by week(startTime)";
+   // var queryStr="select  startTime, count(resourceId) as counts, resourceId,week(startTime) as week from transfer_resource   group by week(startTime),resourceId  order by week ,counts desc  ;";
+    var queryStr="select  startTime, count(resourceId) as counts ,resourceId from transfer_resource where online='0'   group by resourceId  order by  counts desc limit 0,10 ;";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+         var resultlength = result.length;
+         result.forEach(function(row) {
+
+            var wathnum = new Array();
+
+            var queryStr2="select * from live_info where resourceId='"+row.resourceId+"' ";
+            console.log(queryStr2);
+            myClient.query(queryStr2,function(err,results){
+
+                flag++;
+
+                var value = {
+                    countst:row.counts,
+                    resourceId:row.resourceId,
+                    startTime:timeformat1(row.startTime),
+                    host:results[0].host,
+                    path:results[0].path
+
+
+                };
+
+                 values.push(value);
+
+
+                  if (flag == resultlength) {
+                
+
+                    var retStr = {
+                        ret: 0,
+                        values: values
+                    };
+
+
+                    flag = 0;
+                    console.log(retStr);
+                    res.send(retStr);
+
+
+             }
+
+
+            });
+            
+      
+           
+        });
+
+            
+    });
+
+
+}
+
+
+
+function countOnLine(req, res, next) {
+
+ var flag = 0;
+
+    var values = new Array();
+
+    //var deviceId = req.body.deviceId;
+
+    //var queryStr="select count(*) as num,  startTime, week(startTime) as week from transfer_resource group by week(startTime)";
+   // var queryStr="select  startTime, count(resourceId) as counts, resourceId,week(startTime) as week from transfer_resource   group by week(startTime),resourceId  order by week ,counts desc  ;";
+    var queryStr="select  startTime, count(resourceId) as counts ,resourceId from transfer_resource where online='1'   group by resourceId  order by  counts desc limit 0,10 ;";
+    console.log(queryStr);
+
+    myClient.query(queryStr, function(err, result) {
+        if (err) {
+            console.error(err.stack);
+            return;
+        }
+
+         var resultlength = result.length;
+         result.forEach(function(row) {
+
+            var wathnum = new Array();
+
+            var queryStr2="select * from live_info where resourceId='"+row.resourceId+"' ";
+            console.log(queryStr2);
+            myClient.query(queryStr2,function(err,results){
+
+                flag++;
+
+                var value = {
+                    countst:row.counts,
+                    resourceId:row.resourceId,
+                    startTime:timeformat1(row.startTime),
+                    host:results[0].host,
+                    path:results[0].path
+
+
+                };
+
+                 values.push(value);
+
+
+                  if (flag == resultlength) {
+                
+
+                    var retStr = {
+                        ret: 0,
+                        values: values
+                    };
+
+
+                    flag = 0;
+                    console.log(retStr);
+                    res.send(retStr);
+
+
+             }
+
+
+            });
+            
+      
+           
+        });
+
+            
+    });
+
+
+}
+
+
+
+
+
+
 module.exports.queryAllroute = queryAllroute;
 module.exports.querynowmsg = querynowmsg;
 module.exports.queryhismsg = queryhismsg;
@@ -434,5 +587,8 @@ module.exports.totalBytesBytime = totalBytesBytime;
 module.exports.totalBytesBydeviceId = totalBytesBydeviceId;
 module.exports.totalsumByweek = totalsumByweek;
 module.exports.countLiveByweek = countLiveByweek;
+
+module.exports.countOffLine = countOffLine;
+module.exports.countOnLine = countOnLine;
 
 

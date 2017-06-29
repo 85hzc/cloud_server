@@ -32,6 +32,7 @@
 	<a href="router_historyresource.html" target="iframe1"><div class="navCell" style="letter-spacing: 0px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon2.jpg" />历史直播资源</div></a>
 	<a href="router_info.html" target="iframe1"><div class="navCell" style="letter-spacing: 3px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon11.jpg" />路由器信息</div></a>
 	<a href="router_distribution.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon7.jpg" />区域分布</div></a>
+	<a href="router_statistics.html" target="iframe1"><div class="navCell" style="letter-spacing: 8px;"><div class="leftBlcok"></div><img class="lefNavIcon" src="img/icon4.jpg" />统计报表</div></a>
 	
 </div>
 
@@ -41,7 +42,7 @@
 		<div class="titleContainer">
 			<a href="" class="selectTitle" target="iframe1">开发指南</a>
 		</div>
-		<div class="jiantou"><div class="jtBlock"></div></div>
+		<div class="jiantou">展开<div class="jtBlock"></div></div>
 	</div>
 	<div class="iframeContainer">
 		<iframe id="iframe1" name="iframe1" src="help.html" frameborder="no" border="0"></iframe>
@@ -115,6 +116,11 @@
 
 		$(".jiantou").on("click",function(){
 			$("#middleContainer").toggleClass("fullScreen");
+			if($(this).text() == "展开"){
+				$(this).text("收起");
+			}else{
+				$(this).text("展开");
+			}
 		});
 		//标题导航点击
 

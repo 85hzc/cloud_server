@@ -122,7 +122,7 @@
 				<div id="indexstatus">
 					<div class="img_outside_div">
 						<img id="earth" src="./img/icon_earth.png">
-						<div class="image_describe">直播平台</div>
+						<div class="image_describe">直播CDN</div>
 					</div>
 					<div id="speedtext">
 						<div id="wan_link_div" class="hide" style="display: block;">
@@ -213,24 +213,9 @@
 				</div>
 
 			</div>
-			
-			
-			
 		</div>
 
-		<div class="pluginContainer" fileNam="plugin">
-			<div class="pluginTitle">总状态</div>
-
-			<div class="tableContainer" style="margin-top: 30px;" >
-				<table id="table">
-					<tr v-for="dic in message.values">
-						<td v-for="value in dic">{{value}}</td>
-					</tr>
-				</table>
-			</div>
-			<div style="height: 15px;"></div>
-
-		</div>
+		
 
 		<div class="pluginContainer">
 			<div class="table" style="height: 400px;margin-top: 30px;"></div>
@@ -243,6 +228,23 @@
 		<div class="pluginContainer">
 			<div class="table" style="height: 400px;margin-top: 30px;"></div>
 		</div>
+		
+		
+		
+		<div class="pluginContainer" fileNam="plugin">
+			<div class="pluginTitle">总状态</div>
+
+			<div class="tableContainer" style="margin-top: 30px;" >
+				<table id="table">
+					<tr v-for="dic in message.values">
+						<td v-for="value in dic">{{value}}</td>
+					</tr>
+				</table>
+			</div>
+			<div style="height: 15px;"></div>
+		</div>
+		
+		
 </div><!--总的container-->
 
 	</body>

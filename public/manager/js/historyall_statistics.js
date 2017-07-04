@@ -24,8 +24,8 @@ function formateData(data1, bytes) {
 /*----------------------------------------------------------------*/
 var isconnected = true; //是否联网状态
 if(isconnected) {
-	myajax(8, "get", {}, allBytesCallback);
-	myajax(9, "get", {}, allsumCallback);
+	// myajax(8, "get", {}, allBytesCallback);
+	// myajax(9, "get", {}, allsumCallback);
 } else {
 
 	var data = {
@@ -79,10 +79,18 @@ function pie(piedata){
 		var value1 = piedata.values[7].count ? piedata.values[7].count : 0;
 		var value2 = piedata.values[8].count ? piedata.values[8].count : 0;
 
+	require.config({
+		paths: {
+			echarts: 'echarts/build/dist'
+		}
+	});
 require(
 	[
 		'echarts',
-		'echarts/chart/pie' // 使用柱状图就加载bar模块，按需加载
+		'echarts/chart/pie' ,// 使用柱状图就加载bar模块，按需加载
+		'echarts/chart/line', // 使用柱状图就加载bar模块，按需加载
+		'echarts/chart/bar'
+	
 	],
 	function(ec) {
 			
@@ -151,6 +159,9 @@ require(
 
 		// 为echarts对象加载数据 
 		myChart1.setOption(option1);
+
+	myajax(8, "get", {}, allBytesCallback);
+	myajax(9, "get", {}, allsumCallback);
 		
 	
 	}

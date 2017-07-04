@@ -1,8 +1,37 @@
-var mysql   = require('mysql');
+/*var mysql   = require('mysql');
 var db = require('db');
 var myClient = mysql.createConnection(db.mysql);
  
-myClient.connect();
+myClient.connect();*/
+
+var mysql   = require('mysql');
+var db = require('db');
+// var myClient = mysql.createConnection(db.mysql);
+ 
+// myClient.connect();
+
+
+
+function handleError (err) {  
+    if (err) {
+        // 如果是连接断开，自动重新连接
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+            connect();
+    } else {
+        console.error(err.stack || err);
+    }
+    }
+}
+
+// 连接数据库  
+function connect () {
+    myClient = mysql.createConnection(db.mysql);
+    myClient.connect(handleError);
+    myClient.on('error', handleError);
+}
+      
+var myClient;
+connect();
 
 
 

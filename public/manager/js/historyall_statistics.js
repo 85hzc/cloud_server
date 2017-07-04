@@ -6,7 +6,7 @@ function formateData(data1, bytes) {
 
 	for(var i = 0; i < arr.length; i++) {
 		if(bytes == 1) {
-			bytesArr.push(arr[i].totalBytes);
+			bytesArr.push(parseInt(arr[i].totalBytes / 1024 / 1024 / 8));
 			timeArr.push(arr[i].time.slice(0, 7));
 		}
 		if(bytes == 2) {
@@ -68,16 +68,18 @@ if(isconnected) {
 /*----------------------------------流的情况饼图---------------------------------*/
 
 
-
+function BytetoMB(number){
+	return parseInt(number / 1024 /1024 / 8);
+}
 
        
-
+var falgpie = 0; //once
 		
 
 function pie(piedata){
 
-		var value1 = piedata.values[7].count ? piedata.values[7].count : 0;
-		var value2 = piedata.values[8].count ? piedata.values[8].count : 0;
+		var value1 = piedata.values[7].count ? BytetoMB(piedata.values[7].count) : 0;
+		var value2 = piedata.values[8].count ? BytetoMB(piedata.values[8].count) : 0;
 
 	require.config({
 		paths: {
@@ -102,7 +104,7 @@ require(
 		
 			title: {
 				text: '直播流情况',
-				subtext: '直播流的总字节数 : 2000000000000Byte',
+				subtext: '直播流的总流量 : 0MB',
 				x: 'center',
 				subtextStyle: {
             		color: 'orange'          // 副标题文字颜色
@@ -115,7 +117,7 @@ require(
 			legend: {
 				orient: 'vertical',
 				x: 'left',
-				data: ['从直播平台获取流的总字节数', 'P2P转发流的总字节数']
+				data: ['从直播平台获取流的总流量', 'P2P转发流的总流量']
 			},
 
 			calculable: true,
@@ -125,7 +127,7 @@ require(
 					normal: {
 						label: {
 							show: true,
-							formatter: '{c} Byte ({d}%)'
+							formatter: '{c} MB ({d}%)'
 						},
 						labelLine: {
 							show: true
@@ -138,11 +140,11 @@ require(
 				center: ['50%', '60%'],
 				data: [{
 						value: value1,
-						name: '从直播平台获取流的总字节数'
+						name: '从直播平台获取流的总流量'
 					},
 					{
 						value: value2,
-						name: 'P2P转发流的总字节数'
+						name: 'P2P转发流的总流量'
 					}
 
 				]
@@ -151,7 +153,7 @@ require(
 		};
 
 
-			option1.title.subtext = '直播流的总字节数 : '+piedata.values[6].count+'Byte';
+			option1.title.subtext = '直播流的总流量 : '+parseInt(piedata.values[6].count / 1024 /1024 / 8) +'MB';
 	
 
 
@@ -159,9 +161,12 @@ require(
 
 		// 为echarts对象加载数据 
 		myChart1.setOption(option1);
-
+if (falgpie == 0) {
 	myajax(8, "get", {}, allBytesCallback);
 	myajax(9, "get", {}, allsumCallback);
+}
+
+falgpie = 1;
 		
 	
 	}
@@ -204,7 +209,7 @@ function allBytesCallback(data1) {
 					trigger: 'axis'
 				},
 				legend: {
-					data: ['转发字节']
+					data: ['转发流量']
 				},
 				toolbox: {
 					show: true,
@@ -237,11 +242,11 @@ function allBytesCallback(data1) {
 				yAxis: [{
 					type: 'value',
 					axisLabel: {
-						formatter: '{value} Byte'
+						formatter: '{value} MB'
 					}
 				}],
 				series: [{
-					name: '转发字节',
+					name: '转发流量',
 					type: 'line',
 					data: data1.bytesArr,
 					//					markPoint: {

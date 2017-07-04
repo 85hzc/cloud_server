@@ -67,3 +67,39 @@ create table `transfer_resource`(
 
 );
 
+
+DROP TABLE IF EXISTS `user_table`;
+create table `user_table`(
+        `userId` bigint AUTO_INCREMENT  PRIMARY KEY,
+        `regisTime` timestamp ,
+        `phoneNo` varchar(30) ,
+        `pwd` varchar(60)
+
+
+);
+
+DROP TABLE IF EXISTS `dev_user_mapping`;
+create table `dev_user_mapping`(
+        `id` bigint  AUTO_INCREMENT  PRIMARY KEY,
+        `userId` bigint ,
+        `deviceId` bigint ,
+      FOREIGN KEY (`deviceId`) REFERENCES `iot_device` (`deviceId`),
+      FOREIGN KEY (`userId`) REFERENCES `user_table` (`userId`)
+
+
+);
+
+
+DROP TABLE IF EXISTS `shared_strategy`;
+create table `shared_strategy`(
+        `id` bigint AUTO_INCREMENT  PRIMARY KEY,
+        `deviceId` bigint ,
+        `startSharedTime` timestamp ,
+	`endSharedTime`  timestamp,
+        `sharedBW`  int ,
+      FOREIGN KEY (`deviceId`) REFERENCES `iot_device` (`deviceId`)
+
+
+);
+
+

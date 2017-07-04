@@ -269,7 +269,7 @@ function stat(req, res, next) {
         }
 
         var value = {
-            name: "正在观看的直播资源数",
+            name: "正在观看的直播节目数",
             count: result[0].count
         };
 

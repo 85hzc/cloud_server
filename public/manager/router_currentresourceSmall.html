@@ -88,6 +88,16 @@ var vm = new Vue({
 
 
 myajax(6,"post",{"deviceId":deviceId},detaiCallBack);
+function fresh(){
+    setTimeout(function(){
+
+myajax(6,"post",{"deviceId":deviceId},detaiCallBack);
+
+
+
+    },5000);
+}
+
 
 function detaiCallBack(data1){
 
@@ -133,6 +143,10 @@ function detaiCallBack(data1){
 
 
  vm.message = data;
+
+
+
+ fresh();
 }//callback
 
 

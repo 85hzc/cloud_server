@@ -58,6 +58,8 @@ var vm = new Vue({
   
 });
 
+
+
 //获取标题
  for(var key in vm.message.values[0]){
  	vm.headArr.push(key);
@@ -65,7 +67,20 @@ var vm = new Vue({
  vm.headArr.push("直播资源");
  
 //网络请求
- 	myajax(2,"get","",detailCallBack);
+
+ myajax(2,"get","",detailCallBack);
+
+ function fresh(){
+    setTimeout(function(){
+
+    myajax(2,"get","",detailCallBack);           
+
+
+    },5000);
+}
+
+
+
     function detailCallBack(data){
     	// alert(data);
  
@@ -79,10 +94,10 @@ var vm = new Vue({
  vm.headArr.push("直播资源");
  
 
+fresh();
     	
     }
-    
- 
+
     
  </script>
 </html>

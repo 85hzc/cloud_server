@@ -227,12 +227,27 @@ myChart.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
         );
 	
 	
+    fresh();
  
 }//ajax
 
 
-        var resourceId = window.localStorage.resourceId;
+    var resourceId = window.localStorage.resourceId;
+
+
+ myajax(3,"post",{"resourceId":resourceId},detailCallBack);              
+
+function fresh(){
+    setTimeout(function(){
+
     myajax(3,"post",{"resourceId":resourceId},detailCallBack);              
+
+
+    },5000);
+}
+
+
+
 
 	
 </script>

@@ -1,37 +1,28 @@
-/*var mysql   = require('mysql');
-var db = require('db');
-var myClient = mysql.createConnection(db.mysql);
- 
-myClient.connect();*/
-
 var mysql   = require('mysql');
 var db = require('db');
-// var myClient = mysql.createConnection(db.mysql);
- 
-// myClient.connect();
 
-
-
-function handleError (err) {  
-    if (err) {
-        // 如果是连接断开，自动重新连接
-    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            connect();
-    } else {
-        console.error(err.stack || err);
-    }
-    }
-}
-
-// 连接数据库  
-function connect () {
-    myClient = mysql.createConnection(db.mysql);
-    myClient.connect(handleError);
-    myClient.on('error', handleError);
-}
-      
 var myClient;
-connect();
+function handleDisconnect() {
+myClient = mysql.createConnection(db.mysql); // Recreate the connection, since
+// the old one cannot be reused.
+myClient.connect(function(err) {              // The server is either down
+if(err) {                                     // or restarting (takes a while sometimes).
+console.log('error when connecting to db:', err);
+setTimeout(handleDisconnect, 1000); // We introduce a delay before attempting to reconnect,
+}                                     // to avoid a hot loop, and to allow our node script to
+});                                     // process asynchronous requests in the meantime.
+// If you're also serving http, display a 503 error.
+myClient.on('error', function(err) {
+console.log('db error', err);
+if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+handleDisconnect();                         // lost due to either server restart, or a
+} else {                                      // connnection idle timeout (the wait_timeout
+throw err;                                  // server variable configures this)
+}
+});
+}
+handleDisconnect();
+
 
 
 

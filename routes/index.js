@@ -141,13 +141,13 @@ router.post('/user_intf', function(req, res, next)
 //    res.render('index', { title: 'Express' });
 });
 
-router.post('/zb', function(req, res, next) 
+/*router.post('/zb', function(req, res, next) 
 {
    // console.log(req.body);
     app.message_handle(req, res);
 //    res.render('index', { title: 'Express' });
 });
-
+*/
 router.post('/app', function(req, res, next) 
 {
    // console.log(req.body);

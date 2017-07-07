@@ -1,4 +1,4 @@
-var mysql   = require('mysql');
+/*var mysql   = require('mysql');
 var db = require('db');
 
 var myClient;
@@ -21,7 +21,43 @@ throw err;                                  // server variable configures this)
 }
 });
 }
-handleDisconnect();
+handleDisconnect();*/
+
+var mysql = require('mysql');
+var myClient;
+
+
+function handleError () {
+    myClient = mysql.createConnection({
+        host: 'localhost',
+        user: 'user1',
+        password: '123456',
+        database: 'cdn',
+        port: 3306
+    });
+
+    //连接错误，2秒重试
+    myClient.connect(function (err) {
+        if (err) {
+            console.log('error when connecting to db:', err);
+            setTimeout(handleError , 2000);
+        }
+    });
+
+    myClient.on('error', function (err) {
+        console.log('db error', err);
+        // 如果是连接断开，自动重新连接
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+            handleError();
+        } else {
+            throw err;
+        }
+    });
+}
+handleError();
+
+
+
 
 
 

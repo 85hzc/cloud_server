@@ -144,3 +144,4 @@ CREATE TABLE `lirc_code`
    FOREIGN KEY (`vendorId`) REFERENCES `vendor`(`vendorId`)
 );
 
+

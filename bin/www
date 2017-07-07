@@ -11,11 +11,7 @@ var devConn = require('dev_conn');
 var wsSrv = require('ws-server');
 
 
-var mysql   = require('mysql');
-var db = require('db');
-var client = mysql.createConnection(db.mysql);
- 
-client.connect();
+
 
 
 

@@ -13,13 +13,11 @@ var gateway_priv = require('gateway_priv');
 var user_intf = require('user_intf');
 var app = require('app');
 var user = require('user');
-var check        = require('check');
+var check = require('check');
 var session_priv = require('session_priv');
 
 var weixin_socket_arr    = new Array();
 var gateway_socket_arr = new Array(); 
-
-
 
 var config = {
     token : 'weixin',
